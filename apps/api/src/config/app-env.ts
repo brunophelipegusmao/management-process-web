@@ -21,9 +21,9 @@ function normalizeBasePath(value: string) {
   return withLeadingSlash.replace(/\/+$/, '');
 }
 
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT ?? 3001);
 const poolMax = Number(process.env.DATABASE_POOL_MAX ?? 10);
-const normalizedPort = Number.isNaN(port) ? 3000 : port;
+const normalizedPort = Number.isNaN(port) ? 3001 : port;
 const betterAuthBasePath = normalizeBasePath(
   process.env.BETTER_AUTH_BASE_PATH ?? '/auth',
 );
