@@ -38,8 +38,7 @@ const smtpSecure = (process.env.SMTP_SECURE ?? 'true') === 'true';
 const smtpUser = process.env.SMTP_USER ?? '';
 const smtpPass = process.env.SMTP_PASS ?? '';
 const corsOriginsRaw =
-  process.env.CORS_ORIGINS ??
-  'http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173';
+  process.env.CORS_ORIGINS ?? 'http://localhost:3000';
 const corsAllowedOrigins = corsOriginsRaw
   .split(',')
   .map((origin) => origin.trim())

@@ -1,0 +1,248 @@
+/* ─── Imports ──────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght,MONO@0,300..800,1;1,300..800,1&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ─── Theme Variants ───────────────────────────────────────────────────────── */
+
+@custom-variant dark (&:is(.dark *));
+@custom-variant light (&:is(.light *));
+
+/* ─── Design Tokens → Tailwind ─────────────────────────────────────────────── */
+
+@theme inline {
+    /* Typography */
+    --font-sans: "Literata", Georgia, serif;
+    --font-heading: "Literata", Georgia, serif;
+    --font-code: "Google Sans Code", monospace;
+
+    /* Semantic colors */
+    --color-background:              var(--background);
+    --color-foreground:              var(--foreground);
+    --color-card:                    var(--card);
+    --color-card-foreground:         var(--card-foreground);
+    --color-popover:                 var(--popover);
+    --color-popover-foreground:      var(--popover-foreground);
+    --color-primary:                 var(--primary);
+    --color-primary-foreground:      var(--primary-foreground);
+    --color-secondary:               var(--secondary);
+    --color-secondary-foreground:    var(--secondary-foreground);
+    --color-muted:                   var(--muted);
+    --color-muted-foreground:        var(--muted-foreground);
+    --color-accent:                  var(--accent);
+    --color-accent-foreground:       var(--accent-foreground);
+    --color-destructive:             var(--destructive);
+    --color-border:                  var(--border);
+    --color-input:                   var(--input);
+    --color-ring:                    var(--ring);
+
+    /* Charts */
+    --color-chart-1:                 var(--chart-1);
+    --color-chart-2:                 var(--chart-2);
+    --color-chart-3:                 var(--chart-3);
+    --color-chart-4:                 var(--chart-4);
+    --color-chart-5:                 var(--chart-5);
+
+    /* Sidebar */
+    --color-sidebar:                 var(--sidebar);
+    --color-sidebar-foreground:      var(--sidebar-foreground);
+    --color-sidebar-primary:         var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent:          var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border:          var(--sidebar-border);
+    --color-sidebar-ring:            var(--sidebar-ring);
+
+    /* Brand */
+    --color-brand-400:               var(--color-brand-400);
+    --color-brand-300:               var(--color-brand-300);
+
+    /* Status */
+    --color-success-600:             var(--color-success-600);
+    --color-success-500:             var(--color-success-500);
+    --color-info-900:                var(--color-info-900);
+    --color-info-820:                var(--color-info-820);
+    --color-error-600:               var(--color-error-600);
+    --color-error-500:               var(--color-error-500);
+
+    /* Radius scale */
+    --radius-sm:                     calc(var(--radius) * 0.6);
+    --radius-md:                     calc(var(--radius) * 0.8);
+    --radius-lg:                     var(--radius);
+    --radius-xl:                     calc(var(--radius) * 1.4);
+    --radius-2xl:                    calc(var(--radius) * 1.8);
+    --radius-3xl:                    calc(var(--radius) * 2.2);
+    --radius-4xl:                    calc(var(--radius) * 2.6);
+
+    /* Shadow scale */
+    --shadow-100:                    var(--shadow-100);
+    --shadow-200:                    var(--shadow-200);
+    --shadow-300:                    var(--shadow-300);
+    --shadow-400:                    var(--shadow-400);
+    --shadow-500:                    var(--shadow-500);
+    --shadow-700:                    var(--shadow-700);
+    --shadow-900:                    var(--shadow-900);
+}
+
+/* ─── Dark Theme (default) ─────────────────────────────────────────────────── */
+
+:root,
+.dark {
+    /* Surfaces */
+    --background:           oklch(0.2781 0.0296 256.85);
+    --foreground:           oklch(0.9610 0.0040 256.00);
+    --card:                 oklch(0.3150 0.0250 256.85);
+    --card-foreground:      oklch(0.9610 0.0040 256.00);
+    --popover:              oklch(0.3150 0.0250 256.85);
+    --popover-foreground:   oklch(0.9610 0.0040 256.00);
+
+    /* Brand */
+    --primary:              oklch(0.7287 0.1337 85.53);
+    --primary-foreground:   oklch(0.1800 0.0200 256.00);
+
+    /* Supporting — IBM cool grays */
+    --secondary:            oklch(0.3500 0.0180 256.85);
+    --secondary-foreground: oklch(0.9200 0.0050 256.00);
+    --muted:                oklch(0.3200 0.0200 256.85);
+    --muted-foreground:     oklch(0.6500 0.0080 256.00);
+    --accent:               oklch(0.3300 0.0220 256.85);
+    --accent-foreground:    oklch(0.9610 0.0040 256.00);
+
+    /* State */
+    --destructive:          oklch(0.5770 0.2450 27.33);
+
+    /* Structure */
+    --border:               oklch(0.3800 0.0150 256.85);
+    --input:                oklch(0.3800 0.0150 256.85);
+    --ring:                 oklch(0.7287 0.1337 85.53);
+
+    /* Charts — IBM data visualization palette */
+    --chart-1:              oklch(0.7287 0.1337 85.53);
+    --chart-2:              oklch(0.6500 0.1200 195.00);
+    --chart-3:              oklch(0.6000 0.1800 295.00);
+    --chart-4:              oklch(0.7200 0.1400 220.00);
+    --chart-5:              oklch(0.5771 0.2152 27.33);
+
+    /* Sidebar */
+    --sidebar:                      oklch(0.2450 0.0260 256.85);
+    --sidebar-foreground:           oklch(0.8800 0.0050 256.00);
+    --sidebar-primary:              oklch(0.7287 0.1337 85.53);
+    --sidebar-primary-foreground:   oklch(0.1800 0.0200 256.00);
+    --sidebar-accent:               oklch(0.3200 0.0220 256.85);
+    --sidebar-accent-foreground:    oklch(0.9610 0.0040 256.00);
+    --sidebar-border:               oklch(0.3500 0.0150 256.85);
+    --sidebar-ring:                 oklch(0.7287 0.1337 85.53);
+
+    /* Radius */
+    --radius: 0.125rem;
+
+    /* Brand palette */
+    --color-brand-400:      oklch(0.6305 0.1315 73.75);
+    --color-brand-300:      oklch(0.7287 0.1337 85.53);
+
+    /* Status palette */
+    --color-success-600:    oklch(0.4479 0.1083 151.33);
+    --color-success-500:    oklch(0.6271 0.1699 149.21);
+    --color-info-900:       oklch(0.3462 0.0736 256.04);
+    --color-info-820:       oklch(0.4882 0.2172 264.38);
+    --color-error-600:      oklch(0.4437 0.1613 26.90);
+    --color-error-500:      oklch(0.5771 0.2152 27.33);
+
+    /* Shadows */
+    --shadow-100: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+    --shadow-200: 0px 2px 4px 0px rgba(16, 24, 40, 0.08);
+    --shadow-300: 0px 4px 8px -2px rgba(16, 24, 40, 0.10),
+                  0px 2px 4px -2px rgba(16, 24, 40, 0.06);
+    --shadow-400: 0px 8px 16px -4px rgba(16, 24, 40, 0.12),
+                  0px 4px 8px -4px rgba(16, 24, 40, 0.08);
+    --shadow-500: 0px 12px 24px -6px rgba(16, 24, 40, 0.16),
+                  0px 6px 12px -6px rgba(16, 24, 40, 0.10);
+    --shadow-700: 0px 20px 40px -8px rgba(16, 24, 40, 0.20),
+                  0px 10px 20px -8px rgba(16, 24, 40, 0.12);
+    --shadow-900: 0px 32px 64px -12px rgba(16, 24, 40, 0.28),
+                  0px 16px 32px -12px rgba(16, 24, 40, 0.16);
+}
+
+/* ─── Light Theme ──────────────────────────────────────────────────────────── */
+
+.light {
+    /* Surfaces */
+    --background:           oklch(1.0000 0.0000 0);
+    --foreground:           oklch(0.1800 0.0220 256.85);
+    --card:                 oklch(0.9700 0.0030 256.85);
+    --card-foreground:      oklch(0.1800 0.0220 256.85);
+    --popover:              oklch(1.0000 0.0000 0);
+    --popover-foreground:   oklch(0.1800 0.0220 256.85);
+
+    /* Brand */
+    --primary:              oklch(0.6305 0.1315 73.75);
+    --primary-foreground:   oklch(1.0000 0.0000 0);
+
+    /* Supporting — IBM cool grays */
+    --secondary:            oklch(0.9350 0.0060 256.85);
+    --secondary-foreground: oklch(0.1800 0.0220 256.85);
+    --muted:                oklch(0.9350 0.0060 256.85);
+    --muted-foreground:     oklch(0.5200 0.0120 256.85);
+    --accent:               oklch(0.9479 0.0322 87.29);
+    --accent-foreground:    oklch(0.3669 0.0824 64.80);
+
+    /* State */
+    --destructive:          oklch(0.5771 0.2152 27.33);
+
+    /* Structure */
+    --border:               oklch(0.8900 0.0060 256.85);
+    --input:                oklch(0.8900 0.0060 256.85);
+    --ring:                 oklch(0.6305 0.1315 73.75);
+
+    /* Charts — IBM data visualization palette (light) */
+    --chart-1:              oklch(0.6305 0.1315 73.75);
+    --chart-2:              oklch(0.5500 0.1200 195.00);
+    --chart-3:              oklch(0.5000 0.1800 295.00);
+    --chart-4:              oklch(0.5200 0.1400 220.00);
+    --chart-5:              oklch(0.5771 0.2152 27.33);
+
+    /* Sidebar */
+    --sidebar:                      oklch(0.9479 0.0322 87.29);
+    --sidebar-foreground:           oklch(0.1800 0.0220 256.85);
+    --sidebar-primary:              oklch(0.6305 0.1315 73.75);
+    --sidebar-primary-foreground:   oklch(1.0000 0.0000 0);
+    --sidebar-accent:               oklch(0.8928 0.0613 83.99);
+    --sidebar-accent-foreground:    oklch(0.3669 0.0824 64.80);
+    --sidebar-border:               oklch(0.8900 0.0060 256.85);
+    --sidebar-ring:                 oklch(0.6305 0.1315 73.75);
+}
+
+/* ─── Page Transition ───────────────────────────────────────────────────────── */
+
+@keyframes page-enter {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.transition-page {
+    animation: page-enter 0.4s ease;
+    will-change: opacity;
+}
+
+/* ─── Base Styles ──────────────────────────────────────────────────────────── */
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+
+    html {
+        @apply font-sans;
+        scroll-behavior: smooth;
+    }
+
+    ::selection {
+        background-color: oklch(0.7287 0.1337 85.53 / 0.25);
+        color: var(--foreground);
+    }
+}

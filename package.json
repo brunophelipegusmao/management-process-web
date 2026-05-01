@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "pnpm --parallel --filter './apps/*' run dev",
+    "dev": "pnpm --parallel --filter @mgmt/web --filter @mgmt/api run dev",
     "dev:web": "pnpm --filter @mgmt/web run dev",
     "dev:api": "pnpm --filter @mgmt/api run start:dev",
     "build": "pnpm -r run build",

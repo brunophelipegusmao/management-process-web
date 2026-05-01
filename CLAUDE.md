@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 management-process-web/   ← monorepo root
 ├── apps/
-│   ├── web/              ← Next.js 16 frontend (@mgmt/web)
+│   ├── web/              ← Angular 21 frontend (@mgmt/web)
 │   └── api/              ← NestJS + Fastify backend (@mgmt/api)
 ├── package.json          ← workspace root scripts
 └── pnpm-workspace.yaml
@@ -20,7 +20,7 @@ All commands run from the **monorepo root** using pnpm workspaces.
 ```bash
 # Development
 pnpm dev          # run web + api in parallel
-pnpm dev:web      # Next.js only (port 3000)
+pnpm dev:web      # Angular only (port 3000)
 pnpm dev:api      # NestJS only (port 3333)
 
 # Build
@@ -42,13 +42,17 @@ pnpm --filter @mgmt/web  <script>
 pnpm --filter @mgmt/api  <script>
 ```
 
-## apps/web — Next.js Frontend
+## apps/web — Angular Frontend
 
-- **Next.js 16**, React 19, TypeScript (strict), Tailwind CSS v4
-- App Router: all routes live under `apps/web/src/app/`
-- React Compiler enabled (`next.config.ts`) — no manual `useMemo`/`useCallback` needed
+- **Angular 21**, TypeScript (strict), Tailwind CSS v4
+- Standalone components — sem NgModules
+- Angular Router: rotas definidas em `apps/web/src/app/app.routes.ts`
+- Lazy loading por feature (public, auth, private)
 - Path alias `@/*` → `apps/web/src/*`
-- Fonts: Geist Sans / Geist Mono via `next/font/google`, injected as CSS vars on `<html>`
+- Estilos globais em `apps/web/src/styles.css` (tokens OKLch dark/light)
+- Fonts: Literata (sans/heading) + Google Sans Code (mono) via Google Fonts
+- Dev server na porta **3000** (`ng serve`)
+- Build output em `apps/web/dist/`
 
 ## apps/api — NestJS Backend
 
