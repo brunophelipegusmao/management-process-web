@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /bazel-out
+.angular
 
 # Node
 /node_modules
@@ -38,6 +39,15 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+
+# Claude Code
+.claude/
+
+# Angular CLI generated test stubs (add real tests before tracking)
+*.spec.ts
+
+# PostCSS legacy config (replaced by .postcssrc.json)
+postcss.config.mjs
 
 # System files
 .DS_Store

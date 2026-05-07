@@ -1,0 +1,46 @@
+.header-wrapper {
+    background-color: oklch(0.30 0.04 228 / 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid oklch(0.72 0.13 80 / 0.15);
+}
+
+.bar-top-open {
+    rotate: 45deg;
+    translate: 0 0.5rem;
+}
+
+.bar-bottom-open {
+    rotate: -45deg;
+    translate: 0 -0.5rem;
+}
+
+.nav-desktop {
+    display: none;
+}
+
+.login-desktop {
+    display: none;
+}
+
+.hamburger-btn {
+    display: flex;
+}
+
+@media (min-width: 768px) {
+    .nav-desktop {
+        display: flex;
+    }
+
+    .login-desktop {
+        display: block;
+    }
+
+    .hamburger-btn {
+        display: none;
+    }
+
+    .menu-mobile {
+        display: none !important;
+    }
+}

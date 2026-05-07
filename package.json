@@ -1,7 +1,7 @@
 {
   "name": "management-process",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "dev": "pnpm --parallel --filter @mgmt/web --filter @mgmt/api run dev",
     "dev:web": "pnpm --filter @mgmt/web run dev",

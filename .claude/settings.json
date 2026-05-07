@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"e:\\\\PROJETOS\\\\management-process-web\\\\apps\" -Directory)",
+      "Bash(Select-Object Name)",
+      "WebFetch(domain:abreuadvogados.com)",
+      "Bash(pnpm --filter @mgmt/web build --configuration development)",
+      "Bash(Remove-Item -Recurse -Force \"e:\\\\PROJETOS\\\\management-process-web\\\\apps\\\\web\\\\.angular\\\\cache\" -ErrorAction SilentlyContinue)",
+      "Bash(Write-Host \"Cache cleared\")",
+      "Bash(pnpm --filter @mgmt/web exec ng build --configuration=development)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Angular:', d.get\\('dependencies',{}\\).get\\('@angular/core','?'\\)\\); print\\('Scripts:', list\\(d.get\\('scripts',{}\\).keys\\(\\)\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('NestJS:', d.get\\('dependencies',{}\\).get\\('@nestjs/core','?'\\)\\); print\\('Scripts:', list\\(d.get\\('scripts',{}\\).keys\\(\\)\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts',{}\\), indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('compilerOptions',{}\\).get\\('paths',{}\\), indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); b=d['projects']['web']['architect']['build']; print\\(json.dumps\\(b.get\\('options',{}\\).get\\('assets',[]\\), indent=2\\)\\); print\\('SSR:', 'server' in d['projects']['web']['architect']\\)\")",
+      "Bash(git rm *)"
+    ]
+  }
+}

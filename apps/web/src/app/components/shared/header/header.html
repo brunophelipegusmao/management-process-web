@@ -1,0 +1,58 @@
+<div class="header-wrapper fixed top-0 left-0 right-0 z-50">
+
+  <header class="h-16 md:h-20 flex items-center px-3 md:px-4 max-w-[95%] md:max-w-[80%] mx-auto">
+
+    <!-- Logo -->
+    <div class="w-12 md:w-20">
+      <img src="/logo.svg" alt="Logotipo Mulim Advogados Associados" class="w-full h-auto" />
+    </div>
+
+    <!-- Nav desktop -->
+    <div class="nav-desktop flex-1 justify-center items-center">
+      <nav class="text-mulim-ouro text-lg font-semibold">
+        <ul class="flex gap-20">
+          <li class="cursor-pointer hover:text-mulim-ouro/70 transition-colors">Inicio</li>
+          <li class="cursor-pointer hover:text-mulim-ouro/70 transition-colors">Sobre</li>
+          <li class="cursor-pointer hover:text-mulim-ouro/70 transition-colors">Contato</li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Botão login desktop -->
+    <div class="login-desktop">
+      <button class="text-mulim-azul font-bold bg-mulim-ouro w-24 h-10 text-base rounded-xl hover:bg-mulim-ouro/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Login</button>
+    </div>
+
+    <!-- Botão sanduíche mobile -->
+    <button
+      class="hamburger-btn ml-auto flex-col justify-center gap-1.5 p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro"
+      (click)="toggleMenu()"
+      aria-label="Abrir menu"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="mobile-menu"
+    >
+      <span class="block w-6 h-0.5 bg-mulim-ouro transition-all duration-300"
+        [class.bar-top-open]="menuOpen()"></span>
+      <span class="block w-6 h-0.5 bg-mulim-ouro transition-all duration-300"
+        [class.opacity-0]="menuOpen()"></span>
+      <span class="block w-6 h-0.5 bg-mulim-ouro transition-all duration-300"
+        [class.bar-bottom-open]="menuOpen()"></span>
+    </button>
+
+  </header>
+
+  <!-- Menu mobile dropdown -->
+  @if (menuOpen()) {
+    <div id="mobile-menu" class="menu-mobile bg-mulim-azul flex flex-col items-center gap-4 py-4">
+      <nav class="text-mulim-ouro text-base font-semibold">
+        <ul class="flex flex-col items-center gap-4">
+          <li class="cursor-pointer hover:text-mulim-ouro/70 transition-colors" (click)="toggleMenu()">Inicio</li>
+          <li class="cursor-pointer hover:text-mulim-ouro/70 transition-colors" (click)="toggleMenu()">Sobre</li>
+          <li class="cursor-pointer hover:text-mulim-ouro/70 transition-colors" (click)="toggleMenu()">Contato</li>
+        </ul>
+      </nav>
+      <button class="text-mulim-azul font-bold bg-mulim-ouro w-24 h-10 text-sm rounded-xl hover:bg-mulim-ouro/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Login</button>
+    </div>
+  }
+
+</div>

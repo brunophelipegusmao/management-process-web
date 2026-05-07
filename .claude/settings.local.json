@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:getdesign.md)",
+      "WebFetch(domain:carbondesignsystem.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -s \"https://api.github.com/repos/carbon-design-system/carbon/contents/packages/themes/src\")",
+      "Bash(curl -s \"https://api.github.com/repos/carbon-design-system/carbon/contents/packages/colors/src\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); [print\\(f['name'], f.get\\('download_url',''\\)\\) for f in data if isinstance\\(data, list\\)]\")",
+      "Bash(pnpm --filter @mgmt/web exec tsc --noEmit)",
+      "Bash(grep -v \"^$\")",
+      "mcp__claude_ai_Context7__resolve-library-id",
+      "mcp__claude_ai_Context7__query-docs",
+      "Bash(rm -f \"e:/PROJETOS/management-process-web/apps/web/src/app/\\(public\\)/about/page.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/app/\\(public\\)/contact/page.tsx\")",
+      "Bash(rmdir \"e:/PROJETOS/management-process-web/apps/web/src/app/\\(public\\)/about\" \"e:/PROJETOS/management-process-web/apps/web/src/app/\\(public\\)/contact\")",
+      "Bash(rm -f \"e:/PROJETOS/management-process-web/apps/web/src/app/\\(public\\)/layout.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/app/\\(public\\)/page.tsx\")",
+      "Bash(rm -rf \"e:/PROJETOS/management-process-web/apps/web/src/components/Header\" \"e:/PROJETOS/management-process-web/apps/web/src/components/PageTransition.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/components/ThemeProvider\")",
+      "Bash(rm -f \"e:/PROJETOS/management-process-web/apps/web/src/components/ui/badge.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/components/ui/button.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/components/ui/card.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/components/ui/input.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/components/ui/label.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/components/ui/separator.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/components/ui/textarea.tsx\" \"e:/PROJETOS/management-process-web/apps/web/src/components/ui/toggle.tsx\")",
+      "Bash(grep -E \"\\\\.\\(json|ts|tsx|css|mjs|js\\)$\")",
+      "WebSearch",
+      "Bash(npx --yes @angular/cli@21 new web --directory apps/web --style css --no-ssr --skip-git --skip-install --package-manager pnpm)",
+      "Bash(pnpm install *)",
+      "Bash(timeout 30 pnpm --filter @mgmt/web run build)",
+      "Bash(git config *)",
+      "Bash(echo \"name exit: $?\")",
+      "Bash(echo \"email exit: $?\")",
+      "Bash(pnpm --filter @mgmt/web run build)",
+      "Bash(mkdir -p \"e:/PROJETOS/management-process-web/.claude/skills\")",
+      "Bash(cp -r \"C:/Users/Bruno/.claude/skills/angular\" \"e:/PROJETOS/management-process-web/.claude/skills/\")",
+      "Bash(cp -r \"C:/Users/Bruno/.claude/skills/angular-best-practices\" \"e:/PROJETOS/management-process-web/.claude/skills/\")",
+      "Bash(cp -r \"C:/Users/Bruno/.claude/skills/angular-state-management\" \"e:/PROJETOS/management-process-web/.claude/skills/\")"
+    ]
+  }
+}
