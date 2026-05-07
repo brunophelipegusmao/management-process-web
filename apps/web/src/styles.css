@@ -39,6 +39,7 @@
     --sidebar-border: oklch(0.929 0.013 255.508);
     --sidebar-ring: oklch(0.704 0.04 256.788);
     --mulim-azul: oklch(0.30 0.04 228);
+    --mulima-transparente: oklch(30.294% 0.04858 229.207 / 0.822);
     --mulim-ouro: oklch(0.72 0.13 80);
 }
 
@@ -114,6 +115,7 @@
     --color-sidebar-ring: var(--sidebar-ring);
     --color-mulim-azul: var(--mulim-azul);
     --color-mulim-ouro: var(--mulim-ouro);
+    --color-mulima-transparente: var(--mulima-transparente);
 
     --font-sans: 'Source Sans 3', sans-serif;
     --font-mono: 'Anonymous Pro', monospace;
