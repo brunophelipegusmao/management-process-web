@@ -43,6 +43,7 @@ const corsAllowedOrigins = corsOriginsRaw
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
+const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY ?? '';
 
 export const appEnv = {
   port: normalizedPort,
@@ -68,5 +69,8 @@ export const appEnv = {
   },
   cors: {
     allowedOrigins: corsAllowedOrigins,
+  },
+  recaptcha: {
+    secretKey: recaptchaSecretKey,
   },
 } as const;

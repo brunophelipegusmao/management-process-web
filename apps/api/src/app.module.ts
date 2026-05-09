@@ -17,6 +17,7 @@ import { ReportsModule } from './modules/reports/reports.module';
 import { WitnessesModule } from './modules/witnesses/witnesses.module';
 import { UsersModule } from './modules/users/users.module';
 import { RolesGuard } from './common/guards/roles.guard';
+import { ContactModule } from './modules/contact/contact.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     HearingsModule,
     JobsModule,
     ReportsModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [

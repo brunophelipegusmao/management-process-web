@@ -1,24 +1,31 @@
 <section class="hero">
+  <img
+    src="/justice.png"
+    alt="Background"
+    class="absolute inset-0 w-full h-full object-cover animate-sway"
+  >
+
   <div class="absolute inset-0 bg-mulima-transparente"></div>
 
-  <div class="relative z-10 flex flex-col items-center gap-5 px-4 py-16 sm:py-24 text-center w-full max-w-xl mx-auto">
-    <img src="/logo.svg" alt="Mulim Advogados Associados" class="w-20 sm:w-28 md:w-36 h-auto">
+  <div class="hero-content relative z-10 flex flex-col items-center gap-6 px-4 py-16 sm:py-24 text-center w-full max-w-xl mx-auto">
+    <img src="/logo.svg" alt="Mulim Advogados Associados" class="hero-logo w-20 sm:w-28 md:w-36 h-auto">
 
-    <div class="flex flex-col gap-2">
-      <p class="text-primary-foreground/80 text-sm sm:text-base md:text-lg font-light tracking-wide">
+    <div class="hero-headline flex flex-col items-center gap-3">
+      <p class="hero-eyebrow">
         Escritório de advocacia especializado em
       </p>
-      <h1 class="text-primary-foreground text-3xl sm:text-4xl md:text-6xl font-bold tracking-widest uppercase">
+      <h1 class="hero-title">
         Direito Civil
       </h1>
+      <div class="hero-rule" aria-hidden="true"></div>
     </div>
 
-    <p class="text-primary-foreground/70 text-sm md:text-base max-w-sm sm:max-w-lg leading-relaxed">
+    <p class="hero-body max-w-sm sm:max-w-lg">
       Defendemos seus direitos com dedicação e expertise, oferecendo soluções jurídicas personalizadas para cada caso.
     </p>
 
-    <button class="mt-2 bg-mulim-ouro text-mulim-azul font-bold px-6 sm:px-8 py-3 rounded hover:bg-mulim-ouro/80 transition-colors uppercase tracking-widest text-sm w-full sm:w-auto">
+    <a routerLink="/contact" class="hero-cta w-full sm:w-auto">
       Falar com Especialista
-    </button>
+    </a>
   </div>
 </section>

@@ -1,0 +1,254 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-screen flex flex-col items-center justify-center">
+
+  <!-- Cabeçalho -->
+  <header class="flex items-end-safe justify-around gap-4 mb-5 flex-wrap w-[80%]">
+    <a routerLink="/dashboard"
+       class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-mulim-azul/60 dark:text-foreground/50 hover:text-mulim-azul dark:hover:text-foreground flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2">
+      <span aria-hidden="true">←</span> Processos
+    </a>
+    <div class="flex flex-col items-end gap-1">
+      <span class="ap-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Cadastro</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Novo Processo</h1>
+    </div>
+  </header>
+  <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-8 sm:mb-10 max-w-[80%] w-[80%]" aria-hidden="true"></div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-10 sm:gap-12 max-w-[80%] w-[80%]">
+
+    <!-- ── 01 PROCESSO ──────────────────────────────────────── -->
+    <section aria-labelledby="sec-processo">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-processo">
+        <span class="text-mulim-ouro text-sm">01</span> Processo
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-5 sm:gap-y-6">
+
+        <!-- CNJ: full na sm, 2/3 na lg -->
+        <div class="sm:col-span-1 lg:col-span-2 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="cnjNumber">
+            Número CNJ <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <input
+            id="cnjNumber"
+            formControlName="cnjNumber"
+            class="font-mono text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 placeholder:font-sans transition-colors"
+            [class.ap-input--error]="hasError('cnjNumber')"
+            placeholder="0000000-00.0000.8.19.0000"
+            autocomplete="off"
+          >
+          @if (hasError('cnjNumber')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Campo obrigatório</span>
+          }
+        </div>
+
+        <!-- Tipo de Vara: 1/2 na sm, 1/3 na lg -->
+        <div class="flex flex-col gap-2">
+          <span class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" id="courtType-label">
+            Tipo de Vara <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </span>
+          <div class="flex sm:flex-col gap-4 sm:gap-3 pt-1" role="radiogroup" aria-labelledby="courtType-label">
+            <label class="ap-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="courtType" value="vara">
+              <span class="ap-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              Vara Comum
+            </label>
+            <label class="ap-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="courtType" value="jec">
+              <span class="ap-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              JEC
+            </label>
+          </div>
+        </div>
+
+        <!-- Comarca: 1/2 na sm, 1/3 na lg -->
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="comarca">
+            Comarca <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <input
+            id="comarca"
+            formControlName="comarca"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            [class.ap-input--error]="hasError('comarca')"
+            placeholder="Duque de Caxias"
+          >
+          @if (hasError('comarca')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Campo obrigatório</span>
+          }
+        </div>
+
+        <!-- Vara: 1/2 na sm, 2/3 na lg -->
+        <div class="lg:col-span-2 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="vara">
+            Vara <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <input
+            id="vara"
+            formControlName="vara"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            [class.ap-input--error]="hasError('vara')"
+            placeholder="30ª Vara Cível"
+          >
+          @if (hasError('vara')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Campo obrigatório</span>
+          }
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── 02 PARTES ──────────────────────────────────────── -->
+    <section aria-labelledby="sec-partes">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-partes">
+        <span class="text-mulim-ouro text-sm">02</span> Partes
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-5 sm:gap-y-6">
+
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="authorName">
+            Nome do Autor <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <input
+            id="authorName"
+            formControlName="authorName"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            [class.ap-input--error]="hasError('authorName')"
+            placeholder="Nome completo"
+          >
+          @if (hasError('authorName')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Campo obrigatório</span>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="defendantName">
+            Nome do Réu <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <input
+            id="defendantName"
+            formControlName="defendantName"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            [class.ap-input--error]="hasError('defendantName')"
+            placeholder="Nome completo"
+          >
+          @if (hasError('defendantName')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Campo obrigatório</span>
+          }
+        </div>
+
+        <!-- Polo: linha inteira na sm, 1/3 na lg -->
+        <div class="sm:col-span-2 lg:col-span-1 flex flex-col gap-2">
+          <span class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" id="clientSide-label">Pólo do Cliente</span>
+          <div class="flex gap-6 sm:gap-8 lg:flex-col lg:gap-3 pt-1" role="radiogroup" aria-labelledby="clientSide-label">
+            <label class="ap-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="clientSide" value="reu">
+              <span class="ap-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              Réu (Defesa)
+            </label>
+            <label class="ap-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="clientSide" value="autor">
+              <span class="ap-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              Autor (Ação)
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── 03 CLIENTE ─────────────────────────────────────── -->
+    <section aria-labelledby="sec-cliente">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-cliente">
+        <span class="text-mulim-ouro text-sm">03</span> Cliente
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8">
+        <div class="lg:col-span-2 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="clientId">
+            Selecionar Cliente <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <select
+            id="clientId"
+            formControlName="clientId"
+            class="ap-select font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro appearance-none pr-6 transition-colors cursor-pointer"
+            [class.ap-input--error]="hasError('clientId')"
+            [attr.aria-busy]="loading()"
+          >
+            <option value="" disabled>
+              @if (loading()) { Carregando clientes… } @else { Selecione um cliente }
+            </option>
+            @for (client of clients(); track client.id) {
+              <option [value]="client.id">{{ client.name }}</option>
+            }
+          </select>
+          @if (hasError('clientId')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Selecione um cliente</span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 04 DETALHES ────────────────────────────────────── -->
+    <section aria-labelledby="sec-detalhes">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-detalhes">
+        <span class="text-mulim-ouro text-sm">04</span> Detalhes
+        <span class="text-[0.65rem] tracking-normal text-foreground/40 font-sans font-normal normal-case">(opcional)</span>
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-5 sm:gap-y-6">
+
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="status">Status</label>
+          <select
+            id="status"
+            formControlName="status"
+            class="ap-select font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro appearance-none pr-6 transition-colors cursor-pointer"
+          >
+            <option value="citado">Citado</option>
+            <option value="em_andamento">Em Andamento</option>
+            <option value="encerrado">Encerrado</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="citationDate">Data de Citação</label>
+          <input
+            id="citationDate"
+            type="date"
+            formControlName="citationDate"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro transition-colors"
+          >
+        </div>
+
+        <!-- Testemunha: linha inteira na sm, 1/3 na lg (alinhado à base) -->
+        <div class="sm:col-span-2 lg:col-span-1 flex flex-col justify-end pb-2">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              formControlName="mentionsWitness"
+              class="ap-checkbox relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-sm appearance-none shrink-0 cursor-pointer transition-colors checked:bg-mulim-ouro checked:border-mulim-ouro focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2"
+            >
+            <span class="font-sans text-sm font-normal text-foreground">Menciona testemunha</span>
+          </label>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── AÇÕES ──────────────────────────────────────────── -->
+    <div class="flex flex-col items-start gap-3 pt-6 sm:pt-8 border-t border-foreground/10">
+      @if (submitError()) {
+        <p class="text-sm text-destructive font-medium" role="alert">{{ submitError() }}</p>
+      }
+      <button
+        type="submit"
+        class="ap-submit font-mono text-[0.7rem] font-bold tracking-[0.22em] uppercase text-mulim-ouro border border-mulim-ouro/70 px-8 sm:px-11 py-3.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-3 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+        [disabled]="submitting()"
+      >
+        @if (submitting()) { Cadastrando… } @else { Cadastrar Processo }
+      </button>
+    </div>
+
+  </form>
+</div>

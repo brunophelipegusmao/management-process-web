@@ -77,6 +77,11 @@ export const routes: Routes = [
         loadComponent: () => import('./private/kanban/kanban').then((m) => m.Kanban),
         title: 'Kanban',
       },
+      {
+        path: 'users',
+        loadComponent: () => import('./private/users/users').then((m) => m.Users),
+        title: 'Usuários',
+      },
     ],
   },
 

@@ -1,94 +1,65 @@
 <div class="header-wrapper fixed top-0 left-0 right-0 z-50">
 
-  <header class="h-16 md:h-20 flex items-center px-4 md:px-6 w-full max-w-5xl mx-auto">
+  <header class="h-16 md:h-20 flex items-center px-5 md:px-10 w-full max-w-6xl mx-auto">
 
-    <!-- Logo -->
-    <div class="w-12 md:w-20">
-      <img src="/logo.svg" alt="Logotipo Mulim Advogados Associados" class="w-full h-auto" />
-    </div>
+    <!-- Logo → home -->
+    <a routerLink="/"
+       aria-label="Página inicial — Mulim Advogados Associados"
+       class="header-logo shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-mulim-ouro">
+      <img src="/logo.svg" alt="" class="w-full h-auto" />
+    </a>
 
-    <!-- Nav desktop -->
-    <div class="nav-desktop flex-1 justify-center items-center">
-      <nav class="text-mulim-ouro text-lg font-semibold" aria-label="Navegação principal">
-        <ul class="flex gap-20">
-          <li>
-            <a routerLink="/" routerLinkActive="text-mulim-ouro/70"
-              class="hover:text-mulim-ouro/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro rounded">
-              Inicio
-            </a>
-          </li>
-          <li>
-            <a routerLink="/about" routerLinkActive="text-mulim-ouro/70"
-              class="hover:text-mulim-ouro/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro rounded">
-              Sobre
-            </a>
-          </li>
-          <li>
-            <a routerLink="/contact" routerLinkActive="text-mulim-ouro/70"
-              class="hover:text-mulim-ouro/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro rounded">
-              Contato
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <!-- Nav desktop: direita — assimetria intencional -->
+    <nav class="header-nav ml-auto" aria-label="Navegação principal">
+      <ul class="flex items-center gap-10">
+        <li>
+          <a routerLink="/" routerLinkActive="nav-active" [routerLinkActiveOptions]="{exact: true}"
+             class="nav-link" focus-visible:outline-none>Início</a>
+        </li>
+        <li>
+          <a routerLink="/about" routerLinkActive="nav-active"
+             class="nav-link">Sobre</a>
+        </li>
+        <li>
+          <a routerLink="/contact" routerLinkActive="nav-active"
+             class="nav-link">Contato</a>
+        </li>
+      </ul>
+    </nav>
 
-    <!-- Botão login desktop -->
-    <div class="login-desktop">
-      <a routerLink="/login"
-        class="text-mulim-azul font-bold bg-mulim-ouro w-24 h-10 text-base rounded-xl hover:bg-mulim-ouro/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring inline-flex items-center justify-center">
-        Login
-      </a>
-    </div>
-
-    <!-- Botão sanduíche mobile -->
+    <!-- Hambúrguer mobile -->
     <button
-      class="hamburger-btn ml-auto flex-col justify-center gap-1.5 p-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro"
+      class="hamburger ml-auto md:hidden focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-mulim-ouro rounded-sm"
       (click)="toggleMenu()"
-      aria-label="Abrir menu"
       [attr.aria-expanded]="menuOpen()"
+      aria-label="Abrir menu"
       aria-controls="mobile-menu"
     >
-      <span class="block w-6 h-0.5 bg-mulim-ouro transition-all duration-300"
-        [class.bar-top-open]="menuOpen()"></span>
-      <span class="block w-6 h-0.5 bg-mulim-ouro transition-all duration-300"
-        [class.opacity-0]="menuOpen()"></span>
-      <span class="block w-6 h-0.5 bg-mulim-ouro transition-all duration-300"
-        [class.bar-bottom-open]="menuOpen()"></span>
+      <span class="ham-bar" [class.bar-top-open]="menuOpen()"></span>
+      <span class="ham-bar" [class.opacity-0]="menuOpen()"></span>
+      <span class="ham-bar" [class.bar-bottom-open]="menuOpen()"></span>
     </button>
 
   </header>
 
-  <!-- Menu mobile dropdown -->
+  <!-- Menu mobile -->
   @if (menuOpen()) {
-    <div id="mobile-menu" class="menu-mobile bg-mulim-azul flex flex-col items-center gap-4 py-4">
-      <nav class="text-mulim-ouro text-base font-semibold" aria-label="Navegação mobile">
-        <ul class="flex flex-col items-center gap-4">
-          <li>
-            <a routerLink="/" (click)="toggleMenu()"
-              class="hover:text-mulim-ouro/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro rounded">
-              Inicio
-            </a>
-          </li>
-          <li>
-            <a routerLink="/about" (click)="toggleMenu()"
-              class="hover:text-mulim-ouro/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro rounded">
-              Sobre
-            </a>
-          </li>
-          <li>
-            <a routerLink="/contact" (click)="toggleMenu()"
-              class="hover:text-mulim-ouro/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro rounded">
-              Contato
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <a routerLink="/login" (click)="toggleMenu()"
-        class="text-mulim-azul font-bold bg-mulim-ouro w-24 h-10 text-sm rounded-xl hover:bg-mulim-ouro/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring inline-flex items-center justify-center">
-        Login
-      </a>
-    </div>
+    <nav id="mobile-menu" class="mobile-menu" aria-label="Navegação mobile">
+      <ul class="mobile-nav-list">
+        <li>
+          <a routerLink="/" routerLinkActive="mobile-nav-active" [routerLinkActiveOptions]="{exact: true}"
+             class="mobile-nav-link" (click)="toggleMenu()">Início</a>
+        </li>
+        <li>
+          <a routerLink="/about" routerLinkActive="mobile-nav-active"
+             class="mobile-nav-link" (click)="toggleMenu()">Sobre</a>
+        </li>
+        <li>
+          <a routerLink="/contact" routerLinkActive="mobile-nav-active"
+             class="mobile-nav-link" (click)="toggleMenu()">Contato</a>
+        </li>
+      </ul>
+    </nav>
   }
 
 </div>

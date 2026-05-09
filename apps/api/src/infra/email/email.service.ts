@@ -59,6 +59,10 @@ export class EmailService {
     private readonly emailTransport: EmailTransport,
   ) {}
 
+  async sendDirect(payload: EmailTransportPayload): Promise<EmailTransportResult> {
+    return this.emailTransport.send(payload);
+  }
+
   async sendTemplate(input: SendTemplateInput) {
     const renderedTemplate = renderEmailTemplate(
       input.template,

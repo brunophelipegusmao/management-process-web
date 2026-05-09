@@ -15,7 +15,9 @@
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); b=d['projects']['web']['architect']['build']; print\\(json.dumps\\(b.get\\('options',{}\\).get\\('assets',[]\\), indent=2\\)\\); print\\('SSR:', 'server' in d['projects']['web']['architect']\\)\")",
       "Bash(git rm *)",
       "Bash(pnpm --filter @mgmt/web build)",
-      "Bash(xargs cat)"
+      "Bash(xargs cat)",
+      "Bash(jobs -l)",
+      "Bash(grep -E \"\\\\.\\(ts|html\\)$\")"
     ]
   }
 }

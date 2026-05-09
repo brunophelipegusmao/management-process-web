@@ -1,0 +1,287 @@
+.cf-section {
+    background: var(--background);
+    border-top: 1px solid oklch(0 0 0 / 0.06);
+}
+
+/* ── Header ──────────────────────────────────────────── */
+.cf-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3.5rem;
+    text-align: center;
+}
+
+.cf-eyebrow {
+    font-family: 'Anonymous Pro', monospace;
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--mulim-ouro);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+}
+
+.cf-eyebrow::before,
+.cf-eyebrow::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 1.5rem;
+    background: var(--mulim-ouro);
+    opacity: 0.55;
+    flex-shrink: 0;
+}
+
+.cf-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mulim-azul);
+    line-height: 1.1;
+}
+
+.cf-rule {
+    height: 1.5px;
+    width: 6rem;
+    background: linear-gradient(to right, transparent, var(--mulim-ouro), transparent);
+}
+
+/* ── Formulário ──────────────────────────────────────── */
+.cf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.cf-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+}
+
+@media (min-width: 640px) {
+    .cf-row--2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Campo ───────────────────────────────────────────── */
+.cf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cf-label {
+    font-family: 'Anonymous Pro', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mulim-azul);
+}
+
+.cf-label span {
+    color: var(--mulim-ouro);
+}
+
+/* Input com borda inferior — estilo editorial */
+.cf-input {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    color: oklch(0.2 0.042 264.695);
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid oklch(0 0 0 / 0.18);
+    border-radius: 0;
+    padding: 0.625rem 0;
+    width: 100%;
+    outline: none;
+    transition: border-bottom-color 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.cf-input::placeholder {
+    color: oklch(0.5 0.02 264 / 0.45);
+    font-weight: 300;
+}
+
+.cf-input:focus {
+    border-bottom-color: var(--mulim-ouro);
+}
+
+.cf-input--error {
+    border-bottom-color: oklch(0.55 0.22 27) !important;
+}
+
+.cf-textarea {
+    resize: vertical;
+    min-height: 7rem;
+    line-height: 1.7;
+}
+
+.cf-error {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: oklch(0.55 0.22 27);
+    letter-spacing: 0.01em;
+}
+
+/* ── reCAPTCHA ───────────────────────────────────────── */
+.cf-recaptcha-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* sem opacity: 0 — o widget deve aparecer assim que o iframe carregar */
+}
+
+/* Em telas muito pequenas o widget (304px fixo) pode overflow */
+@media (max-width: 360px) {
+    #recaptcha-widget {
+        transform: scale(0.85);
+        transform-origin: left center;
+    }
+}
+
+/* ── Ações ───────────────────────────────────────────── */
+.cf-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding-top: 0.5rem;
+}
+
+.cf-submit {
+    font-family: 'Anonymous Pro', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--mulim-ouro);
+    background: linear-gradient(to right, var(--mulim-ouro) 50%, transparent 50%);
+    background-size: 200% 100%;
+    background-position: right center;
+    border: 1px solid oklch(0.72 0.13 80 / 0.7);
+    padding: 0.9rem 2.75rem;
+    cursor: pointer;
+    transition: background-position 0.35s ease, color 0.35s ease;
+}
+
+.cf-submit:hover {
+    background-position: left center;
+    color: var(--mulim-azul);
+}
+
+.cf-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.cf-submit:focus-visible {
+    outline: 2px solid var(--mulim-ouro);
+    outline-offset: 3px;
+}
+
+.cf-disclaimer {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.01em;
+    color: oklch(0.5 0.03 264 / 0.6);
+}
+
+/* ── Mensagem de sucesso ─────────────────────────────── */
+.cf-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+    text-align: center;
+    padding: 3rem 1.5rem;
+    border-top: 2px solid var(--mulim-ouro);
+    background: oklch(0.99 0.002 247);
+}
+
+.cf-success-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mulim-azul);
+}
+
+.cf-success-body {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.75;
+    color: oklch(0.4 0.04 264.695);
+    max-width: 28rem;
+}
+
+.cf-back-btn {
+    font-family: 'Anonymous Pro', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mulim-ouro);
+    background: none;
+    border: 1px solid oklch(0.72 0.13 80 / 0.5);
+    padding: 0.625rem 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.cf-back-btn:hover {
+    border-color: var(--mulim-ouro);
+    color: var(--mulim-azul);
+    background: var(--mulim-ouro);
+}
+
+/* ── Entrada com scroll ──────────────────────────────── */
+@keyframes cfIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.cf-header,
+.cf-field,
+.cf-actions,
+.cf-success {
+    opacity: 0;
+}
+
+.is-visible .cf-header {
+    animation: cfIn 0.7s ease-out both;
+    animation-delay: 0.05s;
+}
+
+.is-visible .cf-field {
+    animation: cfIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(0.2s + var(--fi) * 0.07s);
+}
+
+
+.is-visible .cf-actions {
+    animation: cfIn 0.6s ease-out both;
+    animation-delay: 0.72s;
+}
+
+.is-visible .cf-success {
+    animation: cfIn 0.5s ease-out both;
+    animation-delay: 0.05s;
+}

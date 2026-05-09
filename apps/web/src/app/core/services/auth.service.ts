@@ -8,6 +8,7 @@ interface AuthUser {
   id: string;
   name: string;
   email: string;
+  role: string;
 }
 
 interface SignInResponse {
@@ -33,7 +34,7 @@ export class AuthService {
       ),
     );
 
-    this.authStore.setUser({ id: res.user.id, name: res.user.name, email: res.user.email });
+    this.authStore.setUser({ id: res.user.id, name: res.user.name, email: res.user.email, role: res.user.role });
   }
 
   async signOut(): Promise<void> {

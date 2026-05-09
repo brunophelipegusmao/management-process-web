@@ -1,10 +1,10 @@
-.text-section {
+.values-section {
     background: var(--background);
     border-top: 1px solid oklch(0 0 0 / 0.06);
 }
 
 /* ── Header ──────────────────────────────────────────── */
-.ts-header {
+.vs-header {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,8 +13,7 @@
     text-align: center;
 }
 
-/* Eyebrow — mesmo padrão mono/ouro do hero */
-.ts-eyebrow {
+.vs-eyebrow {
     font-family: 'Anonymous Pro', monospace;
     font-size: 0.65rem;
     font-weight: 400;
@@ -27,8 +26,8 @@
     gap: 0.625rem;
 }
 
-.ts-eyebrow::before,
-.ts-eyebrow::after {
+.vs-eyebrow::before,
+.vs-eyebrow::after {
     content: '';
     display: block;
     height: 1px;
@@ -38,7 +37,7 @@
     flex-shrink: 0;
 }
 
-.ts-title {
+.vs-title {
     font-family: 'Source Sans 3', sans-serif;
     font-size: clamp(1.75rem, 5vw, 2.75rem);
     font-weight: 700;
@@ -48,66 +47,69 @@
     line-height: 1.1;
 }
 
-.ts-rule {
+.vs-rule {
     height: 1.5px;
     width: 6rem;
     background: linear-gradient(to right, transparent, var(--mulim-ouro), transparent);
 }
 
-/* ── Grid ────────────────────────────────────────────── */
-.ts-grid {
+/* ── Grid 2×2 ────────────────────────────────────────── */
+.vs-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
 }
 
 @media (min-width: 640px) {
-    .ts-grid { grid-template-columns: repeat(2, 1fr); }
-    .ts-card:last-child { grid-column: span 2; }
+    .vs-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (min-width: 1024px) {
-    .ts-grid { grid-template-columns: repeat(3, 1fr); }
-    .ts-card:last-child { grid-column: span 1; }
-}
-
-/* ── Cards ───────────────────────────────────────────── */
-.ts-card {
+/* ── Cards com borda esquerda ouro ───────────────────── */
+.vs-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.875rem;
-    padding: 2rem 1.75rem 1.75rem;
-    border-top: 2px solid var(--mulim-ouro);
+    gap: 0.75rem;
+    padding: 1.75rem 1.75rem 1.75rem 2rem;
+    border-left: 3px solid var(--mulim-ouro);
     background: oklch(0.99 0.002 247);
-    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+    overflow: hidden;
+    transition: border-left-color 0.25s ease, background 0.25s ease;
 }
 
-.ts-card:hover {
-    border-top-color: var(--mulim-azul);
-    background: oklch(1 0 0);
-    transform: translateY(-4px);
-}
-
-.ts-num {
+/* Número grande como decoração de fundo */
+.vs-card::before {
+    content: attr(data-num);
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
     font-family: 'Anonymous Pro', monospace;
-    font-size: 0.65rem;
+    font-size: 5.5rem;
     font-weight: 700;
-    letter-spacing: 0.15em;
-    color: var(--mulim-ouro);
+    color: var(--mulim-azul);
+    opacity: 0.04;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
 }
 
-.ts-card-title {
+.vs-card:hover {
+    border-left-color: var(--mulim-azul);
+    background: oklch(1 0 0);
+}
+
+.vs-card-title {
     font-family: 'Source Sans 3', sans-serif;
     font-size: 0.95rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--mulim-azul);
-    line-height: 1.3;
+    line-height: 1.2;
 }
 
-.ts-card-body {
+.vs-card-body {
     font-family: 'Source Sans 3', sans-serif;
     font-size: 0.875rem;
     font-weight: 300;
@@ -116,28 +118,28 @@
     color: oklch(0.4 0.04 264.695);
 }
 
-/* ── Entrada com scroll (IntersectionObserver) ───────── */
-@keyframes headerIn {
+/* ── Entrada com scroll ──────────────────────────────── */
+@keyframes vsHeaderIn {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes cardIn {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
+@keyframes vsCardIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
-.ts-header,
-.ts-card {
+.vs-header,
+.vs-card {
     opacity: 0;
 }
 
-.is-visible .ts-header {
-    animation: headerIn 0.7s ease-out both;
+.is-visible .vs-header {
+    animation: vsHeaderIn 0.7s ease-out both;
     animation-delay: 0.05s;
 }
 
-.is-visible .ts-card {
-    animation: cardIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(0.2s + var(--i) * 0.12s);
+.is-visible .vs-card {
+    animation: vsCardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(0.2s + var(--i) * 0.1s);
 }

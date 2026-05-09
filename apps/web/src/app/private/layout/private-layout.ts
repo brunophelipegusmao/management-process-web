@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { AuthStore } from '../../core/stores/auth.store';
+import { ThemeStore } from '../../core/stores/theme.store';
 
 interface NavItem {
   label: string;
@@ -20,7 +21,9 @@ export class PrivateLayout {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  readonly themeStore = inject(ThemeStore);
   readonly user = this.authStore.user;
+  readonly isSuperAdmin = this.authStore.isSuperAdmin;
 
   readonly navItems: NavItem[] = [
     { label: 'Dashboard', path: '/dashboard', icon: '⊞' },

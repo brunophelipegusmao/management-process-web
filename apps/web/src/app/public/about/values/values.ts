@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, signal } from '@angular/core';
 
 @Component({
-  selector: 'app-text-section',
+  selector: 'app-values',
   imports: [],
-  templateUrl: './text-section.html',
-  styleUrl: './text-section.css',
+  templateUrl: './values.html',
+  styleUrl: './values.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextSection implements OnInit {
+export class Values implements OnInit {
   private el = inject(ElementRef);
   readonly visible = signal(false);
 

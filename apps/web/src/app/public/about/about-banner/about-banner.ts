@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, signal } from '@angular/core';
 
 @Component({
-  selector: 'app-text-section',
+  selector: 'app-about-banner',
   imports: [],
-  templateUrl: './text-section.html',
-  styleUrl: './text-section.css',
+  templateUrl: './about-banner.html',
+  styleUrl: './about-banner.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextSection implements OnInit {
+export class AboutBanner implements OnInit {
   private el = inject(ElementRef);
   readonly visible = signal(false);
 
@@ -19,7 +19,7 @@ export class TextSection implements OnInit {
           observer.disconnect();
         }
       },
-      { threshold: 0.15 },
+      { threshold: 0.1 },
     );
     observer.observe(this.el.nativeElement);
   }

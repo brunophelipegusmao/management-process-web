@@ -1,6 +1,45 @@
-<footer class="bg-mulima-transparente text-foreground h-120 w-full flex items-center justify-center">
-    <div class="flex flex-col items-center justify-center gap-4">
-        <h2 class="text-3xl font-bold">Footer</h2>
-        <p class="text-lg text-center">This is a footer component. You can add any content here.</p>
+<footer class="footer">
+  <div class="footer-inner">
+
+    <div class="footer-grid">
+
+      <!-- Coluna: Brand -->
+      <div class="footer-brand">
+        <img src="/logo.svg" alt="Mulim Advogados Associados" class="footer-logo">
+        <p class="footer-tagline">
+          Defendendo seus direitos<br>com dedicação e expertise.
+        </p>
+        <span class="footer-oab">OAB/SP 000.000</span>
+      </div>
+
+      <!-- Coluna: Navegação -->
+      <nav aria-label="Navegação rodapé">
+        <p class="footer-col-label">Navegação</p>
+        <ul class="footer-nav-list">
+          <li><a routerLink="/" class="footer-link">Início</a></li>
+          <li><a routerLink="/about" class="footer-link">Sobre</a></li>
+          <li><a routerLink="/contact" class="footer-link">Contato</a></li>
+        </ul>
+      </nav>
+
+      <!-- Coluna: Contato -->
+      <address class="footer-contact">
+        <p class="footer-col-label">Contato</p>
+        <a href="mailto:contato@mulimassociados.adv.br" class="footer-contact-item footer-contact-link">
+          contato&#64;mulimassociados.adv.br
+        </a>
+        <p class="footer-contact-item">(11) 9999-9999</p>
+        <p class="footer-contact-item">Av. Paulista, 1000 — 10º andar<br>São Paulo, SP — 01310-100</p>
+      </address>
+
     </div>
+
+    <div class="footer-divider" aria-hidden="true"></div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 Mulim Advogados Associados. Todos os direitos reservados.</p>
+      <p class="footer-legal">Este site tem caráter informativo e não constitui consulta jurídica.</p>
+    </div>
+
+  </div>
 </footer>

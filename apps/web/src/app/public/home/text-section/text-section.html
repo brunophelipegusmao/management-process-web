@@ -1,19 +1,29 @@
-<section class="text-foreground py-12 sm:py-16 px-5">
-    <div class="flex flex-col items-center gap-8 max-w-5xl mx-auto">
-        <h2 class="text-2xl sm:text-3xl font-bold text-mulim-ouro">Áreas de Atuação</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
-            <div class="flex flex-col items-center gap-3 border border-gray-200 rounded-xl p-6 shadow-md">
-                <h3 class="text-lg font-semibold text-mulim-azul text-center">Gestão de Projetos</h3>
-                <p class="text-center text-gray-600 text-sm leading-relaxed">Planejamento, execução e monitoramento de projetos para garantir o sucesso e a entrega de resultados.</p>
-            </div>
-            <div class="flex flex-col items-center gap-3 border border-gray-200 rounded-xl p-6 shadow-md">
-                <h3 class="text-lg font-semibold text-mulim-azul text-center">Consultoria Empresarial</h3>
-                <p class="text-center text-gray-600 text-sm leading-relaxed">Análise e aconselhamento para otimizar processos, aumentar a eficiência e impulsionar o crescimento do negócio.</p>
-            </div>
-            <div class="flex flex-col items-center gap-3 border border-gray-200 rounded-xl p-6 shadow-md sm:col-span-2 lg:col-span-1">
-                <h3 class="text-lg font-semibold text-mulim-azul text-center">Treinamento e Desenvolvimento</h3>
-                <p class="text-center text-gray-600 text-sm leading-relaxed">Capacitação de equipes e desenvolvimento de habilidades para enfrentar os desafios do mercado atual.</p>
-            </div>
-        </div>
+<section class="text-section" [class.is-visible]="visible()">
+  <div class="max-w-5xl mx-auto px-5 py-16 sm:py-24">
+
+    <header class="ts-header">
+      <p class="ts-eyebrow">Especialidades</p>
+      <h2 class="ts-title">Áreas de Atuação</h2>
+      <div class="ts-rule" aria-hidden="true"></div>
+    </header>
+
+    <div class="ts-grid">
+      <article class="ts-card" style="--i: 0">
+        <span class="ts-num" aria-hidden="true">01</span>
+        <h3 class="ts-card-title">Gestão de Projetos</h3>
+        <p class="ts-card-body">Planejamento, execução e monitoramento de projetos para garantir o sucesso e a entrega de resultados.</p>
+      </article>
+      <article class="ts-card" style="--i: 1">
+        <span class="ts-num" aria-hidden="true">02</span>
+        <h3 class="ts-card-title">Consultoria Empresarial</h3>
+        <p class="ts-card-body">Análise e aconselhamento para otimizar processos, aumentar a eficiência e impulsionar o crescimento do negócio.</p>
+      </article>
+      <article class="ts-card" style="--i: 2">
+        <span class="ts-num" aria-hidden="true">03</span>
+        <h3 class="ts-card-title">Treinamento e Desenvolvimento</h3>
+        <p class="ts-card-body">Capacitação de equipes e desenvolvimento de habilidades para enfrentar os desafios do mercado atual.</p>
+      </article>
     </div>
+
+  </div>
 </section>
