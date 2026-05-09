@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Hero } from "./hero/hero";
-import { Container } from "../../components/shared/container/container";
-import { Contact } from "../contact/contact";
-import { TextSection } from "./text-section/text-section";
-import { Footer } from "../../components/shared/footer/footer";
+import { Container } from '../../components/shared/container/container';
+import { Hero } from './hero/hero';
+import { TextSection } from './text-section/text-section';
 
 @Component({
   selector: 'app-home',
-  imports: [Hero, Container, Contact, TextSection, Footer],
+  imports: [Hero, Container, TextSection],
   templateUrl: './home.html',
   styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
