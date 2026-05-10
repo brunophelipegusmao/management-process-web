@@ -1,13 +1,9 @@
 /**
- * Angular test setup for standalone Vitest execution.
+ * Minimal setup for Angular unit tests running under Vitest.
  *
- * @angular/compiler is required so that TestBed can compile component metadata
- * at runtime (JIT mode). Without this import, TestBed.configureTestingModule
- * will throw for components — although pure service / store tests that never
- * touch templates can skip it.
- *
- * If zone.js is not installed in the workspace, enable zoneless mode in each
- * TestBed call via provideExperimentalZonelessChangeDetection() (already done
- * in all guard and service spec files in this suite).
+ * @angular/compiler (JIT template compiler) is NOT imported here because
+ * this suite tests stores, services, guards, and interceptors — none of which
+ * require template compilation.  If component tests are added later, add:
+ *   import '@angular/compiler';
+ * before any TestBed.configureTestingModule call that uses Angular templates.
  */
-import '@angular/compiler';
