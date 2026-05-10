@@ -1,7 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  PLATFORM_ID,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { AuthStore } from '../../core/stores/auth.store';
+
+const REMEMBERED_EMAIL_KEY = 'mulim.rememberedEmail';
 
 @Component({
   selector: 'app-login',
@@ -10,11 +21,13 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Login {
+export class Login implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -22,7 +35,26 @@ export class Login {
   readonly form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
+    rememberEmail: [false],
   });
+
+  ngOnInit(): void {
+    // After APP_INITIALIZER restores the session, if already authenticated
+    // redirect to dashboard instead of showing the login form.
+    if (this.authStore.isAuthenticated()) {
+      const returnUrl =
+        this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard';
+      this.router.navigateByUrl(returnUrl, { replaceUrl: true });
+      return;
+    }
+
+    if (isPlatformBrowser(this.platformId)) {
+      const savedEmail = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+      if (savedEmail) {
+        this.form.patchValue({ email: savedEmail, rememberEmail: true });
+      }
+    }
+  }
 
   isFieldInvalid(field: 'email' | 'password'): boolean {
     const control = this.form.get(field);
@@ -48,8 +80,16 @@ export class Login {
     this.errorMessage.set(null);
 
     try {
-      const { email, password } = this.form.getRawValue();
+      const { email, password, rememberEmail } = this.form.getRawValue();
       await this.authService.signIn(email!, password!);
+
+      if (isPlatformBrowser(this.platformId)) {
+        if (rememberEmail && email) {
+          localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+        } else {
+          localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+        }
+      }
 
       const returnUrl =
         this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard';
