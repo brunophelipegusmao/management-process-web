@@ -1,0 +1,72 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2021",
+    "lib": [
+      "ES2021"
+    ],
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "typeRoots": [
+      "../../apps/api/node_modules/@types"
+    ],
+    "types": [
+      "jest",
+      "node"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@nestjs/*": [
+        "../../apps/api/node_modules/@nestjs/*"
+      ],
+      "drizzle-orm": [
+        "../../apps/api/node_modules/drizzle-orm"
+      ],
+      "drizzle-orm/*": [
+        "../../apps/api/node_modules/drizzle-orm/*"
+      ],
+      "postgres": [
+        "../../apps/api/node_modules/postgres"
+      ],
+      "zod": [
+        "../../apps/api/node_modules/zod"
+      ],
+      "zod/*": [
+        "../../apps/api/node_modules/zod/*"
+      ],
+      "dotenv": [
+        "../../apps/api/node_modules/dotenv"
+      ],
+      "dotenv/*": [
+        "../../apps/api/node_modules/dotenv/*"
+      ],
+      "rxjs": [
+        "../../apps/api/node_modules/rxjs"
+      ],
+      "rxjs/*": [
+        "../../apps/api/node_modules/rxjs/*"
+      ],
+      "reflect-metadata": [
+        "../../apps/api/node_modules/reflect-metadata"
+      ],
+      "better-auth": [
+        "../../apps/api/node_modules/better-auth"
+      ],
+      "better-auth/*": [
+        "../../apps/api/node_modules/better-auth/*"
+      ],
+      "nodemailer": [
+        "../../apps/api/node_modules/nodemailer"
+      ],
+      "nodemailer/*": [
+        "../../apps/api/node_modules/nodemailer/*"
+      ]
+    }
+  }
+}

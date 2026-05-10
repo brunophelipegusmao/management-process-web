@@ -1,0 +1,8 @@
+{
+   "chat.tools.terminal.autoApprove": {
+      "/^cd /home/bruno/management-process-web/apps/api && \\./node_modules/\\.bin/jest --config \\.\\./\\.\\./testes/api/jest\\.config\\.js 2>&1 \\| tail -50$/": {
+         "approve": true,
+         "matchCommandLine": true
+      }
+   }
+}

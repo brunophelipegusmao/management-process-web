@@ -1,0 +1,17 @@
+{
+   "compilerOptions": {
+      "target": "ES2022",
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "experimentalDecorators": true,
+      "useDefineForClassFields": false,
+      "strict": true,
+      "skipLibCheck": true,
+      "types": ["vitest/globals", "node"],
+      "lib": ["ES2022", "DOM", "DOM.Iterable"],
+      "allowJs": true,
+      "resolveJsonModule": true
+   },
+   "include": ["./**/*.spec.ts", "./**/*.ts", "../../apps/web/src/**/*.ts"],
+   "exclude": ["../../apps/web/src/**/*.spec.ts", "node_modules"]
+}

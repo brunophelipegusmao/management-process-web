@@ -1,14 +1,14 @@
-<div class="p-4 sm:p-6 lg:p-8">
+<div class="p-4 sm:p-6 lg:p-8 max-w-screen flex flex-col items-center justify-center">
 
   <!-- Cabeçalho + Busca -->
-  <header class="mb-6 sm:mb-8">
+  <header class="flex items-end-safe justify-around gap-4 mb-5 flex-wrap w-[80%]">
     <div class="flex items-end justify-between flex-wrap gap-4 mb-4">
       <div class="flex flex-col gap-1">
         <span class="db-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Escritório</span>
         <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Dashboard</h1>
       </div>
     </div>
-    <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-6" aria-hidden="true"></div>
+    <div class="h-px bg-linear-to-r from-transparent via-mulim-ouro to-transparent mb-6" aria-hidden="true"></div>
 
     <!-- Barra de busca -->
     <div class="relative">
@@ -127,7 +127,7 @@
           <ul class="flex flex-col gap-2">
             @for (h of weekHearings(); track h.id) {
               <li class="db-hearing flex items-center gap-3 px-3 py-2.5 border border-foreground/8 dark:border-foreground/5">
-                <div class="flex flex-col items-center shrink-0 min-w-[3rem] text-center">
+                <div class="flex flex-col items-center shrink-0 min-w-12 text-center">
                   <time [attr.datetime]="h.dateTime" class="font-mono text-sm font-bold text-mulim-ouro tabular-nums leading-none">{{ formatDateTime(h.dateTime).time }}</time>
                   <span class="font-mono text-[0.52rem] tracking-wide uppercase text-foreground/35 mt-0.5 whitespace-nowrap">{{ formatDateTime(h.dateTime).date }}</span>
                 </div>
@@ -162,7 +162,7 @@
                     [class.text-foreground/50]="!warningStatuses.has(entry[0])"
                   >{{ entry[1] }}</span>
                 </div>
-                <div class="h-[3px] bg-foreground/6 rounded-full overflow-hidden">
+                <div class="h-0.75 bg-foreground/6 rounded-full overflow-hidden">
                   <div
                     class="db-bar h-full rounded-full"
                     [style.width]="barWidth(entry[1], witnessTotal())"
