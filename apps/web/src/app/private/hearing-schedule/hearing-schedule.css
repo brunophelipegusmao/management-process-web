@@ -1,0 +1,19 @@
+/* Linha decorativa do eyebrow */
+.hs-eyebrow::before {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 1.5rem;
+    background: var(--mulim-ouro);
+    opacity: 0.55;
+}
+
+/* Card de audiência: hover sutil */
+.hs-item {
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.hs-item:hover {
+    background-color: color-mix(in oklch, var(--mulim-ouro) 5%, transparent);
+    border-color: color-mix(in oklch, var(--mulim-ouro) 40%, transparent);
+}

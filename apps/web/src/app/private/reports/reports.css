@@ -1,0 +1,30 @@
+/* Linha decorativa do eyebrow */
+.rp-eyebrow::before {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 1.5rem;
+    background: var(--mulim-ouro);
+    opacity: 0.55;
+}
+
+/* KPI card: borda esquerda discreta */
+.rp-kpi {
+    position: relative;
+}
+
+.rp-kpi::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 2px;
+    background: var(--mulim-ouro);
+    opacity: 0.4;
+}
+
+/* Barra de progresso de status */
+.rp-bar {
+    opacity: 0.6;
+    transition: width 0.4s ease;
+}

@@ -73,6 +73,8 @@ export const userProfileValues = [
   'advogado',
   'paralegal',
 ] as const;
+export const taskStatusValues = ['todo', 'in_progress', 'done'] as const;
+
 export const actionTypeValues = [
   'CREATE_PROCESS',
   'UPDATE_PROCESS',
@@ -114,6 +116,7 @@ export const holidaySourceEnum = pgEnum('holiday_source', holidaySourceValues);
 export const emailTemplateEnum = pgEnum('email_template', emailTemplateValues);
 export const userProfileEnum = pgEnum('user_profile', userProfileValues);
 export const actionTypeEnum = pgEnum('action_type', actionTypeValues);
+export const taskStatusEnum = pgEnum('task_status', taskStatusValues);
 
 export const users = pgTable(
   'users',
@@ -318,6 +321,24 @@ export const auditLogs = pgTable('audit_logs', {
   newData: jsonb('new_data').$type<Record<string, unknown> | null>(),
 });
 
+export const tasks = pgTable('tasks', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  title: text('title').notNull(),
+  description: text('description'),
+  status: taskStatusEnum('status').default('todo').notNull(),
+  processId: uuid('process_id').references(() => processes.id, {
+    onDelete: 'set null',
+  }),
+  createdById: uuid('created_by_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'restrict' }),
+  updatedById: uuid('updated_by_id').references(() => users.id, {
+    onDelete: 'restrict',
+  }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 export type User = InferSelectModel<typeof users>;
 export type NewUser = InferInsertModel<typeof users>;
 export type AuthSession = InferSelectModel<typeof sessions>;
@@ -342,3 +363,5 @@ export type Email = InferSelectModel<typeof emails>;
 export type NewEmail = InferInsertModel<typeof emails>;
 export type AuditLog = InferSelectModel<typeof auditLogs>;
 export type NewAuditLog = InferInsertModel<typeof auditLogs>;
+export type Task = InferSelectModel<typeof tasks>;
+export type NewTask = InferInsertModel<typeof tasks>;

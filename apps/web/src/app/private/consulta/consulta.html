@@ -1,0 +1,195 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-5xl">
+
+  <!-- Cabeçalho -->
+  <header class="flex items-end justify-between gap-4 mb-5 flex-wrap">
+    <a routerLink="/dashboard"
+       class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-mulim-azul/60 dark:text-foreground/50 hover:text-mulim-azul dark:hover:text-foreground flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2">
+      <span aria-hidden="true">←</span> Dashboard
+    </a>
+    <div class="flex flex-col items-end gap-1">
+      <span class="cs-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Pesquisa</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Consulta</h1>
+    </div>
+  </header>
+  <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-8" aria-hidden="true"></div>
+
+  <!-- Modo de busca -->
+  <div class="flex gap-2 mb-5" role="group" aria-label="Modo de busca">
+    <button
+      type="button"
+      (click)="setMode('cnj')"
+      class="cs-mode-btn font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase px-5 py-2.5 border transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2"
+      [class.border-mulim-ouro]="searchMode() === 'cnj'"
+      [class.text-mulim-ouro]="searchMode() === 'cnj'"
+      [class.bg-mulim-ouro/5]="searchMode() === 'cnj'"
+      [class.border-foreground/20]="searchMode() !== 'cnj'"
+      [class.text-foreground/45]="searchMode() !== 'cnj'"
+      [attr.aria-pressed]="searchMode() === 'cnj'"
+    >Número CNJ</button>
+    <button
+      type="button"
+      (click)="setMode('nome')"
+      class="cs-mode-btn font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase px-5 py-2.5 border transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2"
+      [class.border-mulim-ouro]="searchMode() === 'nome'"
+      [class.text-mulim-ouro]="searchMode() === 'nome'"
+      [class.bg-mulim-ouro/5]="searchMode() === 'nome'"
+      [class.border-foreground/20]="searchMode() !== 'nome'"
+      [class.text-foreground/45]="searchMode() !== 'nome'"
+      [attr.aria-pressed]="searchMode() === 'nome'"
+    >Nome da Parte</button>
+  </div>
+
+  <!-- Campo de busca -->
+  <div class="mb-8">
+    <div class="flex items-center gap-3 border-b-2 border-foreground/20 focus-within:border-mulim-ouro transition-colors pb-1">
+      <span class="text-foreground/35 text-base shrink-0" aria-hidden="true">⌕</span>
+      <input
+        type="search"
+        [formControl]="searchControl"
+        [placeholder]="searchMode() === 'cnj' ? 'Digite o número CNJ do processo…' : 'Digite o nome da parte (autor ou réu)…'"
+        class="flex-1 font-sans text-base text-foreground bg-transparent py-2.5 outline-none placeholder:text-foreground/30"
+        [attr.aria-label]="searchMode() === 'cnj' ? 'Buscar por número CNJ' : 'Buscar por nome da parte'"
+        autocomplete="off"
+      >
+      @if (searchLoading()) {
+        <span class="font-mono text-[0.6rem] tracking-widest uppercase text-foreground/30 shrink-0">Buscando…</span>
+      }
+      @if (rawQuery().length > 0) {
+        <button
+          type="button"
+          (click)="clearSearch()"
+          class="text-foreground/30 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro text-xs shrink-0"
+          aria-label="Limpar busca"
+        >✕</button>
+      }
+    </div>
+    @if (rawQuery().length > 0 && rawQuery().length < 2) {
+      <p class="font-mono text-[0.6rem] tracking-widest uppercase text-foreground/30 mt-2">Digite ao menos 2 caracteres</p>
+    }
+  </div>
+
+  <!-- Resultados -->
+  @if (searchDone()) {
+    @if (!hasResults()) {
+      <div class="py-14 flex flex-col items-center gap-3 border border-dashed border-foreground/10">
+        <span class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/25">Nenhum resultado encontrado</span>
+        <span class="font-sans text-xs text-foreground/20">
+          @if (searchMode() === 'cnj') { Verifique o número CNJ informado }
+          @else { Nenhum cliente com esse nome foi encontrado }
+        </span>
+      </div>
+    } @else {
+
+      <!-- Contagem -->
+      <div class="flex items-center justify-between mb-5">
+        <span class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/35">
+          {{ totalResults() }} {{ totalResults() === 1 ? 'processo encontrado' : 'processos encontrados' }}
+        </span>
+      </div>
+
+      <!-- Resultados por CNJ: lista plana -->
+      @if (searchMode() === 'cnj') {
+        <ul class="flex flex-col gap-3">
+          @for (p of groups()[0]?.processes ?? []; track p.id) {
+            <li class="cs-card border border-foreground/10 px-5 py-4 flex flex-col gap-3">
+              <!-- Linha 1: CNJ + Status -->
+              <div class="flex items-start justify-between gap-4 flex-wrap">
+                <p class="font-mono text-sm font-bold text-mulim-azul dark:text-foreground tracking-wide">{{ p.cnjNumber }}</p>
+                <span
+                  class="font-mono text-[0.58rem] font-bold tracking-[0.15em] uppercase px-2.5 py-1 border shrink-0"
+                  [class]="statusConfig(p.status).cls"
+                >{{ statusConfig(p.status).label }}</span>
+              </div>
+              <!-- Linha 2: Partes -->
+              <p class="font-sans text-sm text-foreground/80">
+                <span class="font-medium">{{ p.authorName }}</span>
+                <span class="text-foreground/35 mx-2">×</span>
+                <span class="font-medium">{{ p.defendantName }}</span>
+              </p>
+              <!-- Linha 3: Detalhes -->
+              <div class="flex flex-wrap gap-x-4 gap-y-1">
+                <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/40">
+                  {{ p.comarca }}
+                </span>
+                <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/25" aria-hidden="true">·</span>
+                <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/40">
+                  {{ p.vara }}
+                </span>
+                <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/25" aria-hidden="true">·</span>
+                <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/40">
+                  {{ courtTypeLabel(p.courtType) }}
+                </span>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+
+      <!-- Resultados por nome: agrupado por cliente -->
+      @if (searchMode() === 'nome') {
+        <div class="flex flex-col gap-8">
+          @for (group of groups(); track group.clientName) {
+            <div>
+              <!-- Cabeçalho do grupo / cliente -->
+              <div class="flex items-center gap-4 mb-3">
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="font-sans text-sm font-semibold text-foreground">{{ group.clientName }}</span>
+                  <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/30 px-1.5 py-0.5 border border-foreground/10">
+                    {{ group.clientType === 'pj' ? 'PJ' : 'PF' }}
+                  </span>
+                </div>
+                <div class="flex-1 h-px bg-foreground/8"></div>
+                <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/30 shrink-0">
+                  {{ group.processes.length }} {{ group.processes.length === 1 ? 'processo' : 'processos' }}
+                </span>
+              </div>
+
+              <!-- Processos do cliente -->
+              <ul class="flex flex-col gap-2 pl-0 sm:pl-4">
+                @for (p of group.processes; track p.id) {
+                  <li class="cs-card border border-foreground/10 px-5 py-4 flex flex-col gap-2.5">
+                    <div class="flex items-start justify-between gap-4 flex-wrap">
+                      <p class="font-mono text-sm font-bold text-mulim-azul dark:text-foreground tracking-wide">{{ p.cnjNumber }}</p>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/30 border border-foreground/10 px-1.5 py-0.5">
+                          {{ clientSideLabel(p.clientSide) }}
+                        </span>
+                        <span
+                          class="font-mono text-[0.58rem] font-bold tracking-[0.15em] uppercase px-2.5 py-1 border"
+                          [class]="statusConfig(p.status).cls"
+                        >{{ statusConfig(p.status).label }}</span>
+                      </div>
+                    </div>
+                    <p class="font-sans text-sm text-foreground/80">
+                      <span class="font-medium">{{ p.authorName }}</span>
+                      <span class="text-foreground/35 mx-2">×</span>
+                      <span class="font-medium">{{ p.defendantName }}</span>
+                    </p>
+                    <div class="flex flex-wrap gap-x-4 gap-y-1">
+                      <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/40">{{ p.comarca }}</span>
+                      <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/25" aria-hidden="true">·</span>
+                      <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/40">{{ p.vara }}</span>
+                      <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/25" aria-hidden="true">·</span>
+                      <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/40">{{ courtTypeLabel(p.courtType) }}</span>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      }
+
+    }
+  } @else if (!searchLoading() && rawQuery().length === 0) {
+    <!-- Estado inicial -->
+    <div class="py-16 flex flex-col items-center gap-4 text-center">
+      <span class="font-mono text-3xl text-foreground/10" aria-hidden="true">⌕</span>
+      <span class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/25">
+        @if (searchMode() === 'cnj') { Informe o número CNJ para localizar o processo }
+        @else { Informe o nome da parte para localizar processos }
+      </span>
+    </div>
+  }
+
+</div>

@@ -1,0 +1,195 @@
+<div class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Cabeçalho + Busca -->
+  <header class="mb-6 sm:mb-8">
+    <div class="flex items-end justify-between flex-wrap gap-4 mb-4">
+      <div class="flex flex-col gap-1">
+        <span class="db-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Escritório</span>
+        <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Dashboard</h1>
+      </div>
+    </div>
+    <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-6" aria-hidden="true"></div>
+
+    <!-- Barra de busca -->
+    <div class="relative">
+      <div class="flex items-center gap-3 border-b border-foreground/25 focus-within:border-mulim-ouro transition-colors pb-0.5">
+        <span class="text-foreground/35 shrink-0 text-sm" aria-hidden="true">⌕</span>
+        <input
+          type="search"
+          [formControl]="searchControl"
+          placeholder="Buscar por nome ou número CNJ…"
+          class="flex-1 font-sans text-sm text-foreground bg-transparent py-2.5 outline-none placeholder:text-foreground/30"
+          aria-label="Buscar processo ou cliente"
+          autocomplete="off"
+        >
+        @if (searchLoading()) {
+          <span class="font-mono text-[0.58rem] tracking-widest uppercase text-foreground/30 shrink-0">Buscando…</span>
+        }
+        @if (rawQuery().length > 0) {
+          <button
+            type="button"
+            (click)="clearSearch()"
+            class="text-foreground/30 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro shrink-0 text-xs"
+            aria-label="Limpar busca"
+          >✕</button>
+        }
+      </div>
+
+      <!-- Painel de resultados -->
+      @if (showSearchPanel()) {
+        <div class="absolute top-full left-0 right-0 z-50 bg-background border border-foreground/10 shadow-lg max-h-72 overflow-y-auto" role="listbox">
+          @if (!hasSearchResults()) {
+            <p class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/30 px-4 py-5">Nenhum resultado encontrado</p>
+          } @else {
+            @if (processResults().length > 0) {
+              <div>
+                <p class="font-mono text-[0.58rem] tracking-widest uppercase text-foreground/25 px-4 pt-3 pb-1">Processos</p>
+                @for (p of processResults(); track p.id) {
+                  <div class="px-4 py-2.5 hover:bg-foreground/5 transition-colors cursor-default border-b border-foreground/5 last:border-0">
+                    <p class="font-mono text-xs font-bold text-mulim-azul dark:text-mulim-ouro">{{ p.cnjNumber }}</p>
+                    <p class="font-sans text-xs text-foreground/55 mt-0.5 truncate">{{ p.authorName }} × {{ p.defendantName }}</p>
+                  </div>
+                }
+              </div>
+            }
+            @if (clientResults().length > 0) {
+              <div [class.border-t]="processResults().length > 0" class="border-foreground/8">
+                <p class="font-mono text-[0.58rem] tracking-widest uppercase text-foreground/25 px-4 pt-3 pb-1">Clientes</p>
+                @for (c of clientResults(); track c.id) {
+                  <div class="px-4 py-2.5 hover:bg-foreground/5 transition-colors cursor-default border-b border-foreground/5 last:border-0">
+                    <p class="font-sans text-sm font-medium text-foreground">{{ c.name }}</p>
+                    <p class="font-mono text-[0.58rem] uppercase tracking-wide text-foreground/35 mt-0.5">
+                      {{ c.type === 'pf' ? 'Pessoa Física' : 'Pessoa Jurídica' }}
+                    </p>
+                  </div>
+                }
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="py-20 flex items-center justify-center">
+      <span class="font-mono text-xs tracking-widest uppercase text-foreground/25">Carregando…</span>
+    </div>
+  } @else {
+
+    <!-- ── KPI CARDS ─────────────────────────────────────── -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10">
+
+      <div class="db-kpi flex flex-col gap-1 px-4 pt-4 pb-5 border border-foreground/10">
+        <span class="font-mono text-3xl sm:text-4xl font-bold text-mulim-ouro tabular-nums leading-none">{{ weekHearingCount() }}</span>
+        <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/40 mt-1.5">Audiências esta semana</span>
+      </div>
+
+      <div class="db-kpi flex flex-col gap-1 px-4 pt-4 pb-5 border border-foreground/10">
+        <span class="font-mono text-3xl sm:text-4xl font-bold text-mulim-ouro tabular-nums leading-none">{{ monthHearingCount() }}</span>
+        <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/40 mt-1.5">Audiências este mês</span>
+      </div>
+
+      <div
+        class="db-kpi flex flex-col gap-1 px-4 pt-4 pb-5 border transition-colors"
+        [class.border-foreground/10]="expedientesAEnviar() === 0"
+        [class.border-destructive/40]="expedientesAEnviar() > 0"
+      >
+        <span
+          class="font-mono text-3xl sm:text-4xl font-bold tabular-nums leading-none"
+          [class.text-mulim-ouro]="expedientesAEnviar() === 0"
+          [class.text-destructive]="expedientesAEnviar() > 0"
+        >{{ expedientesAEnviar() }}</span>
+        <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/40 mt-1.5">Expedientes a enviar</span>
+      </div>
+
+      <div class="db-kpi flex flex-col gap-1 px-4 pt-4 pb-5 border border-foreground/10">
+        <span class="font-mono text-3xl sm:text-4xl font-bold text-mulim-ouro tabular-nums leading-none">{{ expedientesEnviados() }}</span>
+        <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/40 mt-1.5">Expedientes enviados</span>
+      </div>
+
+    </div>
+
+    <!-- ── CONTEÚDO PRINCIPAL ─────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
+
+      <!-- Agenda da semana -->
+      <section aria-labelledby="sec-agenda">
+        <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-4 border-b-2 border-mulim-ouro/40" id="sec-agenda">
+          <span class="text-mulim-ouro text-sm">01</span> Agenda da Semana
+        </h2>
+
+        @if (weekHearings().length === 0) {
+          <div class="py-10 flex items-center justify-center border border-dashed border-foreground/10">
+            <p class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/25">Sem audiências esta semana</p>
+          </div>
+        } @else {
+          <ul class="flex flex-col gap-2">
+            @for (h of weekHearings(); track h.id) {
+              <li class="db-hearing flex items-center gap-3 px-3 py-2.5 border border-foreground/8 dark:border-foreground/5">
+                <div class="flex flex-col items-center shrink-0 min-w-[3rem] text-center">
+                  <time [attr.datetime]="h.dateTime" class="font-mono text-sm font-bold text-mulim-ouro tabular-nums leading-none">{{ formatDateTime(h.dateTime).time }}</time>
+                  <span class="font-mono text-[0.52rem] tracking-wide uppercase text-foreground/35 mt-0.5 whitespace-nowrap">{{ formatDateTime(h.dateTime).date }}</span>
+                </div>
+                <div class="w-px self-stretch bg-foreground/10 shrink-0"></div>
+                <p class="flex-1 font-mono text-xs font-bold text-foreground/65 truncate min-w-0">{{ h.cnjNumber }}</p>
+                <span class="font-mono text-[0.55rem] font-bold tracking-[0.12em] uppercase px-2 py-0.5 border border-mulim-ouro/30 text-mulim-ouro shrink-0">{{ typeLabel(h.type) }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <!-- Status de intimações de testemunhas -->
+      <section aria-labelledby="sec-intimacoes">
+        <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-4 border-b-2 border-mulim-ouro/40" id="sec-intimacoes">
+          <span class="text-mulim-ouro text-sm">02</span> Status de Intimações
+        </h2>
+
+        @if (witnessByStatusEntries().length === 0) {
+          <div class="py-10 flex items-center justify-center border border-dashed border-foreground/10">
+            <p class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/25">Sem testemunhas cadastradas</p>
+          </div>
+        } @else {
+          <ul class="flex flex-col gap-3.5">
+            @for (entry of witnessByStatusEntries(); track entry[0]) {
+              <li class="flex flex-col gap-1.5">
+                <div class="flex items-baseline justify-between gap-3">
+                  <span class="font-sans text-sm text-foreground leading-none">{{ witnessLabels[entry[0]] ?? entry[0] }}</span>
+                  <span
+                    class="font-mono text-xs font-bold tabular-nums shrink-0"
+                    [class.text-destructive]="warningStatuses.has(entry[0])"
+                    [class.text-foreground/50]="!warningStatuses.has(entry[0])"
+                  >{{ entry[1] }}</span>
+                </div>
+                <div class="h-[3px] bg-foreground/6 rounded-full overflow-hidden">
+                  <div
+                    class="db-bar h-full rounded-full"
+                    [style.width]="barWidth(entry[1], witnessTotal())"
+                    [class.bg-destructive]="warningStatuses.has(entry[0])"
+                    [class.bg-mulim-ouro]="!warningStatuses.has(entry[0])"
+                  ></div>
+                </div>
+              </li>
+            }
+          </ul>
+
+          <!-- Expedientes: resumo -->
+          <div class="mt-6 pt-4 border-t border-foreground/8 grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-0.5">
+              <span class="font-mono text-2xl font-bold text-destructive tabular-nums">{{ expedientesAEnviar() }}</span>
+              <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/35">A enviar</span>
+            </div>
+            <div class="flex flex-col gap-0.5">
+              <span class="font-mono text-2xl font-bold text-mulim-ouro tabular-nums">{{ expedientesEnviados() }}</span>
+              <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/35">Concluídos</span>
+            </div>
+          </div>
+        }
+      </section>
+
+    </div>
+
+  }
+
+</div>

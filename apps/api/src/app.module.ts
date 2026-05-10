@@ -18,6 +18,7 @@ import { WitnessesModule } from './modules/witnesses/witnesses.module';
 import { UsersModule } from './modules/users/users.module';
 import { RolesGuard } from './common/guards/roles.guard';
 import { ContactModule } from './modules/contact/contact.module';
+import { TasksModule } from './modules/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ContactModule } from './modules/contact/contact.module';
     JobsModule,
     ReportsModule,
     ContactModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [

@@ -33,6 +33,7 @@ export class PrivateLayout {
     { label: 'Agenda', path: '/dashboard/hearing-schedule', icon: '📅' },
     { label: 'Relatórios', path: '/dashboard/reports', icon: '📊' },
     { label: 'Kanban', path: '/dashboard/kanban', icon: '🗂' },
+    { label: 'Consulta', path: '/dashboard/consulta', icon: '🔍' },
   ];
 
   async logout(): Promise<void> {

@@ -60,4 +60,13 @@ export class AuthService {
       return null;
     }
   }
+
+  async restoreSession(): Promise<void> {
+    const user = await this.getSession();
+    this.authStore.setUser(
+      user
+        ? { id: user.id, name: user.name, email: user.email, role: user.role }
+        : null,
+    );
+  }
 }

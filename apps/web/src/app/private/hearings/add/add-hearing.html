@@ -1,0 +1,165 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-5xl">
+
+  <!-- Cabeçalho -->
+  <header class="flex items-end justify-between gap-4 mb-5 flex-wrap">
+    <a routerLink="/dashboard"
+       class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-mulim-azul/60 dark:text-foreground/50 hover:text-mulim-azul dark:hover:text-foreground flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2">
+      <span aria-hidden="true">←</span> Dashboard
+    </a>
+    <div class="flex flex-col items-end gap-1">
+      <span class="ah-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Agendamento</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Nova Audiência</h1>
+    </div>
+  </header>
+  <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-8 sm:mb-10" aria-hidden="true"></div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-10 sm:gap-12">
+
+    <!-- ── 01 PROCESSO ──────────────────────────────────────── -->
+    <section aria-labelledby="sec-processo">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-processo">
+        <span class="text-mulim-ouro text-sm">01</span> Processo
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8">
+        <div class="lg:col-span-2 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="processId">
+            Selecionar Processo <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <select
+            id="processId"
+            formControlName="processId"
+            class="ah-select font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro appearance-none pr-6 transition-colors cursor-pointer"
+            [class.ah-input--error]="hasError('processId')"
+            [attr.aria-busy]="loading()"
+          >
+            <option value="" disabled>
+              @if (loading()) { Carregando processos… } @else { Selecione um processo }
+            </option>
+            @for (p of processes(); track p.id) {
+              <option [value]="p.id">{{ p.cnjNumber }} — {{ p.authorName }} × {{ p.defendantName }}</option>
+            }
+          </select>
+          @if (hasError('processId')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Selecione um processo</span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 02 AUDIÊNCIA ─────────────────────────────────────── -->
+    <section aria-labelledby="sec-audiencia">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-audiencia">
+        <span class="text-mulim-ouro text-sm">02</span> Audiência
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-5 sm:gap-y-6">
+
+        <!-- Data e Hora: 1/3 -->
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="dateTime">
+            Data e Hora <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <input
+            id="dateTime"
+            type="datetime-local"
+            formControlName="dateTime"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro transition-colors"
+            [class.ah-input--error]="hasError('dateTime')"
+          >
+          @if (hasError('dateTime')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Campo obrigatório</span>
+          }
+        </div>
+
+        <!-- Tipo: 2/3 — radio group -->
+        <div class="sm:col-span-1 lg:col-span-2 flex flex-col gap-2">
+          <span class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" id="type-label">
+            Tipo de Audiência <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </span>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-3 pt-1" role="radiogroup" aria-labelledby="type-label">
+            <label class="ah-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="type" value="conciliacao">
+              <span class="ah-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              Conciliação
+            </label>
+            <label class="ah-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="type" value="aij">
+              <span class="ah-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              AIJ
+            </label>
+            <label class="ah-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="type" value="oitiva">
+              <span class="ah-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              Oitiva
+            </label>
+            <label class="ah-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="type" value="acij">
+              <span class="ah-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              ACIJ
+            </label>
+          </div>
+          @if (hasError('type')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Selecione o tipo de audiência</span>
+          }
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── 03 DETALHES ────────────────────────────────────── -->
+    <section aria-labelledby="sec-detalhes">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-detalhes">
+        <span class="text-mulim-ouro text-sm">03</span> Detalhes
+        <span class="text-[0.65rem] tracking-normal text-foreground/40 font-sans font-normal normal-case">(opcional)</span>
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-5 sm:gap-y-6">
+
+        <!-- Status: 1/3 -->
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="status">Status</label>
+          <select
+            id="status"
+            formControlName="status"
+            class="ah-select font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro appearance-none pr-6 transition-colors cursor-pointer"
+          >
+            <option value="agendada">Agendada</option>
+            <option value="realizada">Realizada</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="redesignada">Redesignada</option>
+          </select>
+        </div>
+
+        <!-- Data de Redesignação: 2/3 -->
+        <div class="sm:col-span-1 lg:col-span-2 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="rescheduledTo">
+            Data de Redesignação
+          </label>
+          <input
+            id="rescheduledTo"
+            type="datetime-local"
+            formControlName="rescheduledTo"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro transition-colors"
+          >
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── AÇÕES ──────────────────────────────────────────── -->
+    <div class="flex flex-col items-start gap-3 pt-6 sm:pt-8 border-t border-foreground/10">
+      @if (submitError()) {
+        <p class="text-sm text-destructive font-medium" role="alert">{{ submitError() }}</p>
+      }
+      <button
+        type="submit"
+        class="ah-submit font-mono text-[0.7rem] font-bold tracking-[0.22em] uppercase text-mulim-ouro border border-mulim-ouro/70 px-8 sm:px-11 py-3.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-3 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+        [disabled]="submitting()"
+      >
+        @if (submitting()) { Agendando… } @else { Agendar Audiência }
+      </button>
+    </div>
+
+  </form>
+</div>

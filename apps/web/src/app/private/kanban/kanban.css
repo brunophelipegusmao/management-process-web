@@ -1,0 +1,62 @@
+/* Eyebrow decorativo */
+.kb-eyebrow::before {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 1.5rem;
+    background: var(--mulim-ouro);
+    opacity: 0.55;
+}
+
+/* Coluna */
+.kb-col {
+    background-color: color-mix(in oklch, var(--foreground) 2%, transparent);
+    border-top-width: 2px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.kb-col--todo    { border-top-color: var(--chart-1); }
+.kb-col--in-progress { border-top-color: var(--chart-4); }
+.kb-col--done    { border-top-color: var(--chart-2); }
+
+.kb-col--dragover {
+    background-color: color-mix(in oklch, var(--mulim-ouro) 4%, transparent);
+    border-color: color-mix(in oklch, var(--mulim-ouro) 25%, transparent);
+}
+
+/* Dot de status */
+.kb-col-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    opacity: 0.7;
+}
+
+.kb-col-dot--todo        { background: var(--chart-1); }
+.kb-col-dot--in-progress { background: var(--chart-4); }
+.kb-col-dot--done        { background: var(--chart-2); }
+
+/* Card */
+.kb-card {
+    background-color: var(--background);
+    transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.kb-card:hover {
+    border-color: color-mix(in oklch, var(--foreground) 25%, transparent);
+}
+
+.kb-card--todo:hover        { border-color: color-mix(in oklch, var(--chart-1) 40%, transparent); }
+.kb-card--in-progress:hover { border-color: color-mix(in oklch, var(--chart-4) 40%, transparent); }
+.kb-card--done:hover        { border-color: color-mix(in oklch, var(--chart-2) 40%, transparent); }
+
+/* Label de coluna */
+.kb-col-label--todo        { color: var(--chart-1); }
+.kb-col-label--in-progress { color: var(--chart-4); }
+.kb-col-label--done        { color: var(--chart-2); }
+
+/* Formulário inline */
+.kb-form {
+    background-color: color-mix(in oklch, var(--foreground) 2%, transparent);
+}

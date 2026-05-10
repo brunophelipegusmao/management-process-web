@@ -17,7 +17,11 @@
       "Bash(pnpm --filter @mgmt/web build)",
       "Bash(xargs cat)",
       "Bash(jobs -l)",
-      "Bash(grep -E \"\\\\.\\(ts|html\\)$\")"
+      "Bash(grep -E \"\\\\.\\(ts|html\\)$\")",
+      "Bash(xargs -I {} basename {})",
+      "Bash(pnpm db:migrate)",
+      "Bash(pnpm --filter @mgmt/api exec tsc --noEmit)",
+      "Bash(xargs ls -la)"
     ]
   }
 }

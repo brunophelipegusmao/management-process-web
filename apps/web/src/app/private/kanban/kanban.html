@@ -1,0 +1,167 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-7xl">
+
+  <!-- Cabeçalho -->
+  <header class="flex items-end justify-between gap-4 mb-5 flex-wrap">
+    <a routerLink="/dashboard"
+       class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-mulim-azul/60 dark:text-foreground/50 hover:text-mulim-azul dark:hover:text-foreground flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2">
+      <span aria-hidden="true">←</span> Dashboard
+    </a>
+    <div class="flex flex-col items-end gap-1">
+      <span class="kb-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Tarefas</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Kanban</h1>
+    </div>
+  </header>
+  <div class="h-px bg-linear-to-r from-transparent via-mulim-ouro to-transparent mb-8" aria-hidden="true"></div>
+
+  @if (loading()) {
+    <div class="flex items-center justify-center py-20">
+      <span class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/30">Carregando…</span>
+    </div>
+  } @else {
+
+    <!-- Colunas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      @for (col of columns; track col.status) {
+        <div
+          class="kb-col flex flex-col gap-3 min-h-96 p-4 border border-foreground/8 transition-colors"
+          [class.kb-col--todo]="col.status === 'todo'"
+          [class.kb-col--in-progress]="col.status === 'in_progress'"
+          [class.kb-col--done]="col.status === 'done'"
+          [class.kb-col--dragover]="dragOverCol() === col.status"
+          (dragover)="onDragOver($event, col.status)"
+          (dragleave)="onDragLeave()"
+          (drop)="onDrop($event, col.status)"
+        >
+          <!-- Cabeçalho da coluna -->
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center gap-2">
+              <span
+                class="kb-col-dot"
+                [class.kb-col-dot--todo]="col.status === 'todo'"
+                [class.kb-col-dot--in-progress]="col.status === 'in_progress'"
+                [class.kb-col-dot--done]="col.status === 'done'"
+              ></span>
+              <span
+                class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase kb-col-label"
+                [class.kb-col-label--todo]="col.status === 'todo'"
+                [class.kb-col-label--in-progress]="col.status === 'in_progress'"
+                [class.kb-col-label--done]="col.status === 'done'"
+              >{{ col.label }}</span>
+            </div>
+            <span class="font-mono text-[0.58rem] tracking-widest text-foreground/30 bg-foreground/5 px-1.5 py-0.5 border border-foreground/10">
+              {{ colTasks(col.status).length }}
+            </span>
+          </div>
+
+          <!-- Cards -->
+          @for (task of colTasks(col.status); track task.id) {
+            <div
+              class="kb-card border border-foreground/10 p-4 flex flex-col gap-2 cursor-grab active:cursor-grabbing"
+              [class.opacity-40]="draggingId() === task.id"
+              [class.kb-card--todo]="task.status === 'todo'"
+              [class.kb-card--in-progress]="task.status === 'in_progress'"
+              [class.kb-card--done]="task.status === 'done'"
+              draggable="true"
+              (dragstart)="onDragStart(task.id)"
+              (dragend)="onDragEnd()"
+            >
+              <!-- Título -->
+              <p class="font-sans text-sm font-semibold text-foreground leading-snug">{{ task.title }}</p>
+
+              @if (task.description) {
+                <p class="font-sans text-xs text-foreground/55 leading-relaxed">{{ task.description }}</p>
+              }
+
+              <!-- Processo -->
+              @if (task.cnjNumber) {
+                <div class="flex flex-col gap-0.5 border-t border-foreground/8 pt-2 mt-1">
+                  <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/50">{{ task.cnjNumber }}</span>
+                  <span class="font-sans text-[0.7rem] text-foreground/40">
+                    {{ task.authorName }} <span class="text-foreground/25">×</span> {{ task.defendantName }}
+                  </span>
+                </div>
+              }
+
+              <!-- Rodapé: criador / editor + botão excluir -->
+              <div class="flex items-end justify-between gap-2 mt-1 pt-2 border-t border-foreground/8">
+                <div class="flex flex-col gap-0.5">
+                  <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/25">
+                    Criado por {{ task.createdByName ?? '—' }}
+                  </span>
+                  @if (task.updatedByName) {
+                    <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/20">
+                      Editado por {{ task.updatedByName }}
+                    </span>
+                  }
+                </div>
+                <button
+                  type="button"
+                  (click)="deleteTask(task.id)"
+                  class="kb-delete-btn font-mono text-[0.55rem] tracking-widest uppercase text-foreground/20 hover:text-destructive transition-colors px-1.5 py-0.5 border border-transparent hover:border-destructive/30 focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+                  aria-label="Remover tarefa"
+                >✕</button>
+              </div>
+            </div>
+          }
+
+          <!-- Formulário de nova tarefa -->
+          @if (openFormCol() === col.status) {
+            <div class="kb-form border border-foreground/15 p-4 flex flex-col gap-3">
+              <input
+                type="text"
+                [formControl]="titleControl"
+                placeholder="Título da tarefa…"
+                class="font-sans text-sm text-foreground bg-transparent border-b border-foreground/20 focus:border-mulim-ouro outline-none py-1.5 placeholder:text-foreground/30 transition-colors"
+                (keydown.enter)="createTask()"
+                (keydown.escape)="cancelForm()"
+                autofocus
+              >
+              <textarea
+                [formControl]="descriptionControl"
+                placeholder="Descrição (opcional)…"
+                rows="2"
+                class="font-sans text-xs text-foreground bg-transparent border-b border-foreground/15 focus:border-mulim-ouro/50 outline-none py-1.5 placeholder:text-foreground/25 transition-colors resize-none"
+              ></textarea>
+              <select
+                [formControl]="processIdControl"
+                class="font-mono text-[0.65rem] tracking-wide uppercase text-foreground/60 bg-transparent border-b border-foreground/15 focus:border-mulim-ouro/50 outline-none py-1.5 transition-colors"
+              >
+                <option value="">Processo (opcional)</option>
+                @for (p of processes(); track p.id) {
+                  <option [value]="p.id">{{ p.cnjNumber }}</option>
+                }
+              </select>
+              @if (submitError()) {
+                <p class="font-mono text-[0.6rem] tracking-wide uppercase text-destructive">{{ submitError() }}</p>
+              }
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  (click)="createTask()"
+                  [disabled]="titleControl.invalid || submitting()"
+                  class="kb-submit font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase px-4 py-2 border border-mulim-ouro/50 text-mulim-ouro hover:bg-mulim-ouro/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+                >{{ submitting() ? 'Criando…' : 'Criar' }}</button>
+                <button
+                  type="button"
+                  (click)="cancelForm()"
+                  class="font-mono text-[0.65rem] tracking-[0.2em] uppercase px-4 py-2 text-foreground/30 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+                >Cancelar</button>
+              </div>
+            </div>
+          } @else {
+            <!-- Botão de adicionar -->
+            <button
+              type="button"
+              (click)="openForm(col.status)"
+              class="kb-add-btn font-mono text-[0.6rem] tracking-[0.2em] uppercase px-3 py-2.5 border border-dashed border-foreground/15 text-foreground/30 hover:text-foreground/60 hover:border-foreground/30 transition-colors w-full text-left focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+            >+ Adicionar tarefa</button>
+          }
+
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

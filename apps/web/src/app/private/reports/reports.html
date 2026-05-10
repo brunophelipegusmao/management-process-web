@@ -1,0 +1,124 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-5xl">
+
+  <!-- Cabeçalho -->
+  <header class="flex items-end justify-between gap-4 mb-5 flex-wrap">
+    <a routerLink="/dashboard"
+       class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-mulim-azul/60 dark:text-foreground/50 hover:text-mulim-azul dark:hover:text-foreground flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2">
+      <span aria-hidden="true">←</span> Dashboard
+    </a>
+    <div class="flex flex-col items-end gap-1">
+      <span class="rp-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Analytics</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Relatórios</h1>
+    </div>
+  </header>
+  <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-8 sm:mb-10" aria-hidden="true"></div>
+
+  @if (loading()) {
+    <div class="py-20 flex items-center justify-center">
+      <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando relatórios…</span>
+    </div>
+  } @else {
+
+    <!-- ── KPI CARDS ─────────────────────────────────────── -->
+    <section aria-label="Indicadores" class="mb-10 sm:mb-12">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 border-b-2 border-mulim-ouro/40">
+        <span class="text-mulim-ouro text-sm">01</span> Visão Geral
+      </h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        @for (card of kpiCards(); track card.label) {
+          <div
+            class="rp-kpi flex flex-col gap-1 px-4 pt-4 pb-5 border"
+            [class.border-foreground/10]="!card.warn"
+            [class.border-destructive/30]="card.warn"
+          >
+            <span
+              class="font-mono text-3xl sm:text-4xl font-bold tabular-nums leading-none"
+              [class.text-mulim-ouro]="!card.warn"
+              [class.text-destructive]="card.warn"
+            >{{ card.value }}</span>
+            <span class="font-mono text-[0.6rem] tracking-[0.18em] uppercase text-foreground/50 mt-1">{{ card.label }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ── TABELAS DE STATUS ──────────────────────────────── -->
+    <section aria-label="Status detalhados" class="mb-10 sm:mb-12">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-6 border-b-2 border-mulim-ouro/40">
+        <span class="text-mulim-ouro text-sm">02</span> Distribuição por Status
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Prazos por status -->
+        <div>
+          <h3 class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-foreground/40 mb-4">Prazos</h3>
+          @if (entries(deadlinesByStatus()).length === 0) {
+            <p class="font-mono text-xs text-foreground/30 uppercase tracking-widest">Sem dados</p>
+          } @else {
+            <ul class="flex flex-col gap-3">
+              @for (entry of entries(deadlinesByStatus()); track entry[0]) {
+                <li class="flex flex-col gap-1.5">
+                  <div class="flex items-baseline justify-between gap-3">
+                    <span class="font-sans text-sm text-foreground">
+                      {{ deadlineLabels[entry[0]] ?? entry[0] }}
+                    </span>
+                    <span
+                      class="font-mono text-xs font-bold tabular-nums shrink-0"
+                      [class.text-destructive]="warnDeadlineStatuses.has(entry[0])"
+                      [class.text-foreground/60]="!warnDeadlineStatuses.has(entry[0])"
+                    >{{ entry[1] }}</span>
+                  </div>
+                  <div class="h-px bg-foreground/8 relative">
+                    <div
+                      class="rp-bar absolute inset-y-0 left-0"
+                      [style.width]="barWidth(entry[1], deadlinesByStatus())"
+                      [class.bg-destructive]="warnDeadlineStatuses.has(entry[0])"
+                      [class.bg-mulim-ouro]="!warnDeadlineStatuses.has(entry[0])"
+                    ></div>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <!-- Testemunhas por status -->
+        <div>
+          <h3 class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-foreground/40 mb-4">Testemunhas</h3>
+          @if (entries(witnessesByStatus()).length === 0) {
+            <p class="font-mono text-xs text-foreground/30 uppercase tracking-widest">Sem dados</p>
+          } @else {
+            <ul class="flex flex-col gap-3">
+              @for (entry of entries(witnessesByStatus()); track entry[0]) {
+                <li class="flex flex-col gap-1.5">
+                  <div class="flex items-baseline justify-between gap-3">
+                    <span class="font-sans text-sm text-foreground">
+                      {{ witnessLabels[entry[0]] ?? entry[0] }}
+                    </span>
+                    <span
+                      class="font-mono text-xs font-bold tabular-nums shrink-0"
+                      [class.text-destructive]="warnWitnessStatuses.has(entry[0])"
+                      [class.text-foreground/60]="!warnWitnessStatuses.has(entry[0])"
+                    >{{ entry[1] }}</span>
+                  </div>
+                  <div class="h-px bg-foreground/8 relative">
+                    <div
+                      class="rp-bar absolute inset-y-0 left-0"
+                      [style.width]="barWidth(entry[1], witnessesByStatus())"
+                      [class.bg-destructive]="warnWitnessStatuses.has(entry[0])"
+                      [class.bg-mulim-ouro]="!warnWitnessStatuses.has(entry[0])"
+                    ></div>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+      </div>
+    </section>
+
+  }
+
+</div>

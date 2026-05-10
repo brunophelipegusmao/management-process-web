@@ -1,0 +1,40 @@
+/* Linha decorativa do eyebrow */
+.db-eyebrow::before {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 1.5rem;
+    background: var(--mulim-ouro);
+    opacity: 0.55;
+}
+
+/* KPI card: borda esquerda em ouro */
+.db-kpi {
+    position: relative;
+}
+
+.db-kpi::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 2px;
+    background: var(--mulim-ouro);
+    opacity: 0.35;
+}
+
+/* Item da agenda: hover sutil */
+.db-hearing {
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.db-hearing:hover {
+    background-color: color-mix(in oklch, var(--mulim-ouro) 4%, transparent);
+    border-color: color-mix(in oklch, var(--mulim-ouro) 30%, transparent);
+}
+
+/* Barra de progresso de status */
+.db-bar {
+    opacity: 0.65;
+    transition: width 0.45s ease;
+}

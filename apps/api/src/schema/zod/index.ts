@@ -13,6 +13,7 @@ import {
   holidaySourceValues,
   holidayTypeValues,
   processStatusValues,
+  taskStatusValues,
   userProfileValues,
   witnessSideValues,
   witnessStatusValues,
@@ -76,6 +77,7 @@ export const holidayTypeSchema = z.enum(holidayTypeValues);
 export const holidaySourceSchema = z.enum(holidaySourceValues);
 export const emailTemplateSchema = z.enum(emailTemplateValues);
 export const actionTypeSchema = z.enum(actionTypeValues);
+export const taskStatusSchema = z.enum(taskStatusValues);
 export const witnessIntimationMethodSchema = z.enum([
   'carta_simples',
   'carta_precatoria',
@@ -410,3 +412,31 @@ export type UpdateEmailInput = z.infer<typeof updateEmailSchema>;
 export type EmailFiltersInput = z.infer<typeof emailFiltersSchema>;
 export type CreateAuditLogInput = z.infer<typeof createAuditLogSchema>;
 export type AuditLogFiltersInput = z.infer<typeof auditLogFiltersSchema>;
+
+const taskShape = {
+  title: z.string().trim().min(1),
+  description: optionalTrimmedStringSchema,
+  processId: optionalUuidSchema,
+  status: taskStatusSchema.optional(),
+};
+
+export const createTaskSchema = withStrictUnknownFieldValidation(
+  z.object(taskShape),
+);
+export const updateTaskSchema = withStrictUnknownFieldValidation(
+  z.object(taskShape).partial(),
+);
+export const updateTaskStatusSchema = withStrictUnknownFieldValidation(
+  z.object({ status: taskStatusSchema }),
+);
+export const taskFiltersSchema = withStrictUnknownFieldValidation(
+  paginationSchema.extend({
+    status: taskStatusSchema.optional(),
+    processId: optionalUuidSchema,
+  }),
+);
+
+export type CreateTaskInput = z.infer<typeof createTaskSchema>;
+export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
+export type UpdateTaskStatusInput = z.infer<typeof updateTaskStatusSchema>;
+export type TaskFiltersInput = z.infer<typeof taskFiltersSchema>;

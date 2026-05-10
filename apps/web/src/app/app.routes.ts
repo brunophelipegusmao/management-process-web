@@ -82,6 +82,11 @@ export const routes: Routes = [
         loadComponent: () => import('./private/users/users').then((m) => m.Users),
         title: 'Usuários',
       },
+      {
+        path: 'consulta',
+        loadComponent: () => import('./private/consulta/consulta').then((m) => m.Consulta),
+        title: 'Consulta',
+      },
     ],
   },
 

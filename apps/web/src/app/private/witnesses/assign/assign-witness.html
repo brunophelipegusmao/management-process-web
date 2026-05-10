@@ -1,0 +1,203 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-5xl">
+
+  <!-- Cabeçalho -->
+  <header class="flex items-end justify-between gap-4 mb-5 flex-wrap">
+    <a routerLink="/dashboard"
+       class="font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-mulim-azul/60 dark:text-foreground/50 hover:text-mulim-azul dark:hover:text-foreground flex items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2">
+      <span aria-hidden="true">←</span> Dashboard
+    </a>
+    <div class="flex flex-col items-end gap-1">
+      <span class="aw-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Testemunhas</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Designar Testemunha</h1>
+    </div>
+  </header>
+  <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-8 sm:mb-10" aria-hidden="true"></div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-10 sm:gap-12">
+
+    <!-- ── 01 PROCESSO ──────────────────────────────────────── -->
+    <section aria-labelledby="sec-processo">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-processo">
+        <span class="text-mulim-ouro text-sm">01</span> Processo
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8">
+        <div class="lg:col-span-2 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="processId">
+            Selecionar Processo <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <select
+            id="processId"
+            formControlName="processId"
+            class="aw-select font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro appearance-none pr-6 transition-colors cursor-pointer"
+            [class.aw-input--error]="hasError('processId')"
+            [attr.aria-busy]="loading()"
+          >
+            <option value="" disabled>
+              @if (loading()) { Carregando processos… } @else { Selecione um processo }
+            </option>
+            @for (p of processes(); track p.id) {
+              <option [value]="p.id">{{ p.cnjNumber }} — {{ p.authorName }} × {{ p.defendantName }}</option>
+            }
+          </select>
+          @if (hasError('processId')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Selecione um processo</span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 02 IDENTIFICAÇÃO ────────────────────────────────── -->
+    <section aria-labelledby="sec-identificacao">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-identificacao">
+        <span class="text-mulim-ouro text-sm">02</span> Identificação
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-5 sm:gap-y-6">
+
+        <!-- Nome completo: 2/3 -->
+        <div class="sm:col-span-1 lg:col-span-2 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="fullName">
+            Nome Completo <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </label>
+          <input
+            id="fullName"
+            formControlName="fullName"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            [class.aw-input--error]="hasError('fullName')"
+            placeholder="Nome completo da testemunha"
+          >
+          @if (hasError('fullName')) {
+            <span class="text-xs text-destructive font-medium" role="alert">Campo obrigatório</span>
+          }
+        </div>
+
+        <!-- Polo: 1/3 -->
+        <div class="flex flex-col gap-2">
+          <span class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" id="side-label">
+            Polo <span class="text-mulim-ouro" aria-label="obrigatório">*</span>
+          </span>
+          <div class="flex sm:flex-col gap-4 sm:gap-3 pt-1" role="radiogroup" aria-labelledby="side-label">
+            <label class="aw-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="side" value="reu">
+              <span class="aw-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              Réu (Defesa)
+            </label>
+            <label class="aw-radio-option relative flex items-center gap-2.5 cursor-pointer font-sans text-sm font-normal text-foreground">
+              <input type="radio" formControlName="side" value="autor">
+              <span class="aw-radio-custom relative w-4 h-4 border-[1.5px] border-foreground/30 rounded-full shrink-0 transition-colors" aria-hidden="true"></span>
+              Autor (Ação)
+            </label>
+          </div>
+        </div>
+
+        <!-- Telefone: 1/3 -->
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="phone">
+            Telefone
+          </label>
+          <input
+            id="phone"
+            formControlName="phone"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            placeholder="(00) 00000-0000"
+          >
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── 03 DETALHES ────────────────────────────────────── -->
+    <section aria-labelledby="sec-detalhes">
+      <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-5 sm:mb-6 border-b-2 border-mulim-ouro/40" id="sec-detalhes">
+        <span class="text-mulim-ouro text-sm">03</span> Detalhes
+        <span class="text-[0.65rem] tracking-normal text-foreground/40 font-sans font-normal normal-case">(opcional)</span>
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-5 sm:gap-y-6">
+
+        <!-- Endereço: 2/3 -->
+        <div class="sm:col-span-1 lg:col-span-2 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="address">
+            Endereço
+          </label>
+          <input
+            id="address"
+            formControlName="address"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            placeholder="Rua, número, complemento, bairro"
+          >
+        </div>
+
+        <!-- Comarca de Residência: 1/3 -->
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="residenceComarca">
+            Comarca de Residência
+          </label>
+          <input
+            id="residenceComarca"
+            formControlName="residenceComarca"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            placeholder="Ex: Duque de Caxias"
+          >
+        </div>
+
+        <!-- Estado civil: 1/3 -->
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="maritalStatus">
+            Estado Civil
+          </label>
+          <input
+            id="maritalStatus"
+            formControlName="maritalStatus"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            placeholder="Solteiro, Casado…"
+          >
+        </div>
+
+        <!-- Profissão: 1/3 -->
+        <div class="flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="profession">
+            Profissão
+          </label>
+          <input
+            id="profession"
+            formControlName="profession"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors"
+            placeholder="Motorista, Professora…"
+          >
+        </div>
+
+        <!-- Observações: linha inteira -->
+        <div class="sm:col-span-2 lg:col-span-3 flex flex-col gap-1.5">
+          <label class="font-mono text-xs font-bold tracking-widest uppercase text-mulim-azul dark:text-foreground/80" for="notes">
+            Observações
+          </label>
+          <textarea
+            id="notes"
+            formControlName="notes"
+            rows="3"
+            class="font-sans text-base text-foreground bg-transparent border-0 border-b-[1.5px] border-foreground/25 rounded-none px-0 py-2 w-full outline-none focus:border-mulim-ouro placeholder:text-foreground/35 transition-colors resize-none"
+            placeholder="Informações adicionais sobre a testemunha…"
+          ></textarea>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── AÇÕES ──────────────────────────────────────────── -->
+    <div class="flex flex-col items-start gap-3 pt-6 sm:pt-8 border-t border-foreground/10">
+      @if (submitError()) {
+        <p class="text-sm text-destructive font-medium" role="alert">{{ submitError() }}</p>
+      }
+      <button
+        type="submit"
+        class="aw-submit font-mono text-[0.7rem] font-bold tracking-[0.22em] uppercase text-mulim-ouro border border-mulim-ouro/70 px-8 sm:px-11 py-3.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-3 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+        [disabled]="submitting()"
+      >
+        @if (submitting()) { Designando… } @else { Designar Testemunha }
+      </button>
+    </div>
+
+  </form>
+</div>
