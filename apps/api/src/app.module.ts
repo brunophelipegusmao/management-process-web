@@ -19,6 +19,7 @@ import { UsersModule } from './modules/users/users.module';
 import { RolesGuard } from './common/guards/roles.guard';
 import { ContactModule } from './modules/contact/contact.module';
 import { TasksModule } from './modules/tasks/tasks.module';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
     ReportsModule,
     ContactModule,
     TasksModule,
+    AuditLogsModule,
   ],
   controllers: [AppController],
   providers: [

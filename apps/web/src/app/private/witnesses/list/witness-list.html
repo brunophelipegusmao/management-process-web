@@ -1,0 +1,125 @@
+<div class="p-4 sm:p-6 lg:p-8">
+
+  <header class="flex items-center justify-between gap-4 mb-8 flex-wrap">
+    <div class="flex flex-col gap-1">
+      <span class="wl-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-foreground/40">Gestão</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold uppercase">Testemunhas</h1>
+    </div>
+    <a
+      routerLink="/dashboard/witnesses/assign"
+      class="font-mono text-[0.7rem] font-bold tracking-[0.22em] uppercase text-mulim-ouro border border-mulim-ouro/70 px-6 py-2.5 hover:bg-mulim-ouro hover:text-mulim-azul transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2"
+    >
+      + Designar Testemunha
+    </a>
+  </header>
+
+  <section aria-labelledby="sec-filtros" class="mb-6">
+    <h2 id="sec-filtros" class="wl-section-title"><span class="text-mulim-ouro">01</span> Filtros</h2>
+    <form [formGroup]="filterForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-process" class="wl-label">ID do Processo (UUID)</label>
+        <input id="filter-process" formControlName="processId" placeholder="UUID" autocomplete="off" class="wl-input">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-status" class="wl-label">Status</label>
+        <select id="filter-status" formControlName="status" class="wl-select">
+          <option value="">Todos</option>
+          <option value="pendente_dados">Pendente de Dados</option>
+          <option value="dados_completos">Dados Completos</option>
+          <option value="rol_juntado">Rol Juntado</option>
+          <option value="intimada">Intimada</option>
+          <option value="intimacao_positiva">Intimação Positiva</option>
+          <option value="intimacao_negativa">Intimação Negativa</option>
+          <option value="aguardando_cliente">Aguardando Cliente</option>
+          <option value="desistida">Desistida</option>
+          <option value="substituida">Substituída</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-replaced" class="wl-label">Substituídas</label>
+        <select id="filter-replaced" formControlName="replaced" class="wl-select">
+          <option value="">Todas</option>
+          <option value="false">Ativas</option>
+          <option value="true">Substituídas</option>
+        </select>
+      </div>
+    </form>
+  </section>
+
+  <section aria-labelledby="sec-lista">
+    <h2 id="sec-lista" class="wl-section-title">
+      <span class="text-mulim-ouro">02</span> Lista
+      @if (!loading()) {
+        <span class="font-mono text-xs text-foreground/40 font-normal normal-case ml-2">({{ total() }})</span>
+      }
+    </h2>
+
+    @if (loading()) {
+      <div class="py-16 flex items-center justify-center">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="py-16 flex items-center justify-center border border-dashed border-foreground/15 rounded">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhuma testemunha encontrada</span>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" aria-label="Lista de testemunhas">
+          <thead>
+            <tr class="border-b border-foreground/10">
+              <th scope="col" class="wl-th">Nome</th>
+              <th scope="col" class="wl-th">Lado</th>
+              <th scope="col" class="wl-th">Status</th>
+              <th scope="col" class="wl-th">Processo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (w of witnesses(); track w.id) {
+              <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02] transition-colors" [class.opacity-50]="w.replaced">
+                <td class="py-3 pr-4 font-sans text-sm" [class.line-through]="w.replaced">{{ w.fullName }}</td>
+                <td class="py-3 pr-4">
+                  <span class="font-mono text-[0.6rem] tracking-wide uppercase text-foreground/50">
+                    {{ w.side === 'reu' ? 'Réu' : 'Autor' }}
+                  </span>
+                </td>
+                <td class="py-3 pr-4">
+                  <span
+                    class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                    [class.bg-red-500/15]="w.status === 'pendente_dados' || w.status === 'intimacao_negativa'"
+                    [class.text-red-600]="w.status === 'pendente_dados' || w.status === 'intimacao_negativa'"
+                    [class.bg-yellow-500/15]="w.status === 'intimada' || w.status === 'aguardando_cliente'"
+                    [class.text-yellow-600]="w.status === 'intimada' || w.status === 'aguardando_cliente'"
+                    [class.bg-green-500/15]="w.status === 'intimacao_positiva'"
+                    [class.text-green-600]="w.status === 'intimacao_positiva'"
+                    [class.bg-blue-500/15]="w.status === 'dados_completos' || w.status === 'rol_juntado'"
+                    [class.text-blue-600]="w.status === 'dados_completos' || w.status === 'rol_juntado'"
+                    [class.bg-foreground/8]="w.status === 'desistida' || w.status === 'substituida'"
+                    [class.text-foreground/40]="w.status === 'desistida' || w.status === 'substituida'"
+                  >
+                    {{ statusLabels[w.status] }}
+                  </span>
+                </td>
+                <td class="py-3">
+                  <a
+                    [routerLink]="['/dashboard/processes', w.processId]"
+                    class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-1"
+                  >
+                    Ver Processo
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination
+        [total]="total()"
+        [page]="page()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </section>
+
+</div>

@@ -1,0 +1,131 @@
+<div class="p-4 sm:p-6 lg:p-8">
+
+  <!-- Cabeçalho -->
+  <header class="flex items-center justify-between gap-4 mb-8 flex-wrap">
+    <div class="flex flex-col gap-1">
+      <span class="pl-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-foreground/40">Gestão</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold uppercase">Processos</h1>
+    </div>
+    <a
+      routerLink="/dashboard/processes/add"
+      class="font-mono text-[0.7rem] font-bold tracking-[0.22em] uppercase text-mulim-ouro border border-mulim-ouro/70 px-6 py-2.5 hover:bg-mulim-ouro hover:text-mulim-azul transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2"
+    >
+      + Novo Processo
+    </a>
+  </header>
+
+  <!-- Filtros -->
+  <section aria-labelledby="sec-filtros" class="mb-6">
+    <h2 id="sec-filtros" class="section-title">
+      <span class="section-number">01</span> Filtros
+    </h2>
+    <form [formGroup]="filterForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-cnj" class="label">Número CNJ</label>
+        <input
+          id="filter-cnj"
+          formControlName="cnjNumber"
+          placeholder="0000000-00.0000.8.19.0000"
+          autocomplete="off"
+          class="pl-input"
+        >
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-status" class="label">Status</label>
+        <select id="filter-status" formControlName="status" class="pl-select">
+          <option value="">Todos</option>
+          <option value="citado">Citado</option>
+          <option value="em_andamento">Em Andamento</option>
+          <option value="encerrado">Encerrado</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-court" class="label">Tipo de Vara</label>
+        <select id="filter-court" formControlName="courtType" class="pl-select">
+          <option value="">Todos</option>
+          <option value="vara">Vara Comum</option>
+          <option value="jec">JEC</option>
+        </select>
+      </div>
+    </form>
+  </section>
+
+  <!-- Lista -->
+  <section aria-labelledby="sec-lista">
+    <h2 id="sec-lista" class="section-title">
+      <span class="section-number">02</span> Lista
+      @if (!loading()) {
+        <span class="font-mono text-xs text-foreground/40 font-normal normal-case ml-2">({{ total() }})</span>
+      }
+    </h2>
+
+    @if (loading()) {
+      <div class="py-16 flex items-center justify-center">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="py-16 flex items-center justify-center border border-dashed border-foreground/15 rounded">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhum processo encontrado</span>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" aria-label="Lista de processos">
+          <thead>
+            <tr class="border-b border-foreground/10">
+              <th scope="col" class="text-left font-mono text-[0.6rem] tracking-widest uppercase text-foreground/40 pb-2 pr-4">CNJ</th>
+              <th scope="col" class="text-left font-mono text-[0.6rem] tracking-widest uppercase text-foreground/40 pb-2 pr-4">Comarca / Vara</th>
+              <th scope="col" class="text-left font-mono text-[0.6rem] tracking-widest uppercase text-foreground/40 pb-2 pr-4">Tipo</th>
+              <th scope="col" class="text-left font-mono text-[0.6rem] tracking-widest uppercase text-foreground/40 pb-2 pr-4">Status</th>
+              <th scope="col" class="text-right font-mono text-[0.6rem] tracking-widest uppercase text-foreground/40 pb-2">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (proc of processes(); track proc.id) {
+              <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02] transition-colors">
+                <td class="py-3 pr-4 font-mono text-xs">{{ proc.cnjNumber }}</td>
+                <td class="py-3 pr-4 font-sans text-xs text-foreground/70">
+                  {{ proc.comarca }}
+                  @if (proc.vara) { <span class="text-foreground/40"> / {{ proc.vara }}</span> }
+                </td>
+                <td class="py-3 pr-4">
+                  <span class="font-mono text-[0.65rem] tracking-wide uppercase text-foreground/50">
+                    {{ courtTypeLabels[proc.courtType] }}
+                  </span>
+                </td>
+                <td class="py-3 pr-4">
+                  <span
+                    class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                    [class.bg-yellow-500/15]="proc.status === 'citado'"
+                    [class.text-yellow-600]="proc.status === 'citado'"
+                    [class.bg-blue-500/15]="proc.status === 'em_andamento'"
+                    [class.text-blue-600]="proc.status === 'em_andamento'"
+                    [class.bg-foreground/8]="proc.status === 'encerrado'"
+                    [class.text-foreground/40]="proc.status === 'encerrado'"
+                  >
+                    {{ statusLabels[proc.status] }}
+                  </span>
+                </td>
+                <td class="py-3 text-right">
+                  <a
+                    [routerLink]="['/dashboard/processes', proc.id]"
+                    class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-1"
+                  >
+                    Ver
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination
+        [total]="total()"
+        [page]="page()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </section>
+
+</div>

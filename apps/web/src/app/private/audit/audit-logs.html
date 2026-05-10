@@ -1,0 +1,109 @@
+<div class="p-4 sm:p-6 lg:p-8">
+
+  <header class="flex items-center gap-4 mb-8 flex-wrap">
+    <div class="flex flex-col gap-1">
+      <span class="al-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-foreground/40">Administração</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold uppercase">Auditoria</h1>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <section aria-labelledby="sec-filtros" class="mb-6">
+    <h2 id="sec-filtros" class="al-section-title"><span class="text-mulim-ouro">01</span> Filtros</h2>
+    <form [formGroup]="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-process" class="al-label">ID do Processo (UUID)</label>
+        <input id="filter-process" formControlName="processId" placeholder="UUID" autocomplete="off" class="al-input">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-user" class="al-label">ID do Usuário (UUID)</label>
+        <input id="filter-user" formControlName="userId" placeholder="UUID" autocomplete="off" class="al-input">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-action" class="al-label">Tipo de Ação</label>
+        <select id="filter-action" formControlName="actionType" class="al-select">
+          <option value="">Todos</option>
+          @for (action of actionTypeValues; track action) {
+            <option [value]="action">{{ action }}</option>
+          }
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-from" class="al-label">A partir de</label>
+        <input id="filter-from" type="datetime-local" formControlName="createdFrom" class="al-input">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-to" class="al-label">Até</label>
+        <input id="filter-to" type="datetime-local" formControlName="createdTo" class="al-input">
+      </div>
+    </form>
+  </section>
+
+  <!-- Lista -->
+  <section aria-labelledby="sec-lista">
+    <h2 id="sec-lista" class="al-section-title">
+      <span class="text-mulim-ouro">02</span> Logs
+      @if (!loading()) {
+        <span class="font-mono text-xs text-foreground/40 font-normal normal-case ml-2">({{ total() }})</span>
+      }
+    </h2>
+
+    @if (loading()) {
+      <div class="py-16 flex items-center justify-center">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="py-16 flex items-center justify-center border border-dashed border-foreground/15 rounded">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhum log encontrado</span>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" aria-label="Logs de auditoria">
+          <thead>
+            <tr class="border-b border-foreground/10">
+              <th scope="col" class="al-th">Data / Hora</th>
+              <th scope="col" class="al-th">Ação</th>
+              <th scope="col" class="al-th">Descrição</th>
+              <th scope="col" class="al-th">Processo</th>
+              <th scope="col" class="al-th">Usuário</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of logs(); track log.id) {
+              <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02] transition-colors">
+                <td class="py-3 pr-4 font-mono text-xs whitespace-nowrap">{{ formatDateTime(log.createdAt) }}</td>
+                <td class="py-3 pr-4">
+                  <span class="inline-block font-mono text-[0.58rem] tracking-widest uppercase px-1.5 py-0.5 bg-foreground/8 text-foreground/60 rounded-sm whitespace-nowrap">
+                    {{ log.actionType }}
+                  </span>
+                </td>
+                <td class="py-3 pr-4 font-sans text-xs text-foreground/60 max-w-xs truncate">{{ log.description ?? '—' }}</td>
+                <td class="py-3 pr-4">
+                  @if (log.processId) {
+                    <a
+                      [routerLink]="['/dashboard/processes', log.processId]"
+                      class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-1"
+                    >
+                      Ver
+                    </a>
+                  } @else {
+                    <span class="text-foreground/30">—</span>
+                  }
+                </td>
+                <td class="py-3 font-mono text-xs text-foreground/50">{{ log.userId ? log.userId.slice(0, 8) + '…' : '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination
+        [total]="total()"
+        [page]="page()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </section>
+
+</div>

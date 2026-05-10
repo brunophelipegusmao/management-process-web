@@ -1,0 +1,604 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
+
+  @if (loading()) {
+    <div class="py-20 flex items-center justify-center">
+      <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+    </div>
+  } @else if (loadError()) {
+    <div class="py-20 flex flex-col items-center justify-center gap-4">
+      <span class="font-mono text-xs text-destructive">Erro ao carregar processo.</span>
+      <a routerLink="/dashboard/processes" class="pd-back-link">← Voltar</a>
+    </div>
+  } @else if (process(); as p) {
+
+    <!-- Cabeçalho -->
+    <header class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+      <div class="flex flex-col gap-2">
+        <a routerLink="/dashboard/processes" class="pd-back-link">← Processos</a>
+        <div class="flex items-center gap-3 flex-wrap">
+          <h1 class="font-mono text-xl font-bold">{{ p.cnjNumber }}</h1>
+          <span
+            class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+            [class.bg-yellow-500/15]="p.status === 'citado'"
+            [class.text-yellow-600]="p.status === 'citado'"
+            [class.bg-blue-500/15]="p.status === 'em_andamento'"
+            [class.text-blue-600]="p.status === 'em_andamento'"
+            [class.bg-foreground/8]="p.status === 'encerrado'"
+            [class.text-foreground/40]="p.status === 'encerrado'"
+          >
+            {{ statusLabels[p.status] }}
+          </span>
+        </div>
+        <p class="font-sans text-sm text-foreground/50">{{ p.comarca }} / {{ p.vara }} · {{ courtTypeLabels[p.courtType] }}</p>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav aria-label="Seções do processo" class="flex gap-1 border-b border-foreground/10 mb-6 overflow-x-auto">
+      @for (tab of tabs; track tab.id) {
+        <button
+          (click)="setTab(tab.id)"
+          [attr.aria-selected]="activeTab() === tab.id"
+          role="tab"
+          class="pd-tab"
+          [class.pd-tab--active]="activeTab() === tab.id"
+        >
+          {{ tab.label }}
+          @if (tab.id === 'audiencias') { <span class="pd-tab-count">{{ hearingCount() }}</span> }
+          @if (tab.id === 'testemunhas') { <span class="pd-tab-count">{{ witnessCount() }}</span> }
+          @if (tab.id === 'prazos') { <span class="pd-tab-count">{{ deadlineCount() }}</span> }
+        </button>
+      }
+    </nav>
+
+    <!-- Tab: Dados Gerais -->
+    @if (activeTab() === 'dados') {
+      @if (!editMode()) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+          <div class="pd-field">
+            <span class="pd-field-label">CNJ</span>
+            <span class="pd-field-value font-mono">{{ p.cnjNumber }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Comarca</span>
+            <span class="pd-field-value">{{ p.comarca }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Vara</span>
+            <span class="pd-field-value">{{ p.vara }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Tipo de Vara</span>
+            <span class="pd-field-value">{{ courtTypeLabels[p.courtType] }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Autor</span>
+            <span class="pd-field-value">{{ p.authorName }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Réu</span>
+            <span class="pd-field-value">{{ p.defendantName }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Lado do Cliente</span>
+            <span class="pd-field-value">{{ clientSideLabels[p.clientSide] }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Status</span>
+            <span class="pd-field-value">{{ statusLabels[p.status] }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Data de Citação</span>
+            <span class="pd-field-value">{{ formatDate(p.citationDate) }}</span>
+          </div>
+          <div class="pd-field">
+            <span class="pd-field-label">Testemunhas</span>
+            <span class="pd-field-value">{{ p.mentionsWitness ? 'Sim' : 'Não' }}</span>
+          </div>
+        </div>
+        <div class="mt-6 pt-4 border-t border-foreground/8">
+          <button (click)="enableEdit()" class="pd-btn-secondary">Editar Processo</button>
+        </div>
+      } @else {
+        <!-- Edit form -->
+        <form [formGroup]="editForm" (ngSubmit)="submitEdit()" novalidate>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5">
+            <div class="flex flex-col gap-1.5">
+              <label for="edit-cnj" class="pd-label">Número CNJ <span class="text-destructive">*</span></label>
+              <input id="edit-cnj" formControlName="cnjNumber" class="pd-input" [class.pd-input--error]="hasError(editForm, 'cnjNumber')" autocomplete="off">
+              @if (hasError(editForm, 'cnjNumber')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="edit-comarca" class="pd-label">Comarca <span class="text-destructive">*</span></label>
+              <input id="edit-comarca" formControlName="comarca" class="pd-input" [class.pd-input--error]="hasError(editForm, 'comarca')">
+              @if (hasError(editForm, 'comarca')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="edit-vara" class="pd-label">Vara <span class="text-destructive">*</span></label>
+              <input id="edit-vara" formControlName="vara" class="pd-input" [class.pd-input--error]="hasError(editForm, 'vara')">
+              @if (hasError(editForm, 'vara')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="edit-author" class="pd-label">Autor <span class="text-destructive">*</span></label>
+              <input id="edit-author" formControlName="authorName" class="pd-input" [class.pd-input--error]="hasError(editForm, 'authorName')">
+              @if (hasError(editForm, 'authorName')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="edit-defendant" class="pd-label">Réu <span class="text-destructive">*</span></label>
+              <input id="edit-defendant" formControlName="defendantName" class="pd-input" [class.pd-input--error]="hasError(editForm, 'defendantName')">
+              @if (hasError(editForm, 'defendantName')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="edit-citation" class="pd-label">Data de Citação</label>
+              <input id="edit-citation" type="date" formControlName="citationDate" class="pd-input">
+            </div>
+            <div class="flex flex-col gap-2">
+              <span class="pd-label">Tipo de Vara <span class="text-destructive">*</span></span>
+              <div class="flex gap-4">
+                @for (opt of [{ v: 'vara', l: 'Vara Comum' }, { v: 'jec', l: 'JEC' }]; track opt.v) {
+                  <label class="flex items-center gap-2 cursor-pointer font-sans text-sm">
+                    <input type="radio" formControlName="courtType" [value]="opt.v" class="sr-only">
+                    <span
+                      class="w-4 h-4 rounded-full border-[1.5px] flex items-center justify-center transition-colors"
+                      [class.border-mulim-ouro]="editForm.get('courtType')?.value === opt.v"
+                      [class.border-foreground/30]="editForm.get('courtType')?.value !== opt.v"
+                    >
+                      @if (editForm.get('courtType')?.value === opt.v) {
+                        <span class="w-2 h-2 rounded-full bg-mulim-ouro"></span>
+                      }
+                    </span>
+                    {{ opt.l }}
+                  </label>
+                }
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <span class="pd-label">Lado do Cliente</span>
+              <div class="flex gap-4">
+                @for (opt of [{ v: 'reu', l: 'Réu' }, { v: 'autor', l: 'Autor' }]; track opt.v) {
+                  <label class="flex items-center gap-2 cursor-pointer font-sans text-sm">
+                    <input type="radio" formControlName="clientSide" [value]="opt.v" class="sr-only">
+                    <span
+                      class="w-4 h-4 rounded-full border-[1.5px] flex items-center justify-center transition-colors"
+                      [class.border-mulim-ouro]="editForm.get('clientSide')?.value === opt.v"
+                      [class.border-foreground/30]="editForm.get('clientSide')?.value !== opt.v"
+                    >
+                      @if (editForm.get('clientSide')?.value === opt.v) {
+                        <span class="w-2 h-2 rounded-full bg-mulim-ouro"></span>
+                      }
+                    </span>
+                    {{ opt.l }}
+                  </label>
+                }
+              </div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="edit-status" class="pd-label">Status</label>
+              <select id="edit-status" formControlName="status" class="pd-select">
+                <option value="citado">Citado</option>
+                <option value="em_andamento">Em Andamento</option>
+                <option value="encerrado">Encerrado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 mt-6 pt-4 border-t border-foreground/8 flex-wrap">
+            @if (submitError()) {
+              <p class="text-sm text-destructive font-medium w-full" role="alert">{{ submitError() }}</p>
+            }
+            <button type="submit" class="pd-btn-primary" [disabled]="submitting()">
+              @if (submitting()) { Salvando… } @else { Salvar Alterações }
+            </button>
+            <button type="button" (click)="cancelEdit()" class="pd-btn-secondary" [disabled]="submitting()">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      }
+    }
+
+    <!-- Tab: Audiências -->
+    @if (activeTab() === 'audiencias') {
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="pd-section-title">Audiências</h2>
+        <a
+          routerLink="/dashboard/hearings/add"
+          class="pd-btn-secondary text-xs"
+        >
+          + Nova Audiência
+        </a>
+      </div>
+
+      @if (hearings().length === 0) {
+        <p class="pd-empty">Nenhuma audiência cadastrada.</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm" aria-label="Audiências do processo">
+            <thead>
+              <tr class="border-b border-foreground/10">
+                <th scope="col" class="pd-th">Data / Hora</th>
+                <th scope="col" class="pd-th">Tipo</th>
+                <th scope="col" class="pd-th">Status</th>
+                <th scope="col" class="pd-th text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (h of hearings(); track h.id) {
+                <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02]">
+                  <td class="py-3 pr-4 font-mono text-xs">{{ formatDateTime(h.dateTime) }}</td>
+                  <td class="py-3 pr-4 font-sans text-xs">{{ hearingTypeLabels[h.type] }}</td>
+                  <td class="py-3 pr-4">
+                    <span
+                      class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                      [class.bg-blue-500/15]="h.status === 'agendada'"
+                      [class.text-blue-600]="h.status === 'agendada'"
+                      [class.bg-green-500/15]="h.status === 'realizada'"
+                      [class.text-green-600]="h.status === 'realizada'"
+                      [class.bg-foreground/8]="h.status === 'cancelada' || h.status === 'redesignada'"
+                      [class.text-foreground/40]="h.status === 'cancelada' || h.status === 'redesignada'"
+                    >
+                      {{ hearingStatusLabels[h.status] }}
+                    </span>
+                  </td>
+                  <td class="py-3 text-right">
+                    @if (h.status === 'agendada') {
+                      <button
+                        (click)="openModal('reagendar', h.id)"
+                        class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+                      >
+                        Reagendar
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
+    <!-- Tab: Testemunhas -->
+    @if (activeTab() === 'testemunhas') {
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="pd-section-title">Testemunhas</h2>
+        <a routerLink="/dashboard/witnesses/assign" class="pd-btn-secondary text-xs">+ Designar</a>
+      </div>
+
+      @if (witnesses().length === 0) {
+        <p class="pd-empty">Nenhuma testemunha designada.</p>
+      } @else {
+        <div class="flex flex-col gap-3">
+          @for (w of witnesses(); track w.id) {
+            <div class="pd-witness-card" [class.opacity-60]="w.replaced">
+              <div class="flex items-start justify-between gap-4 flex-wrap">
+                <div class="flex flex-col gap-1">
+                  <span class="font-sans font-semibold text-sm" [class.line-through]="w.replaced">
+                    {{ w.fullName }}
+                  </span>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-mono text-[0.6rem] tracking-widest uppercase text-foreground/40">{{ w.side === 'reu' ? 'Réu' : 'Autor' }}</span>
+                    <span
+                      class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                      [class.bg-red-500/15]="w.status === 'pendente_dados' || w.status === 'intimacao_negativa'"
+                      [class.text-red-600]="w.status === 'pendente_dados' || w.status === 'intimacao_negativa'"
+                      [class.bg-yellow-500/15]="w.status === 'intimada' || w.status === 'aguardando_cliente'"
+                      [class.text-yellow-600]="w.status === 'intimada' || w.status === 'aguardando_cliente'"
+                      [class.bg-green-500/15]="w.status === 'intimacao_positiva'"
+                      [class.text-green-600]="w.status === 'intimacao_positiva'"
+                      [class.bg-blue-500/15]="w.status === 'dados_completos' || w.status === 'rol_juntado'"
+                      [class.text-blue-600]="w.status === 'dados_completos' || w.status === 'rol_juntado'"
+                      [class.bg-foreground/8]="w.status === 'desistida' || w.status === 'substituida'"
+                      [class.text-foreground/40]="w.status === 'desistida' || w.status === 'substituida'"
+                    >
+                      {{ witnessStatusLabels[w.status] }}
+                    </span>
+                  </div>
+                  @if (w.phone) { <span class="font-mono text-xs text-foreground/50">{{ w.phone }}</span> }
+                </div>
+                @if (!w.replaced) {
+                  <div class="flex gap-2 flex-wrap">
+                    <button
+                      (click)="openModal('intimar', w.id)"
+                      class="pd-action-btn"
+                    >
+                      Intimar
+                    </button>
+                    <button
+                      (click)="openModal('resultado', w.id)"
+                      class="pd-action-btn"
+                    >
+                      Resultado
+                    </button>
+                    <button
+                      (click)="openModal('substituir', w.id)"
+                      class="pd-action-btn pd-action-btn--danger"
+                    >
+                      Substituir
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- Tab: Prazos -->
+    @if (activeTab() === 'prazos') {
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="pd-section-title">Prazos</h2>
+        <button (click)="openModal('criar-prazo')" class="pd-btn-secondary text-xs">+ Novo Prazo</button>
+      </div>
+
+      @if (deadlines().length === 0) {
+        <p class="pd-empty">Nenhum prazo cadastrado.</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm" aria-label="Prazos do processo">
+            <thead>
+              <tr class="border-b border-foreground/10">
+                <th scope="col" class="pd-th">Tipo</th>
+                <th scope="col" class="pd-th">Vencimento</th>
+                <th scope="col" class="pd-th">Status</th>
+                <th scope="col" class="pd-th text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of deadlines(); track d.id) {
+                <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02]">
+                  <td class="py-3 pr-4 font-sans text-xs">{{ deadlineTypeLabels[d.type] }}</td>
+                  <td class="py-3 pr-4 font-mono text-xs">{{ formatDate(d.dueDate) }}</td>
+                  <td class="py-3 pr-4">
+                    <span
+                      class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                      [class.bg-yellow-500/15]="d.status === 'aberto'"
+                      [class.text-yellow-600]="d.status === 'aberto'"
+                      [class.bg-green-500/15]="d.status === 'cumprido'"
+                      [class.text-green-600]="d.status === 'cumprido'"
+                      [class.bg-red-500/15]="d.status === 'vencido'"
+                      [class.text-red-600]="d.status === 'vencido'"
+                      [class.bg-foreground/8]="d.status === 'cancelado'"
+                      [class.text-foreground/40]="d.status === 'cancelado'"
+                    >
+                      {{ deadlineStatusLabels[d.status] }}
+                    </span>
+                  </td>
+                  <td class="py-3 text-right">
+                    @if (d.status === 'aberto') {
+                      <button
+                        (click)="confirmCancelDeadlineId.set(d.id)"
+                        class="font-mono text-[0.65rem] tracking-wider uppercase text-destructive hover:underline focus-visible:outline-2 focus-visible:outline-destructive"
+                      >
+                        Cancelar
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
+  }
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Modal: Intimar Testemunha -->
+@if (activeModal() === 'intimar') {
+  <div class="pd-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-intimar-title">
+    <div class="pd-modal-panel">
+      <h2 id="modal-intimar-title" class="pd-modal-title">Registrar Intimação</h2>
+      <form [formGroup]="intimarForm" (ngSubmit)="submitIntimation()" novalidate class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label for="intimar-method" class="pd-label">Método <span class="text-destructive">*</span></label>
+          <select id="intimar-method" formControlName="method" class="pd-select" [class.pd-input--error]="hasError(intimarForm, 'method')">
+            <option value="">Selecione</option>
+            <option value="carta_simples">Carta Simples</option>
+            <option value="carta_precatoria">Carta Precatória</option>
+            <option value="sala_passiva">Sala Passiva</option>
+            <option value="mandado">Mandado</option>
+            <option value="whatsapp">WhatsApp</option>
+          </select>
+          @if (hasError(intimarForm, 'method')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+        </div>
+        @if (needsHearingDateForIntimation()) {
+          <div class="flex flex-col gap-1.5">
+            <label for="intimar-hearing-date" class="pd-label">Data da Audiência <span class="text-destructive">*</span></label>
+            <input id="intimar-hearing-date" type="datetime-local" formControlName="hearingDate" class="pd-input">
+          </div>
+        }
+        <div class="flex flex-col gap-1.5">
+          <label for="intimar-sent-at" class="pd-label">Data de Envio</label>
+          <input id="intimar-sent-at" type="datetime-local" formControlName="sentAt" class="pd-input">
+        </div>
+        <div class="pd-modal-actions">
+          @if (modalError()) { <p class="text-sm text-destructive" role="alert">{{ modalError() }}</p> }
+          <button type="button" (click)="closeModal()" class="pd-btn-secondary" [disabled]="modalSubmitting()">Cancelar</button>
+          <button type="submit" class="pd-btn-primary" [disabled]="modalSubmitting()">
+            @if (modalSubmitting()) { Registrando… } @else { Registrar }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Modal: Resultado da Intimação -->
+@if (activeModal() === 'resultado') {
+  <div class="pd-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-resultado-title">
+    <div class="pd-modal-panel">
+      <h2 id="modal-resultado-title" class="pd-modal-title">Registrar Resultado</h2>
+      <form [formGroup]="resultadoForm" (ngSubmit)="submitOutcome()" novalidate class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label for="resultado-outcome" class="pd-label">Resultado <span class="text-destructive">*</span></label>
+          <select id="resultado-outcome" formControlName="outcome" class="pd-select" [class.pd-input--error]="hasError(resultadoForm, 'outcome')">
+            <option value="">Selecione</option>
+            <option value="positive">Positiva</option>
+            <option value="negative">Negativa</option>
+          </select>
+          @if (hasError(resultadoForm, 'outcome')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+        </div>
+        @if (needsHearingDateForOutcome()) {
+          <div class="flex flex-col gap-1.5">
+            <label for="resultado-hearing-date" class="pd-label">Data da Audiência <span class="text-destructive">*</span></label>
+            <input id="resultado-hearing-date" type="datetime-local" formControlName="hearingDate" class="pd-input">
+          </div>
+        }
+        <div class="flex flex-col gap-1.5">
+          <label for="resultado-occurred" class="pd-label">Data da Ocorrência</label>
+          <input id="resultado-occurred" type="datetime-local" formControlName="occurredAt" class="pd-input">
+        </div>
+        <div class="pd-modal-actions">
+          @if (modalError()) { <p class="text-sm text-destructive" role="alert">{{ modalError() }}</p> }
+          <button type="button" (click)="closeModal()" class="pd-btn-secondary" [disabled]="modalSubmitting()">Cancelar</button>
+          <button type="submit" class="pd-btn-primary" [disabled]="modalSubmitting()">
+            @if (modalSubmitting()) { Registrando… } @else { Registrar }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Modal: Substituir Testemunha -->
+@if (activeModal() === 'substituir') {
+  <div class="pd-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-substituir-title">
+    <div class="pd-modal-panel pd-modal-panel--lg">
+      <h2 id="modal-substituir-title" class="pd-modal-title">Substituir Testemunha</h2>
+      <form [formGroup]="substituirForm" (ngSubmit)="submitSubstituir()" novalidate class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5 sm:col-span-2">
+            <label for="sub-name" class="pd-label">Nome Completo <span class="text-destructive">*</span></label>
+            <input id="sub-name" formControlName="fullName" class="pd-input" [class.pd-input--error]="hasError(substituirForm, 'fullName')">
+            @if (hasError(substituirForm, 'fullName')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="sub-phone" class="pd-label">Telefone</label>
+            <input id="sub-phone" formControlName="phone" class="pd-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="sub-profession" class="pd-label">Profissão</label>
+            <input id="sub-profession" formControlName="profession" class="pd-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="sub-marital" class="pd-label">Estado Civil</label>
+            <input id="sub-marital" formControlName="maritalStatus" class="pd-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="sub-comarca" class="pd-label">Comarca de Residência</label>
+            <input id="sub-comarca" formControlName="residenceComarca" class="pd-input">
+          </div>
+          <div class="flex flex-col gap-1.5 sm:col-span-2">
+            <label for="sub-address" class="pd-label">Endereço</label>
+            <input id="sub-address" formControlName="address" class="pd-input">
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="pd-label">Lado</span>
+            <div class="flex gap-4">
+              @for (opt of [{ v: 'reu', l: 'Réu' }, { v: 'autor', l: 'Autor' }]; track opt.v) {
+                <label class="flex items-center gap-2 cursor-pointer font-sans text-sm">
+                  <input type="radio" formControlName="side" [value]="opt.v" class="sr-only">
+                  <span
+                    class="w-4 h-4 rounded-full border-[1.5px] flex items-center justify-center transition-colors"
+                    [class.border-mulim-ouro]="substituirForm.get('side')?.value === opt.v"
+                    [class.border-foreground/30]="substituirForm.get('side')?.value !== opt.v"
+                  >
+                    @if (substituirForm.get('side')?.value === opt.v) {
+                      <span class="w-2 h-2 rounded-full bg-mulim-ouro"></span>
+                    }
+                  </span>
+                  {{ opt.l }}
+                </label>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="pd-modal-actions">
+          @if (modalError()) { <p class="text-sm text-destructive" role="alert">{{ modalError() }}</p> }
+          <button type="button" (click)="closeModal()" class="pd-btn-secondary" [disabled]="modalSubmitting()">Cancelar</button>
+          <button type="submit" class="pd-btn-primary" [disabled]="modalSubmitting()">
+            @if (modalSubmitting()) { Substituindo… } @else { Substituir }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Modal: Reagendar Audiência -->
+@if (activeModal() === 'reagendar') {
+  <div class="pd-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-reagendar-title">
+    <div class="pd-modal-panel">
+      <h2 id="modal-reagendar-title" class="pd-modal-title">Reagendar Audiência</h2>
+      <form [formGroup]="reagendarForm" (ngSubmit)="submitReagendar()" novalidate class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label for="reagendar-dt" class="pd-label">Nova Data e Hora <span class="text-destructive">*</span></label>
+          <input id="reagendar-dt" type="datetime-local" formControlName="dateTime" class="pd-input" [class.pd-input--error]="hasError(reagendarForm, 'dateTime')">
+          @if (hasError(reagendarForm, 'dateTime')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+        </div>
+        <div class="pd-modal-actions">
+          @if (modalError()) { <p class="text-sm text-destructive" role="alert">{{ modalError() }}</p> }
+          <button type="button" (click)="closeModal()" class="pd-btn-secondary" [disabled]="modalSubmitting()">Cancelar</button>
+          <button type="submit" class="pd-btn-primary" [disabled]="modalSubmitting()">
+            @if (modalSubmitting()) { Reagendando… } @else { Reagendar }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Modal: Criar Prazo -->
+@if (activeModal() === 'criar-prazo') {
+  <div class="pd-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-prazo-title">
+    <div class="pd-modal-panel">
+      <h2 id="modal-prazo-title" class="pd-modal-title">Novo Prazo</h2>
+      <form [formGroup]="criarPrazoForm" (ngSubmit)="submitCriarPrazo()" novalidate class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1.5">
+          <label for="prazo-type" class="pd-label">Tipo <span class="text-destructive">*</span></label>
+          <select id="prazo-type" formControlName="type" class="pd-select" [class.pd-input--error]="hasError(criarPrazoForm, 'type')">
+            <option value="">Selecione</option>
+            <option value="dados_testemunha">Dados da Testemunha</option>
+            <option value="custas_precatoria">Custas Precatória</option>
+            <option value="juntada_intimacao">Juntada de Intimação</option>
+            <option value="desistencia_testemunha">Desistência de Testemunha</option>
+            <option value="providencia_cliente">Providência do Cliente</option>
+          </select>
+          @if (hasError(criarPrazoForm, 'type')) { <span class="pd-error" role="alert">Campo obrigatório</span> }
+        </div>
+        @if (needsHearingDateForDeadline()) {
+          <div class="flex flex-col gap-1.5">
+            <label for="prazo-hearing-date" class="pd-label">Data da Audiência <span class="text-destructive">*</span></label>
+            <input id="prazo-hearing-date" type="date" formControlName="hearingDate" class="pd-input">
+          </div>
+        }
+        <div class="flex flex-col gap-1.5">
+          <label for="prazo-ref-date" class="pd-label">Data de Referência</label>
+          <input id="prazo-ref-date" type="date" formControlName="referenceDate" class="pd-input">
+        </div>
+        <div class="pd-modal-actions">
+          @if (modalError()) { <p class="text-sm text-destructive" role="alert">{{ modalError() }}</p> }
+          <button type="button" (click)="closeModal()" class="pd-btn-secondary" [disabled]="modalSubmitting()">Cancelar</button>
+          <button type="submit" class="pd-btn-primary" [disabled]="modalSubmitting()">
+            @if (modalSubmitting()) { Criando… } @else { Criar Prazo }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Confirm: Cancelar Prazo -->
+<app-confirm-dialog
+  [open]="confirmCancelDeadlineId() !== null"
+  title="Cancelar Prazo"
+  message="O prazo será marcado como cancelado. Esta ação não pode ser desfeita."
+  confirmLabel="Cancelar Prazo"
+  (confirmed)="cancelDeadline()"
+  (cancelled)="confirmCancelDeadlineId.set(null)"
+/>

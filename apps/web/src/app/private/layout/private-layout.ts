@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from '../../core/services/auth.service';
 import { AuthStore } from '../../core/stores/auth.store';
 import { ThemeStore } from '../../core/stores/theme.store';
+import { Toast } from '../../components/shared/toast/toast';
 
 interface NavItem {
   label: string;
@@ -12,7 +13,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-private-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Toast],
   templateUrl: './private-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -27,9 +28,11 @@ export class PrivateLayout {
 
   readonly navItems: NavItem[] = [
     { label: 'Dashboard', path: '/dashboard', icon: '⊞' },
-    { label: 'Processos', path: '/dashboard/processes/add', icon: '📁' },
-    { label: 'Audiências', path: '/dashboard/hearings/add', icon: '🎙' },
-    { label: 'Testemunhas', path: '/dashboard/witnesses/assign', icon: '👤' },
+    { label: 'Processos', path: '/dashboard/processes', icon: '📁' },
+    { label: 'Clientes', path: '/dashboard/clients', icon: '👥' },
+    { label: 'Testemunhas', path: '/dashboard/witnesses', icon: '👤' },
+    { label: 'Prazos', path: '/dashboard/deadlines', icon: '⏰' },
+    { label: 'Audiências', path: '/dashboard/hearings', icon: '🎙' },
     { label: 'Agenda', path: '/dashboard/hearing-schedule', icon: '📅' },
     { label: 'Relatórios', path: '/dashboard/reports', icon: '📊' },
     { label: 'Kanban', path: '/dashboard/kanban', icon: '🗂' },

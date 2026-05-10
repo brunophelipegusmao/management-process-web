@@ -1,0 +1,251 @@
+<div class="p-4 sm:p-6 lg:p-8">
+
+  <header class="flex items-center justify-between gap-4 mb-8 flex-wrap">
+    <div class="flex flex-col gap-1">
+      <span class="us-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-foreground/40">Administração</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold uppercase">Usuários</h1>
+    </div>
+    <button
+      (click)="openCreate()"
+      class="font-mono text-[0.7rem] font-bold tracking-[0.22em] uppercase text-mulim-ouro border border-mulim-ouro/70 px-6 py-2.5 hover:bg-mulim-ouro hover:text-mulim-azul transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2"
+    >
+      + Novo Usuário
+    </button>
+  </header>
+
+  <!-- Filtros -->
+  <section aria-labelledby="sec-filtros" class="mb-6">
+    <h2 id="sec-filtros" class="us-section-title"><span class="text-mulim-ouro">01</span> Filtros</h2>
+    <form [formGroup]="filterForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-email" class="us-label">E-mail</label>
+        <input id="filter-email" formControlName="email" placeholder="usuario@dominio.com" autocomplete="off" class="us-input">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-profile" class="us-label">Perfil</label>
+        <select id="filter-profile" formControlName="profile" class="us-select">
+          <option value="">Todos</option>
+          <option value="superadmin">Superadmin</option>
+          <option value="advogado">Advogado</option>
+          <option value="paralegal">Paralegal</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-active" class="us-label">Status</label>
+        <select id="filter-active" formControlName="active" class="us-select">
+          <option value="">Todos</option>
+          <option value="true">Ativos</option>
+          <option value="false">Inativos</option>
+        </select>
+      </div>
+    </form>
+  </section>
+
+  <!-- Lista -->
+  <section aria-labelledby="sec-lista">
+    <h2 id="sec-lista" class="us-section-title">
+      <span class="text-mulim-ouro">02</span> Lista
+      @if (!loading()) {
+        <span class="font-mono text-xs text-foreground/40 font-normal normal-case ml-2">({{ total() }})</span>
+      }
+    </h2>
+
+    @if (loading()) {
+      <div class="py-16 flex items-center justify-center">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="py-16 flex items-center justify-center border border-dashed border-foreground/15 rounded">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhum usuário encontrado</span>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" aria-label="Lista de usuários">
+          <thead>
+            <tr class="border-b border-foreground/10">
+              <th scope="col" class="us-th">Nome</th>
+              <th scope="col" class="us-th">E-mail</th>
+              <th scope="col" class="us-th">Perfil</th>
+              <th scope="col" class="us-th">Status</th>
+              <th scope="col" class="us-th text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of users(); track u.id) {
+              <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02] transition-colors">
+                <td class="py-3 pr-4 font-sans text-sm">{{ u.name }}</td>
+                <td class="py-3 pr-4 font-mono text-xs text-foreground/60">{{ u.email }}</td>
+                <td class="py-3 pr-4">
+                  <span
+                    class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                    [class.bg-mulim-ouro/15]="u.profile === 'superadmin'"
+                    [class.text-mulim-ouro]="u.profile === 'superadmin'"
+                    [class.bg-blue-500/15]="u.profile === 'advogado'"
+                    [class.text-blue-600]="u.profile === 'advogado'"
+                    [class.bg-foreground/8]="u.profile === 'paralegal'"
+                    [class.text-foreground/50]="u.profile === 'paralegal'"
+                  >
+                    {{ profileLabels[u.profile] }}
+                  </span>
+                </td>
+                <td class="py-3 pr-4">
+                  <button
+                    (click)="toggleActive(u)"
+                    [attr.aria-label]="u.active ? 'Desativar usuário' : 'Ativar usuário'"
+                    [attr.aria-pressed]="u.active"
+                    class="relative w-9 h-5 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mulim-ouro"
+                    [class.bg-green-500]="u.active"
+                    [class.bg-foreground/20]="!u.active"
+                  >
+                    <span
+                      class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200"
+                      [class.translate-x-4]="u.active"
+                    ></span>
+                  </button>
+                </td>
+                <td class="py-3 text-right">
+                  <div class="flex items-center justify-end gap-3">
+                    <button
+                      (click)="openEdit(u)"
+                      class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+                    >
+                      Editar
+                    </button>
+                    @if (u.profile !== 'superadmin') {
+                      <button
+                        (click)="confirmDeleteId.set(u.id)"
+                        class="font-mono text-[0.65rem] tracking-wider uppercase text-destructive hover:underline focus-visible:outline-2 focus-visible:outline-destructive"
+                      >
+                        Excluir
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination
+        [total]="total()"
+        [page]="page()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </section>
+
+  <!-- Formulário (criar / editar) -->
+  @if (showForm()) {
+    <section
+      aria-labelledby="sec-form"
+      class="mt-8 pt-6 border-t border-foreground/10"
+    >
+      <h2 id="sec-form" class="us-section-title">
+        <span class="text-mulim-ouro">03</span>
+        @if (showCreateForm()) { Novo Usuário } @else { Editar Usuário }
+      </h2>
+
+      @if (showCreateForm()) {
+        <form [formGroup]="createForm" (ngSubmit)="submitCreate()" novalidate class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 max-w-2xl">
+          <div class="flex flex-col gap-1.5">
+            <label for="create-name" class="us-label">Nome <span class="text-destructive">*</span></label>
+            <input id="create-name" formControlName="name" class="us-input" [class.us-input--error]="hasError(createForm, 'name')">
+            @if (hasError(createForm, 'name')) { <span class="us-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="create-email" class="us-label">E-mail <span class="text-destructive">*</span></label>
+            <input id="create-email" type="email" formControlName="email" class="us-input" [class.us-input--error]="hasError(createForm, 'email')">
+            @if (hasError(createForm, 'email')) { <span class="us-error" role="alert">E-mail inválido</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="create-profile" class="us-label">Perfil <span class="text-destructive">*</span></label>
+            <select id="create-profile" formControlName="profile" class="us-select">
+              <option value="advogado">Advogado</option>
+              <option value="paralegal">Paralegal</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-3 pt-4">
+            <label class="flex items-center gap-2 cursor-pointer font-sans text-sm">
+              <input type="checkbox" formControlName="active" class="sr-only">
+              <span
+                class="relative w-9 h-5 rounded-full transition-colors duration-200"
+                [class.bg-green-500]="createForm.get('active')?.value"
+                [class.bg-foreground/20]="!createForm.get('active')?.value"
+              >
+                <span
+                  class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200"
+                  [class.translate-x-4]="createForm.get('active')?.value"
+                ></span>
+              </span>
+              Ativo
+            </label>
+          </div>
+          <div class="sm:col-span-2 flex items-center gap-4 pt-2 flex-wrap">
+            @if (submitError()) { <p class="text-sm text-destructive font-medium w-full" role="alert">{{ submitError() }}</p> }
+            <button type="submit" class="us-btn-primary" [disabled]="submitting()">
+              @if (submitting()) { Criando… } @else { Criar Usuário }
+            </button>
+            <button type="button" (click)="closeForm()" class="us-btn-secondary" [disabled]="submitting()">Cancelar</button>
+          </div>
+        </form>
+      }
+
+      @if (editingUser()) {
+        <form [formGroup]="editForm" (ngSubmit)="submitEdit()" novalidate class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 max-w-2xl">
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-name" class="us-label">Nome <span class="text-destructive">*</span></label>
+            <input id="edit-name" formControlName="name" class="us-input" [class.us-input--error]="hasError(editForm, 'name')">
+            @if (hasError(editForm, 'name')) { <span class="us-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-email" class="us-label">E-mail <span class="text-destructive">*</span></label>
+            <input id="edit-email" type="email" formControlName="email" class="us-input" [class.us-input--error]="hasError(editForm, 'email')">
+            @if (hasError(editForm, 'email')) { <span class="us-error" role="alert">E-mail inválido</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-profile" class="us-label">Perfil <span class="text-destructive">*</span></label>
+            <select id="edit-profile" formControlName="profile" class="us-select">
+              <option value="advogado">Advogado</option>
+              <option value="paralegal">Paralegal</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-3 pt-4">
+            <label class="flex items-center gap-2 cursor-pointer font-sans text-sm">
+              <input type="checkbox" formControlName="active" class="sr-only">
+              <span
+                class="relative w-9 h-5 rounded-full transition-colors duration-200"
+                [class.bg-green-500]="editForm.get('active')?.value"
+                [class.bg-foreground/20]="!editForm.get('active')?.value"
+              >
+                <span
+                  class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200"
+                  [class.translate-x-4]="editForm.get('active')?.value"
+                ></span>
+              </span>
+              Ativo
+            </label>
+          </div>
+          <div class="sm:col-span-2 flex items-center gap-4 pt-2 flex-wrap">
+            @if (submitError()) { <p class="text-sm text-destructive font-medium w-full" role="alert">{{ submitError() }}</p> }
+            <button type="submit" class="us-btn-primary" [disabled]="submitting()">
+              @if (submitting()) { Salvando… } @else { Salvar Alterações }
+            </button>
+            <button type="button" (click)="closeForm()" class="us-btn-secondary" [disabled]="submitting()">Cancelar</button>
+          </div>
+        </form>
+      }
+    </section>
+  }
+
+</div>
+
+<app-confirm-dialog
+  [open]="confirmDeleteId() !== null"
+  title="Excluir usuário"
+  message="Esta ação não pode ser desfeita. O usuário perderá acesso ao sistema."
+  confirmLabel="Excluir"
+  (confirmed)="deleteUser()"
+  (cancelled)="confirmDeleteId.set(null)"
+/>

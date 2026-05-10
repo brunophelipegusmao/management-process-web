@@ -1,0 +1,139 @@
+<div class="p-4 sm:p-6 lg:p-8">
+
+  <header class="flex items-center justify-between gap-4 mb-8 flex-wrap">
+    <div class="flex flex-col gap-1">
+      <span class="dl-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-foreground/40">Gestão</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold uppercase">Prazos</h1>
+    </div>
+  </header>
+
+  <section aria-labelledby="sec-filtros" class="mb-6">
+    <h2 id="sec-filtros" class="dl-section-title"><span class="text-mulim-ouro">01</span> Filtros</h2>
+    <form [formGroup]="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-process" class="dl-label">ID do Processo (UUID)</label>
+        <input id="filter-process" formControlName="processId" placeholder="UUID" autocomplete="off" class="dl-input">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-status" class="dl-label">Status</label>
+        <select id="filter-status" formControlName="status" class="dl-select">
+          <option value="">Todos</option>
+          <option value="aberto">Aberto</option>
+          <option value="cumprido">Cumprido</option>
+          <option value="vencido">Vencido</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-type" class="dl-label">Tipo</label>
+        <select id="filter-type" formControlName="type" class="dl-select">
+          <option value="">Todos</option>
+          <option value="dados_testemunha">Dados da Testemunha</option>
+          <option value="custas_precatoria">Custas Precatória</option>
+          <option value="juntada_intimacao">Juntada de Intimação</option>
+          <option value="desistencia_testemunha">Desistência de Testemunha</option>
+          <option value="providencia_cliente">Providência do Cliente</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-from" class="dl-label">Vencimento a partir de</label>
+        <input id="filter-from" type="date" formControlName="dueDateFrom" class="dl-input">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-to" class="dl-label">Vencimento até</label>
+        <input id="filter-to" type="date" formControlName="dueDateTo" class="dl-input">
+      </div>
+    </form>
+  </section>
+
+  <section aria-labelledby="sec-lista">
+    <h2 id="sec-lista" class="dl-section-title">
+      <span class="text-mulim-ouro">02</span> Lista
+      @if (!loading()) {
+        <span class="font-mono text-xs text-foreground/40 font-normal normal-case ml-2">({{ total() }})</span>
+      }
+    </h2>
+
+    @if (loading()) {
+      <div class="py-16 flex items-center justify-center">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="py-16 flex items-center justify-center border border-dashed border-foreground/15 rounded">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhum prazo encontrado</span>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" aria-label="Lista de prazos">
+          <thead>
+            <tr class="border-b border-foreground/10">
+              <th scope="col" class="dl-th">Tipo</th>
+              <th scope="col" class="dl-th">Vencimento</th>
+              <th scope="col" class="dl-th">Status</th>
+              <th scope="col" class="dl-th">Processo</th>
+              <th scope="col" class="dl-th text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (d of deadlines(); track d.id) {
+              <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02] transition-colors">
+                <td class="py-3 pr-4 font-sans text-xs">{{ typeLabels[d.type] }}</td>
+                <td class="py-3 pr-4 font-mono text-xs">{{ formatDate(d.dueDate) }}</td>
+                <td class="py-3 pr-4">
+                  <span
+                    class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                    [class.bg-yellow-500/15]="d.status === 'aberto'"
+                    [class.text-yellow-600]="d.status === 'aberto'"
+                    [class.bg-green-500/15]="d.status === 'cumprido'"
+                    [class.text-green-600]="d.status === 'cumprido'"
+                    [class.bg-red-500/15]="d.status === 'vencido'"
+                    [class.text-red-600]="d.status === 'vencido'"
+                    [class.bg-foreground/8]="d.status === 'cancelado'"
+                    [class.text-foreground/40]="d.status === 'cancelado'"
+                  >
+                    {{ statusLabels[d.status] }}
+                  </span>
+                </td>
+                <td class="py-3 pr-4">
+                  <a
+                    [routerLink]="['/dashboard/processes', d.processId]"
+                    class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-1"
+                  >
+                    Ver
+                  </a>
+                </td>
+                <td class="py-3 text-right">
+                  @if (d.status === 'aberto') {
+                    <button
+                      (click)="confirmCancelId.set(d.id)"
+                      class="font-mono text-[0.65rem] tracking-wider uppercase text-destructive hover:underline focus-visible:outline-2 focus-visible:outline-destructive"
+                    >
+                      Cancelar
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination
+        [total]="total()"
+        [page]="page()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </section>
+
+</div>
+
+<app-confirm-dialog
+  [open]="confirmCancelId() !== null"
+  title="Cancelar Prazo"
+  message="O prazo será marcado como cancelado. Esta ação não pode ser desfeita."
+  confirmLabel="Cancelar Prazo"
+  (confirmed)="cancelDeadline()"
+  (cancelled)="confirmCancelId.set(null)"
+/>

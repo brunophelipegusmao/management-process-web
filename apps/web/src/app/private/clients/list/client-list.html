@@ -1,0 +1,113 @@
+<div class="p-4 sm:p-6 lg:p-8">
+
+  <header class="flex items-center justify-between gap-4 mb-8 flex-wrap">
+    <div class="flex flex-col gap-1">
+      <span class="cl-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-foreground/40">Gestão</span>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold uppercase">Clientes</h1>
+    </div>
+  </header>
+
+  <section aria-labelledby="sec-filtros" class="mb-6">
+    <h2 id="sec-filtros" class="cl-section-title"><span class="text-mulim-ouro">01</span> Filtros</h2>
+    <form [formGroup]="filterForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-name" class="cl-label">Nome</label>
+        <input id="filter-name" formControlName="name" placeholder="Nome do cliente" autocomplete="off" class="cl-input">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="filter-type" class="cl-label">Tipo</label>
+        <select id="filter-type" formControlName="type" class="cl-select">
+          <option value="">Todos</option>
+          <option value="pf">Pessoa Física</option>
+          <option value="pj">Pessoa Jurídica</option>
+        </select>
+      </div>
+    </form>
+  </section>
+
+  <section aria-labelledby="sec-lista">
+    <h2 id="sec-lista" class="cl-section-title">
+      <span class="text-mulim-ouro">02</span> Lista
+      @if (!loading()) {
+        <span class="font-mono text-xs text-foreground/40 font-normal normal-case ml-2">({{ total() }})</span>
+      }
+    </h2>
+
+    @if (loading()) {
+      <div class="py-16 flex items-center justify-center">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="py-16 flex items-center justify-center border border-dashed border-foreground/15 rounded">
+        <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhum cliente encontrado</span>
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" aria-label="Lista de clientes">
+          <thead>
+            <tr class="border-b border-foreground/10">
+              <th scope="col" class="cl-th">Nome</th>
+              <th scope="col" class="cl-th">E-mail</th>
+              <th scope="col" class="cl-th">Telefone</th>
+              <th scope="col" class="cl-th">Tipo</th>
+              <th scope="col" class="cl-th text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of clients(); track c.id) {
+              <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02] transition-colors">
+                <td class="py-3 pr-4 font-sans text-sm">{{ c.name }}</td>
+                <td class="py-3 pr-4 font-mono text-xs text-foreground/60">{{ c.email ?? '—' }}</td>
+                <td class="py-3 pr-4 font-mono text-xs text-foreground/60">{{ c.phone ?? '—' }}</td>
+                <td class="py-3 pr-4">
+                  <span
+                    class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                    [class.bg-blue-500/15]="c.type === 'pj'"
+                    [class.text-blue-600]="c.type === 'pj'"
+                    [class.bg-foreground/8]="c.type === 'pf'"
+                    [class.text-foreground/50]="c.type === 'pf'"
+                  >
+                    {{ typeLabels[c.type] }}
+                  </span>
+                </td>
+                <td class="py-3 text-right">
+                  <div class="flex items-center justify-end gap-3">
+                    <a
+                      [routerLink]="['/dashboard/clients', c.id]"
+                      class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-1"
+                    >
+                      Ver
+                    </a>
+                    <button
+                      (click)="confirmDeleteId.set(c.id)"
+                      class="font-mono text-[0.65rem] tracking-wider uppercase text-destructive hover:underline focus-visible:outline-2 focus-visible:outline-destructive"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination
+        [total]="total()"
+        [page]="page()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      />
+    }
+  </section>
+
+</div>
+
+<app-confirm-dialog
+  [open]="confirmDeleteId() !== null"
+  title="Excluir cliente"
+  message="Esta ação não pode ser desfeita. Processos vinculados podem ser afetados."
+  confirmLabel="Excluir"
+  (confirmed)="deleteClient()"
+  (cancelled)="confirmDeleteId.set(null)"
+/>
