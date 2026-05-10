@@ -1,9 +1,10 @@
 /**
- * Minimal setup for Angular unit tests running under Vitest.
+ * Angular test setup for Vitest.
  *
- * @angular/compiler (JIT template compiler) is NOT imported here because
- * this suite tests stores, services, guards, and interceptors — none of which
- * require template compilation.  If component tests are added later, add:
- *   import '@angular/compiler';
- * before any TestBed.configureTestingModule call that uses Angular templates.
+ * @angular/compiler must be imported FIRST so that the JIT compiler is
+ * available when Angular loads decorators at module initialisation time.
+ * Without this, @angular/common (http, router, …) throws:
+ *   "The injectable 'X' needs to be compiled using the JIT compiler,
+ *    but '@angular/compiler' is not available."
  */
+import '@angular/compiler';
