@@ -21,7 +21,8 @@
       "Bash(xargs -I {} basename {})",
       "Bash(pnpm db:migrate)",
       "Bash(pnpm --filter @mgmt/api exec tsc --noEmit)",
-      "Bash(xargs ls -la)"
+      "Bash(xargs ls -la)",
+      "Bash(xargs ls)"
     ]
   }
 }

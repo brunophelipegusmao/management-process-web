@@ -37,10 +37,17 @@
       >Próximo →</button>
     </div>
 
-    <!-- Título do mês -->
-    <h2 class="font-sans text-lg font-bold text-mulim-azul dark:text-foreground tracking-wide first-letter:uppercase">
-      {{ monthTitle() }}
-    </h2>
+    <!-- Título do mês + indicador de carregamento -->
+    <div class="flex items-center gap-3">
+      <h2 class="font-sans text-lg font-bold text-mulim-azul dark:text-foreground tracking-wide first-letter:uppercase">
+        {{ monthTitle() }}
+      </h2>
+      @if (loading()) {
+        <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/30 animate-pulse" aria-live="polite">
+          carregando…
+        </span>
+      }
+    </div>
 
     <!-- Toggle de visualização -->
     <div class="flex items-center gap-1" role="group" aria-label="Tipo de visualização">
@@ -68,16 +75,9 @@
 
   </div>
 
-  <!-- Estado: carregando -->
-  @if (loading()) {
-    <div class="py-20 flex items-center justify-center border border-foreground/8">
-      <span class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/30">Carregando…</span>
-    </div>
-  }
-
-  @else if (view() === 'month') {
+  @if (view() === 'month') {
     <!-- ────────── CALENDÁRIO MENSAL ────────── -->
-    <div class="border border-foreground/10 overflow-hidden">
+    <div class="border border-foreground/10 overflow-hidden" [class.opacity-60]="loading()">
 
       <!-- Cabeçalho dos dias da semana -->
       <div class="grid grid-cols-7 border-b border-foreground/10 bg-foreground/2">
@@ -163,7 +163,11 @@
       }
     </div>
 
-    @if (grouped().length === 0) {
+    @if (loading()) {
+      <div class="py-16 text-center border border-foreground/10">
+        <p class="font-mono text-xs tracking-widest uppercase text-foreground/30 animate-pulse">Carregando…</p>
+      </div>
+    } @else if (grouped().length === 0) {
       <div class="py-16 text-center border border-foreground/10">
         <p class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhuma audiência neste mês</p>
       </div>

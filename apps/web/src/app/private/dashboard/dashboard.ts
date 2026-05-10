@@ -10,8 +10,8 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { API_BASE_URL } from '../../core/tokens/api-url.token';
 
 interface UpcomingHearing {
@@ -117,7 +117,7 @@ export class Dashboard implements OnInit {
       upcoming: this.http.get<{ data: UpcomingHearing[] }>(
         `${this.apiUrl}/reports/upcoming-hearings`,
         { withCredentials: true },
-      ),
+      ).pipe(catchError(() => of({ data: [] as UpcomingHearing[] }))),
       monthHearings: this.http.get<{ data: unknown[]; meta: { total: number } }>(
         `${this.apiUrl}/hearings`,
         {
@@ -128,15 +128,15 @@ export class Dashboard implements OnInit {
             pageSize: '1',
           },
         },
-      ),
+      ).pipe(catchError(() => of({ data: [], meta: { total: 0 } }))),
       witnesses: this.http.get<{ data: StatusCount }>(
         `${this.apiUrl}/reports/witnesses-by-status`,
         { withCredentials: true },
-      ),
+      ).pipe(catchError(() => of({ data: {} as StatusCount }))),
       overview: this.http.get<{ data: Overview }>(
         `${this.apiUrl}/reports/overview`,
         { withCredentials: true },
-      ),
+      ).pipe(catchError(() => of({ data: { emailsSent: 0 } }))),
     }).subscribe({
       next: ({ upcoming, monthHearings, witnesses, overview }) => {
         this.weekHearings.set(
