@@ -1,6 +1,6 @@
 import { HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
-import { of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { of, asyncScheduler } from 'rxjs';
+import { tap, observeOn } from 'rxjs/operators';
 
 const TTL_MS = 2 * 60 * 1000;
 
@@ -35,7 +35,9 @@ export const httpCacheInterceptor: HttpInterceptorFn = (req, next) => {
   const entry = store.get(key);
 
   if (entry && Date.now() - entry.at < TTL_MS) {
-    return of(new HttpResponse({ body: entry.body, status: 200 }));
+    return of(new HttpResponse({ body: entry.body, status: 200 })).pipe(
+      observeOn(asyncScheduler),
+    );
   }
 
   return next(req).pipe(

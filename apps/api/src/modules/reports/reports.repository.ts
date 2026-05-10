@@ -27,8 +27,12 @@ export type UpcomingHearing = {
   id: string;
   processId: string;
   cnjNumber: string;
+  authorName: string;
+  defendantName: string;
+  clientSide: string;
   dateTime: Date;
   type: string;
+  status: string;
 };
 
 @Injectable()
@@ -108,8 +112,12 @@ export class ReportsRepository {
         id: hearings.id,
         processId: hearings.processId,
         cnjNumber: processes.cnjNumber,
+        authorName: processes.authorName,
+        defendantName: processes.defendantName,
+        clientSide: processes.clientSide,
         dateTime: hearings.dateTime,
         type: hearings.type,
+        status: hearings.status,
       })
       .from(hearings)
       .innerJoin(processes, eq(hearings.processId, processes.id))

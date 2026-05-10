@@ -1,4 +1,4 @@
-<div class="p-4 sm:p-6 lg:p-8 max-w-4xl">
+<div class="p-4 sm:p-6 lg:p-8 max-w-7xl">
 
   <!-- Cabeçalho -->
   <header class="flex items-end justify-between gap-4 mb-5 flex-wrap">
@@ -8,66 +8,194 @@
     </a>
     <div class="flex flex-col items-end gap-1">
       <span class="hs-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Agenda</span>
-      <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Audiências — Próx. 30 dias</h1>
+      <h1 class="font-sans text-2xl sm:text-3xl font-bold tracking-wide uppercase text-mulim-azul dark:text-foreground leading-none">Audiências</h1>
     </div>
   </header>
-  <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-8" aria-hidden="true"></div>
+  <div class="h-px bg-gradient-to-r from-transparent via-mulim-ouro to-transparent mb-6" aria-hidden="true"></div>
 
-  <!-- Filtro por tipo -->
-  <div class="flex flex-wrap gap-2 mb-8" role="group" aria-label="Filtrar por tipo de audiência">
-    @for (opt of typeOptions; track opt.value) {
+  <!-- Barra de controle: navegação + título + toggle de view -->
+  <div class="flex items-center justify-between gap-4 mb-4 flex-wrap">
+
+    <!-- Navegação de mês -->
+    <div class="flex items-center gap-1">
       <button
         type="button"
-        (click)="setFilter(opt.value)"
-        class="font-mono text-[0.65rem] font-bold tracking-[0.18em] uppercase px-4 py-2 border transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2"
-        [class.border-mulim-ouro]="filterType() === opt.value"
-        [class.text-mulim-ouro]="filterType() === opt.value"
-        [class.border-foreground/20]="filterType() !== opt.value"
-        [class.text-foreground/50]="filterType() !== opt.value"
-        [attr.aria-pressed]="filterType() === opt.value"
-      >{{ opt.label }}</button>
-    }
+        (click)="goToday()"
+        class="hs-nav-btn font-mono text-[0.65rem] font-bold tracking-[0.15em] uppercase px-3 py-2 border border-foreground/20 text-foreground/50 hover:border-mulim-ouro/50 hover:text-mulim-ouro transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+      >Hoje</button>
+      <button
+        type="button"
+        (click)="prevMonth()"
+        class="hs-nav-btn font-mono text-[0.65rem] font-bold tracking-[0.15em] uppercase px-3 py-2 border border-foreground/20 text-foreground/50 hover:border-mulim-ouro/50 hover:text-mulim-ouro transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+        aria-label="Mês anterior"
+      >← Anterior</button>
+      <button
+        type="button"
+        (click)="nextMonth()"
+        class="hs-nav-btn font-mono text-[0.65rem] font-bold tracking-[0.15em] uppercase px-3 py-2 border border-foreground/20 text-foreground/50 hover:border-mulim-ouro/50 hover:text-mulim-ouro transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+        aria-label="Próximo mês"
+      >Próximo →</button>
+    </div>
+
+    <!-- Título do mês -->
+    <h2 class="font-sans text-lg font-bold text-mulim-azul dark:text-foreground tracking-wide first-letter:uppercase">
+      {{ monthTitle() }}
+    </h2>
+
+    <!-- Toggle de visualização -->
+    <div class="flex items-center gap-1" role="group" aria-label="Tipo de visualização">
+      <button
+        type="button"
+        (click)="setView('month')"
+        class="hs-nav-btn font-mono text-[0.65rem] font-bold tracking-[0.15em] uppercase px-3 py-2 border transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+        [class.border-mulim-ouro]="view() === 'month'"
+        [class.text-mulim-ouro]="view() === 'month'"
+        [class.border-foreground/20]="view() !== 'month'"
+        [class.text-foreground/50]="view() !== 'month'"
+        [attr.aria-pressed]="view() === 'month'"
+      >Mês</button>
+      <button
+        type="button"
+        (click)="setView('agenda')"
+        class="hs-nav-btn font-mono text-[0.65rem] font-bold tracking-[0.15em] uppercase px-3 py-2 border transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+        [class.border-mulim-ouro]="view() === 'agenda'"
+        [class.text-mulim-ouro]="view() === 'agenda'"
+        [class.border-foreground/20]="view() !== 'agenda'"
+        [class.text-foreground/50]="view() !== 'agenda'"
+        [attr.aria-pressed]="view() === 'agenda'"
+      >Agenda</button>
+    </div>
+
   </div>
 
-  <!-- Estado de carregamento -->
+  <!-- Estado: carregando -->
   @if (loading()) {
-    <div class="py-16 flex items-center justify-center">
-      <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando agenda…</span>
+    <div class="py-20 flex items-center justify-center border border-foreground/8">
+      <span class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/30">Carregando…</span>
     </div>
-  } @else if (grouped().length === 0) {
-    <div class="py-16 text-center border border-foreground/10">
-      <p class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhuma audiência nos próximos 30 dias</p>
-    </div>
-  } @else {
-    <div class="flex flex-col gap-8">
-      @for (group of grouped(); track group.dateKey) {
-        <div>
-          <!-- Cabeçalho de data -->
-          <div class="flex items-center gap-4 mb-3">
-            <h2 class="font-mono text-xs font-bold tracking-[0.18em] uppercase text-mulim-ouro first-letter:uppercase shrink-0">{{ group.dateLabel }}</h2>
-            <div class="flex-1 h-px bg-mulim-ouro/20"></div>
-          </div>
+  }
 
-          <!-- Itens do dia -->
-          <ul class="flex flex-col gap-2">
-            @for (h of group.hearings; track h.id) {
-              <li class="hs-item flex items-center gap-4 sm:gap-6 px-4 py-3 border border-foreground/10 dark:border-foreground/5">
-                <time
-                  [attr.datetime]="h.dateTime"
-                  class="font-mono text-base font-bold text-mulim-ouro tabular-nums shrink-0 w-12 text-center"
-                >{{ formatTime(h.dateTime) }}</time>
-                <div class="flex-1 min-w-0">
-                  <p class="font-mono text-xs font-bold text-foreground/70 truncate">{{ h.cnjNumber }}</p>
-                </div>
-                <span class="font-mono text-[0.6rem] font-bold tracking-[0.15em] uppercase px-2.5 py-1 border border-mulim-ouro/40 text-mulim-ouro shrink-0">
-                  {{ typeLabel(h.type) }}
-                </span>
-              </li>
-            }
-          </ul>
-        </div>
+  @else if (view() === 'month') {
+    <!-- ────────── CALENDÁRIO MENSAL ────────── -->
+    <div class="border border-foreground/10 overflow-hidden">
+
+      <!-- Cabeçalho dos dias da semana -->
+      <div class="grid grid-cols-7 border-b border-foreground/10 bg-foreground/2">
+        @for (wd of weekDays; track wd) {
+          <div class="py-2 text-center font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-foreground/40 border-r border-foreground/8 last:border-r-0">
+            {{ wd }}
+          </div>
+        }
+      </div>
+
+      <!-- Grid de dias -->
+      <div class="grid grid-cols-7">
+        @for (day of calendarDays(); track day.dateKey; let i = $index) {
+          <div
+            class="hs-day-cell border-r border-b border-foreground/8 last-of-type:border-b-0 p-1 min-h-24 flex flex-col"
+            [class.hs-day-cell--other]="!day.isCurrentMonth"
+            [class.hs-day-cell--today]="day.isToday"
+            [class.border-r-0]="(i + 1) % 7 === 0"
+          >
+            <!-- Número do dia -->
+            <div class="flex justify-end mb-1 px-0.5">
+              <span
+                class="hs-day-num font-mono text-xs leading-none"
+                [class.hs-day-num--today]="day.isToday"
+              >{{ day.date.getDate() }}</span>
+            </div>
+
+            <!-- Eventos do dia -->
+            <div class="flex flex-col gap-px overflow-hidden">
+              @for (h of getHearingsForDay(day.dateKey); track h.id) {
+                <div
+                  class="hs-event font-mono text-[0.55rem] font-bold leading-tight px-1.5 py-0.5 truncate"
+                  [class.hs-event--conciliacao]="h.type === 'conciliacao'"
+                  [class.hs-event--aij]="h.type === 'aij'"
+                  [class.hs-event--oitiva]="h.type === 'oitiva'"
+                  [class.hs-event--acij]="h.type === 'acij'"
+                  [title]="typeLabel(h.type) + ' — ' + opposingParty(h) + ' · ' + formatTime(h.dateTime)"
+                >{{ opposingParty(h) }}</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Legenda de tipos -->
+    <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3">
+      <div class="flex items-center gap-1.5">
+        <span class="hs-legend-dot hs-event--conciliacao w-2 h-2 rounded-full inline-block"></span>
+        <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/40">Conciliação</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="hs-legend-dot hs-event--aij w-2 h-2 rounded-full inline-block"></span>
+        <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/40">AIJ</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="hs-legend-dot hs-event--oitiva w-2 h-2 rounded-full inline-block"></span>
+        <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/40">Oitiva</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="hs-legend-dot hs-event--acij w-2 h-2 rounded-full inline-block"></span>
+        <span class="font-mono text-[0.55rem] tracking-widest uppercase text-foreground/40">ACIJ</span>
+      </div>
+    </div>
+  }
+
+  @else {
+    <!-- ────────── AGENDA (LISTA) ────────── -->
+
+    <!-- Filtro por tipo -->
+    <div class="flex flex-wrap gap-2 mb-6" role="group" aria-label="Filtrar por tipo de audiência">
+      @for (opt of typeOptions; track opt.value) {
+        <button
+          type="button"
+          (click)="setFilter(opt.value)"
+          class="font-mono text-[0.65rem] font-bold tracking-[0.18em] uppercase px-4 py-2 border transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-2"
+          [class.border-mulim-ouro]="filterType() === opt.value"
+          [class.text-mulim-ouro]="filterType() === opt.value"
+          [class.border-foreground/20]="filterType() !== opt.value"
+          [class.text-foreground/50]="filterType() !== opt.value"
+          [attr.aria-pressed]="filterType() === opt.value"
+        >{{ opt.label }}</button>
       }
     </div>
+
+    @if (grouped().length === 0) {
+      <div class="py-16 text-center border border-foreground/10">
+        <p class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhuma audiência neste mês</p>
+      </div>
+    } @else {
+      <div class="flex flex-col gap-8">
+        @for (group of grouped(); track group.dateKey) {
+          <div>
+            <div class="flex items-center gap-4 mb-3">
+              <h3 class="font-mono text-xs font-bold tracking-[0.18em] uppercase text-mulim-ouro first-letter:uppercase shrink-0">{{ group.dateLabel }}</h3>
+              <div class="flex-1 h-px bg-mulim-ouro/20"></div>
+            </div>
+            <ul class="flex flex-col gap-2">
+              @for (h of group.hearings; track h.id) {
+                <li class="hs-item flex items-center gap-4 sm:gap-6 px-4 py-3 border border-foreground/10 dark:border-foreground/5">
+                  <time
+                    [attr.datetime]="h.dateTime"
+                    class="font-mono text-base font-bold text-mulim-ouro tabular-nums shrink-0 w-12 text-center"
+                  >{{ formatTime(h.dateTime) }}</time>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-sans text-sm font-semibold text-foreground truncate">{{ opposingParty(h) }}</p>
+                    <p class="font-mono text-xs text-foreground/40 truncate">{{ h.cnjNumber }}</p>
+                  </div>
+                  <span class="font-mono text-[0.6rem] font-bold tracking-[0.15em] uppercase px-2.5 py-1 border border-mulim-ouro/40 text-mulim-ouro shrink-0">
+                    {{ typeLabel(h.type) }}
+                  </span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    }
   }
 
 </div>

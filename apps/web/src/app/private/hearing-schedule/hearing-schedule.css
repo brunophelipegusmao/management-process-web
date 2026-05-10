@@ -1,4 +1,4 @@
-/* Linha decorativa do eyebrow */
+/* Eyebrow decorativo */
 .hs-eyebrow::before {
     content: '';
     display: block;
@@ -8,7 +8,84 @@
     opacity: 0.55;
 }
 
-/* Card de audiência: hover sutil */
+/* Botão de navegação */
+.hs-nav-btn {
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+/* ── Células do calendário ─────────────────────────── */
+.hs-day-cell {
+    transition: background-color 0.1s ease;
+}
+
+.hs-day-cell--other {
+    background-color: color-mix(in oklch, var(--foreground) 1.5%, transparent);
+}
+
+.hs-day-cell--today {
+    background-color: color-mix(in oklch, var(--mulim-ouro) 4%, transparent);
+}
+
+/* Número do dia */
+.hs-day-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    color: color-mix(in oklch, var(--foreground) 55%, transparent);
+}
+
+.hs-day-cell--other .hs-day-num {
+    color: color-mix(in oklch, var(--foreground) 22%, transparent);
+}
+
+.hs-day-num--today {
+    background-color: var(--mulim-ouro);
+    color: white;
+    border-radius: 9999px;
+    font-weight: 700;
+    opacity: 1 !important;
+}
+
+/* ── Chips de evento ───────────────────────────────── */
+.hs-event {
+    border-radius: 2px;
+    transition: opacity 0.1s ease;
+    cursor: default;
+}
+
+.hs-event:hover {
+    opacity: 0.85;
+}
+
+/* Cores por tipo de audiência */
+.hs-event--conciliacao {
+    background-color: var(--mulim-ouro);
+    color: white;
+}
+
+.hs-event--aij {
+    background-color: color-mix(in oklch, var(--chart-2) 85%, transparent);
+    color: color-mix(in oklch, var(--chart-2) 30%, var(--foreground));
+}
+
+.hs-event--oitiva {
+    background-color: color-mix(in oklch, var(--chart-1) 75%, transparent);
+    color: white;
+}
+
+.hs-event--acij {
+    background-color: color-mix(in oklch, var(--chart-4) 80%, transparent);
+    color: color-mix(in oklch, var(--chart-4) 25%, var(--foreground));
+}
+
+/* Pontos da legenda — reusam as cores dos chips */
+.hs-legend-dot {
+    flex-shrink: 0;
+}
+
+/* ── Item da agenda (view lista) ───────────────────── */
 .hs-item {
     transition: background-color 0.15s ease, border-color 0.15s ease;
 }

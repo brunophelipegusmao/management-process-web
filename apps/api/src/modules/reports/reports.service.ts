@@ -20,10 +20,13 @@ export class ReportsService {
     return this.reportsRepository.getWitnessesByStatus();
   }
 
-  async getUpcomingHearings() {
-    const from = new Date();
-    const to = new Date();
-    to.setUTCDate(to.getUTCDate() + UPCOMING_HEARINGS_DAYS);
-    return this.reportsRepository.getUpcomingHearings(from, to);
+  async getUpcomingHearings(from?: Date, to?: Date) {
+    const defaultFrom = new Date();
+    const defaultTo = new Date();
+    defaultTo.setUTCDate(defaultTo.getUTCDate() + UPCOMING_HEARINGS_DAYS);
+    return this.reportsRepository.getUpcomingHearings(
+      from ?? defaultFrom,
+      to ?? defaultTo,
+    );
   }
 }

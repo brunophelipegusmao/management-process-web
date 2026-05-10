@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -41,12 +41,20 @@ export class ReportsController {
     return { data: await this.reportsService.getWitnessesByStatus() };
   }
 
-  @ApiOperation({ summary: 'Audiencias agendadas nos proximos 30 dias' })
+  @ApiOperation({ summary: 'Audiencias agendadas em um intervalo de datas (padrao: proximos 30 dias)' })
   @ApiOkResponse({ description: 'Lista de audiencias retornada com sucesso.' })
   @ApiUnauthorizedResponse({ description: 'Sessao ausente ou invalida.' })
   @Get('upcoming-hearings')
-  async getUpcomingHearings() {
-    return { data: await this.reportsService.getUpcomingHearings() };
+  async getUpcomingHearings(
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+  ) {
+    return {
+      data: await this.reportsService.getUpcomingHearings(
+        from ? new Date(from) : undefined,
+        to ? new Date(to) : undefined,
+      ),
+    };
   }
 }
 

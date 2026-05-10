@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { API_BASE_URL } from '../../../core/tokens/api-url.token';
 
 interface ProcessOption {
@@ -23,6 +24,7 @@ export class AssignWitness implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private apiUrl = inject(API_BASE_URL);
+  private destroyRef = inject(DestroyRef);
 
   processes = signal<ProcessOption[]>([]);
   loading = signal(false);
@@ -45,6 +47,7 @@ export class AssignWitness implements OnInit {
     this.loading.set(true);
     this.http
       .get<{ data: ProcessOption[] }>(`${this.apiUrl}/processes`, { withCredentials: true })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           this.processes.set(res.data);
