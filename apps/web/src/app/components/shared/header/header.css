@@ -32,7 +32,7 @@
 /* ── Nav link ────────────────────────────────────────── */
 .nav-link {
     font-family: 'Anonymous Pro', monospace;
-    font-size: 0.62rem;
+    font-size: .85rem;
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
