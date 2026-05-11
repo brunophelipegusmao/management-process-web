@@ -97,7 +97,7 @@
                     class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
                     [class.bg-yellow-500/15]="proc.status === 'citado'"
                     [class.text-yellow-600]="proc.status === 'citado'"
-                    [class.bg-blue-500/15]="proc.status === 'em_andamento'"
+                    [class.bg-background]="proc.status === 'em_andamento'"
                     [class.text-blue-600]="proc.status === 'em_andamento'"
                     [class.bg-foreground/8]="proc.status === 'encerrado'"
                     [class.text-foreground/40]="proc.status === 'encerrado'"

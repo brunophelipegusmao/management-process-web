@@ -18,7 +18,7 @@
         <h1 class="font-sans text-2xl font-bold">{{ c.name }}</h1>
         <span
           class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
-          [class.bg-blue-500/15]="c.type === 'pj'"
+          [class.bg-background]="c.type === 'pj'"
           [class.text-blue-600]="c.type === 'pj'"
           [class.bg-foreground/8]="c.type === 'pf'"
           [class.text-foreground/50]="c.type === 'pf'"
@@ -114,7 +114,7 @@
             </thead>
             <tbody>
               @for (p of processes(); track p.id) {
-                <tr class="border-b border-foreground/5 hover:bg-foreground/[0.02]">
+                <tr class="border-b border-foreground/5 hover:bg-foreground/2">
                   <td class="py-3 pr-4 font-mono text-xs">{{ p.cnjNumber }}</td>
                   <td class="py-3 pr-4 font-sans text-xs text-foreground/70">{{ p.comarca }} / {{ p.vara }}</td>
                   <td class="py-3 pr-4">
@@ -122,7 +122,7 @@
                       class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
                       [class.bg-yellow-500/15]="p.status === 'citado'"
                       [class.text-yellow-600]="p.status === 'citado'"
-                      [class.bg-blue-500/15]="p.status === 'em_andamento'"
+                      [class.bg-background]="p.status === 'em_andamento'"
                       [class.text-blue-600]="p.status === 'em_andamento'"
                       [class.bg-foreground/8]="p.status === 'encerrado'"
                       [class.text-foreground/40]="p.status === 'encerrado'"

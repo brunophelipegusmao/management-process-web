@@ -14,5 +14,6 @@ import { Header } from '../../components/shared/header/header';
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { 'class': 'light' },
 })
 export class PublicLayout {}

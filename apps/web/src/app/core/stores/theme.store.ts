@@ -23,7 +23,6 @@ export class ThemeStore {
   private apply(isDark: boolean): void {
     this._isDark.set(isDark);
     if (!isPlatformBrowser(this.platformId)) return;
-    document.documentElement.classList.toggle('dark', isDark);
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
   }
 }

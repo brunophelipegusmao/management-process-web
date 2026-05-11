@@ -3,6 +3,7 @@
 @plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant light (&:is(.light *));
 
 :root {
     --radius: 0.625rem;
@@ -40,6 +41,29 @@
     --mulim-azul: oklch(0.30 0.04 228);
     --mulima-transparente: oklch(30.294% 0.04858 229.207 / 0.822);
     --mulim-ouro: oklch(0.72 0.13 80);
+}
+
+/* Força modo claro em toda a árvore — sobrescreve qualquer .dark acima */
+.light {
+    color-scheme: light;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.129 0.042 264.695);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.129 0.042 264.695);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.129 0.042 264.695);
+    --primary: oklch(26.267% 0.08454 265.142);
+    --primary-foreground: oklch(0.984 0.003 247.858);
+    --secondary: oklch(55.373% 0.10751 90.078);
+    --secondary-foreground: oklch(0.208 0.042 265.755);
+    --muted: oklch(0.968 0.007 247.896);
+    --muted-foreground: oklch(0.554 0.046 257.417);
+    --accent: oklch(0.968 0.007 247.896);
+    --accent-foreground: oklch(0.208 0.042 265.755);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.929 0.013 255.508);
+    --input: oklch(0.929 0.013 255.508);
+    --ring: oklch(0.704 0.04 256.788);
 }
 
 .dark {

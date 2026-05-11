@@ -16,6 +16,7 @@ interface NavItem {
   imports: [RouterOutlet, RouterLink, RouterLinkActive, Toast],
   templateUrl: './private-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.dark]': 'themeStore.isDark()' },
 })
 export class PrivateLayout {
   private readonly authStore = inject(AuthStore);
