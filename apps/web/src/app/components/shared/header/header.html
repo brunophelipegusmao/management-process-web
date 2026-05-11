@@ -5,58 +5,58 @@
     <!-- Logo → home -->
     <a routerLink="/"
        aria-label="Página inicial — Mulim Advogados Associados"
-       class="header-logo shrink-0 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-mulim-ouro">
+       class="header-logo shrink-0 block w-10 opacity-90 hover:opacity-100 transition-opacity duration-[250ms] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-mulim-ouro">
       <img src="/logo.svg" alt="" class="w-full h-auto" />
     </a>
 
-    <!-- Nav desktop: direita — assimetria intencional -->
-    <nav class="header-nav ml-auto" aria-label="Navegação principal">
+    <!-- Nav desktop -->
+    <nav class="hidden md:flex ml-auto" aria-label="Navegação principal">
       <ul class="flex items-center gap-10">
         <li>
           <a routerLink="/" routerLinkActive="nav-active" [routerLinkActiveOptions]="{exact: true}"
-             class="nav-link" focus-visible:outline-none>Início</a>
+             class="nav-link font-mono text-[0.62rem] font-bold tracking-[0.22em] uppercase text-[oklch(0.72_0.13_80/0.65)] no-underline relative pb-1 transition-colors duration-[250ms] hover:text-mulim-ouro">Início</a>
         </li>
         <li>
           <a routerLink="/about" routerLinkActive="nav-active"
-             class="nav-link">Sobre</a>
+             class="nav-link font-mono text-[0.62rem] font-bold tracking-[0.22em] uppercase text-[oklch(0.72_0.13_80/0.65)] no-underline relative pb-1 transition-colors duration-[250ms] hover:text-mulim-ouro">Sobre</a>
         </li>
         <li>
           <a routerLink="/contact" routerLinkActive="nav-active"
-             class="nav-link">Contato</a>
+             class="nav-link font-mono text-[0.62rem] font-bold tracking-[0.22em] uppercase text-[oklch(0.72_0.13_80/0.65)] no-underline relative pb-1 transition-colors duration-[250ms] hover:text-mulim-ouro">Contato</a>
         </li>
       </ul>
     </nav>
 
     <!-- Hambúrguer mobile -->
     <button
-      class="hamburger ml-auto md:hidden focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-mulim-ouro rounded-sm"
+      class="hamburger flex md:hidden flex-col justify-center gap-[0.375rem] w-7 h-7 bg-transparent border-0 cursor-pointer p-0 ml-auto focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-mulim-ouro rounded-sm"
       (click)="toggleMenu()"
       [attr.aria-expanded]="menuOpen()"
       aria-label="Abrir menu"
       aria-controls="mobile-menu"
     >
-      <span class="ham-bar" [class.bar-top-open]="menuOpen()"></span>
-      <span class="ham-bar" [class.opacity-0]="menuOpen()"></span>
-      <span class="ham-bar" [class.bar-bottom-open]="menuOpen()"></span>
+      <span class="ham-bar block h-[1.5px] w-full bg-[oklch(0.72_0.13_80/0.75)] rounded-px transition-[rotate,translate,opacity] duration-300 ease-[ease]" [class.bar-top-open]="menuOpen()"></span>
+      <span class="ham-bar block h-[1.5px] w-full bg-[oklch(0.72_0.13_80/0.75)] rounded-px transition-[rotate,translate,opacity] duration-300 ease-[ease]" [class.opacity-0]="menuOpen()"></span>
+      <span class="ham-bar block h-[1.5px] w-full bg-[oklch(0.72_0.13_80/0.75)] rounded-px transition-[rotate,translate,opacity] duration-300 ease-[ease]" [class.bar-bottom-open]="menuOpen()"></span>
     </button>
 
   </header>
 
   <!-- Menu mobile -->
   @if (menuOpen()) {
-    <nav id="mobile-menu" class="mobile-menu" aria-label="Navegação mobile">
-      <ul class="mobile-nav-list">
+    <nav id="mobile-menu" class="bg-[oklch(0.30_0.04_228/0.97)] border-t border-[oklch(0.72_0.13_80/0.12)]" aria-label="Navegação mobile">
+      <ul class="flex flex-col px-5 pt-6 pb-8 gap-0 list-none m-0">
         <li>
           <a routerLink="/" routerLinkActive="mobile-nav-active" [routerLinkActiveOptions]="{exact: true}"
-             class="mobile-nav-link" (click)="toggleMenu()">Início</a>
+             class="mobile-nav-link font-mono text-[0.65rem] font-bold tracking-[0.25em] uppercase text-[oklch(0.72_0.13_80/0.6)] no-underline flex items-center gap-3 py-4 border-b border-[oklch(0.72_0.13_80/0.07)] transition-colors duration-200 hover:text-mulim-ouro" (click)="toggleMenu()">Início</a>
         </li>
         <li>
           <a routerLink="/about" routerLinkActive="mobile-nav-active"
-             class="mobile-nav-link" (click)="toggleMenu()">Sobre</a>
+             class="mobile-nav-link font-mono text-[0.65rem] font-bold tracking-[0.25em] uppercase text-[oklch(0.72_0.13_80/0.6)] no-underline flex items-center gap-3 py-4 border-b border-[oklch(0.72_0.13_80/0.07)] transition-colors duration-200 hover:text-mulim-ouro" (click)="toggleMenu()">Sobre</a>
         </li>
         <li>
           <a routerLink="/contact" routerLinkActive="mobile-nav-active"
-             class="mobile-nav-link" (click)="toggleMenu()">Contato</a>
+             class="mobile-nav-link font-mono text-[0.65rem] font-bold tracking-[0.25em] uppercase text-[oklch(0.72_0.13_80/0.6)] no-underline flex items-center gap-3 py-4 transition-colors duration-200 hover:text-mulim-ouro" (click)="toggleMenu()">Contato</a>
         </li>
       </ul>
     </nav>

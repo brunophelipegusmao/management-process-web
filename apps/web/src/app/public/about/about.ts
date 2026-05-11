@@ -7,7 +7,6 @@ import { Values } from './values/values';
   selector: 'app-about',
   imports: [AboutBanner, Container, Values],
   templateUrl: './about.html',
-  styleUrl: './about.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class About {}

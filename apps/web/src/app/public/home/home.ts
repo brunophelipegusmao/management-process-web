@@ -7,7 +7,6 @@ import { TextSection } from './text-section/text-section';
   selector: 'app-home',
   imports: [Hero, Container, TextSection],
   templateUrl: './home.html',
-  styleUrl: './home.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {}

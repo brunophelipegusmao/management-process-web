@@ -1,88 +1,86 @@
-<section class="cf-section" [class.is-visible]="visible()">
+<section [class.is-visible]="visible()" class="bg-background border-t border-black/6">
   <div class="max-w-3xl mx-auto px-5 py-16 sm:py-24">
 
-    <header class="cf-header">
-      <p class="cf-eyebrow">Envie sua Mensagem</p>
-      <h2 class="cf-title">Formulário de Contato</h2>
+    <header class="cf-header flex flex-col items-center gap-3 mb-14 text-center">
+      <p class="cf-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center justify-center gap-2.5">Envie sua Mensagem</p>
+      <h2 class="font-sans text-[clamp(1.75rem,5vw,2.75rem)] font-bold tracking-[0.1em] uppercase text-mulim-azul leading-[1.1]">Formulário de Contato</h2>
       <div class="cf-rule" aria-hidden="true"></div>
     </header>
 
     @if (submitted()) {
-      <div class="cf-success" role="alert">
-        <p class="cf-success-title">Mensagem preparada!</p>
-        <p class="cf-success-body">
+      <div class="cf-success flex flex-col items-center gap-3.5 text-center px-6 py-12 border-t-2 border-t-mulim-ouro bg-[oklch(0.99_0.002_247)]" role="alert">
+        <p class="font-sans text-xl font-bold tracking-[0.06em] uppercase text-mulim-azul">Mensagem preparada!</p>
+        <p class="font-sans text-[0.9rem] font-light leading-[1.75] text-[oklch(0.4_0.04_264.695)] max-w-[28rem]">
           Sua mensagem foi enviada com sucesso. Retornaremos em breve para
           o e-mail informado.
         </p>
-        <button class="cf-back-btn" (click)="submitted.set(false)">Enviar outra mensagem</button>
+        <button class="cf-back-btn font-mono text-[0.65rem] font-bold tracking-[0.2em] uppercase text-mulim-ouro border border-[oklch(0.72_0.13_80/0.5)] px-6 py-[0.625rem] cursor-pointer transition-colors duration-200 hover:border-mulim-ouro hover:text-mulim-azul hover:bg-mulim-ouro" (click)="submitted.set(false)">Enviar outra mensagem</button>
       </div>
     } @else {
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="cf-form" style="--fields: 5">
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-7">
 
-        <div class="cf-row cf-row--2">
-          <div class="cf-field" style="--fi: 0">
-            <label class="cf-label" for="cf-name">Nome completo <span aria-hidden="true">*</span></label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+          <div class="cf-field flex flex-col gap-2" style="--fi: 0">
+            <label class="font-mono text-[0.62rem] font-bold tracking-[0.2em] uppercase text-mulim-azul" for="cf-name">Nome completo <span class="text-mulim-ouro" aria-hidden="true">*</span></label>
             <input id="cf-name" class="cf-input" [class.cf-input--error]="hasError('name')"
               type="text" formControlName="name" autocomplete="name"
               placeholder="Seu nome">
             @if (hasError('name')) {
-              <span class="cf-error" role="alert">Nome obrigatório (mín. 2 caracteres)</span>
+              <span class="font-sans text-[0.75rem] text-[oklch(0.55_0.22_27)] tracking-[0.01em]" role="alert">Nome obrigatório (mín. 2 caracteres)</span>
             }
           </div>
-
-          <div class="cf-field" style="--fi: 1">
-            <label class="cf-label" for="cf-email">E-mail <span aria-hidden="true">*</span></label>
+          <div class="cf-field flex flex-col gap-2" style="--fi: 1">
+            <label class="font-mono text-[0.62rem] font-bold tracking-[0.2em] uppercase text-mulim-azul" for="cf-email">E-mail <span class="text-mulim-ouro" aria-hidden="true">*</span></label>
             <input id="cf-email" class="cf-input" [class.cf-input--error]="hasError('email')"
               type="email" formControlName="email" autocomplete="email"
               placeholder="seu@email.com">
             @if (hasError('email')) {
-              <span class="cf-error" role="alert">E-mail inválido</span>
+              <span class="font-sans text-[0.75rem] text-[oklch(0.55_0.22_27)] tracking-[0.01em]" role="alert">E-mail inválido</span>
             }
           </div>
         </div>
 
-        <div class="cf-row cf-row--2">
-          <div class="cf-field" style="--fi: 2">
-            <label class="cf-label" for="cf-phone">Telefone</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-7">
+          <div class="cf-field flex flex-col gap-2" style="--fi: 2">
+            <label class="font-mono text-[0.62rem] font-bold tracking-[0.2em] uppercase text-mulim-azul" for="cf-phone">Telefone</label>
             <input id="cf-phone" class="cf-input"
               type="tel" formControlName="phone" autocomplete="tel"
               placeholder="(11) 9 9999-9999">
           </div>
-
-          <div class="cf-field" style="--fi: 3">
-            <label class="cf-label" for="cf-subject">Assunto <span aria-hidden="true">*</span></label>
+          <div class="cf-field flex flex-col gap-2" style="--fi: 3">
+            <label class="font-mono text-[0.62rem] font-bold tracking-[0.2em] uppercase text-mulim-azul" for="cf-subject">Assunto <span class="text-mulim-ouro" aria-hidden="true">*</span></label>
             <input id="cf-subject" class="cf-input" [class.cf-input--error]="hasError('subject')"
               type="text" formControlName="subject"
               placeholder="Ex: Consulta sobre contrato">
             @if (hasError('subject')) {
-              <span class="cf-error" role="alert">Assunto obrigatório</span>
+              <span class="font-sans text-[0.75rem] text-[oklch(0.55_0.22_27)] tracking-[0.01em]" role="alert">Assunto obrigatório</span>
             }
           </div>
         </div>
 
-        <div class="cf-field" style="--fi: 4">
-          <label class="cf-label" for="cf-message">Mensagem <span aria-hidden="true">*</span></label>
+        <div class="cf-field flex flex-col gap-2" style="--fi: 4">
+          <label class="font-mono text-[0.62rem] font-bold tracking-[0.2em] uppercase text-mulim-azul" for="cf-message">Mensagem <span class="text-mulim-ouro" aria-hidden="true">*</span></label>
           <textarea id="cf-message" class="cf-input cf-textarea" [class.cf-input--error]="hasError('message')"
             formControlName="message" rows="5"
             placeholder="Descreva brevemente sua situação..."></textarea>
           @if (hasError('message')) {
-            <span class="cf-error" role="alert">Mensagem obrigatória (mín. 10 caracteres)</span>
+            <span class="font-sans text-[0.75rem] text-[oklch(0.55_0.22_27)] tracking-[0.01em]" role="alert">Mensagem obrigatória (mín. 10 caracteres)</span>
           }
         </div>
 
-        <div class="cf-recaptcha-wrap">
+        <div class="flex flex-col gap-2">
           <div id="recaptcha-widget"></div>
           @if (recaptchaError()) {
-            <span class="cf-error" role="alert">Por favor, confirme que você não é um robô.</span>
+            <span class="font-sans text-[0.75rem] text-[oklch(0.55_0.22_27)] tracking-[0.01em]" role="alert">Por favor, confirme que você não é um robô.</span>
           }
         </div>
 
-        <div class="cf-actions">
-          <button type="submit" class="cf-submit" [disabled]="submitting()">
+        <div class="cf-actions flex flex-col items-start gap-3.5 pt-2">
+          <button type="submit" class="cf-submit font-mono text-[0.7rem] font-bold tracking-[0.22em] uppercase text-mulim-ouro border border-[oklch(0.72_0.13_80/0.7)] px-11 py-[0.9rem] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-[3px]" [disabled]="submitting()">
             {{ submitting() ? 'Enviando…' : 'Enviar Mensagem' }}
           </button>
           @if (submitError()) {
-            <p class="cf-error" role="alert">{{ submitError() }}</p>
+            <p class="font-sans text-[0.75rem] text-[oklch(0.55_0.22_27)] tracking-[0.01em]" role="alert">{{ submitError() }}</p>
           }
         </div>
 

@@ -1,46 +1,42 @@
-<section class="values-section" [class.is-visible]="visible()">
+<section [class.is-visible]="visible()" class="bg-background border-t border-black/6">
   <div class="max-w-5xl mx-auto px-5 py-16 sm:py-24">
 
-    <header class="vs-header">
-      <p class="vs-eyebrow">Por que nos escolher</p>
-      <h2 class="vs-title">Nossos Valores</h2>
+    <header class="vs-header flex flex-col items-center gap-3 mb-14 text-center">
+      <p class="vs-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center justify-center gap-2.5">Por que nos escolher</p>
+      <h2 class="font-sans text-[clamp(1.75rem,5vw,2.75rem)] font-bold tracking-[0.1em] uppercase text-mulim-azul leading-[1.1]">Nossos Valores</h2>
       <div class="vs-rule" aria-hidden="true"></div>
     </header>
 
-    <div class="vs-grid">
-
-      <article class="vs-card" data-num="01" style="--i: 0">
-        <h3 class="vs-card-title">Dedicação</h3>
-        <p class="vs-card-body">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <article class="vs-card relative flex flex-col gap-3 py-7 pr-7 pl-8 border-l-[3px] border-l-mulim-ouro bg-[oklch(0.99_0.002_247)] overflow-hidden transition-colors duration-300 hover:border-l-mulim-azul hover:bg-white" data-num="01" style="--i: 0">
+        <h3 class="font-sans text-[0.95rem] font-bold tracking-[0.08em] uppercase text-mulim-azul leading-[1.2]">Dedicação</h3>
+        <p class="font-sans text-sm font-light leading-[1.8] tracking-[0.01em] text-[oklch(0.4_0.04_264.695)]">
           Cada caso recebe atenção integral. Estudamos cada detalhe com
           profundidade para construir a melhor estratégia jurídica possível.
         </p>
       </article>
-
-      <article class="vs-card" data-num="02" style="--i: 1">
-        <h3 class="vs-card-title">Ética</h3>
-        <p class="vs-card-body">
+      <article class="vs-card relative flex flex-col gap-3 py-7 pr-7 pl-8 border-l-[3px] border-l-mulim-ouro bg-[oklch(0.99_0.002_247)] overflow-hidden transition-colors duration-300 hover:border-l-mulim-azul hover:bg-white" data-num="02" style="--i: 1">
+        <h3 class="font-sans text-[0.95rem] font-bold tracking-[0.08em] uppercase text-mulim-azul leading-[1.2]">Ética</h3>
+        <p class="font-sans text-sm font-light leading-[1.8] tracking-[0.01em] text-[oklch(0.4_0.04_264.695)]">
           Atuamos com transparência e integridade em todas as etapas,
           mantendo nossos clientes informados e confiantes no processo.
         </p>
       </article>
-
-      <article class="vs-card" data-num="03" style="--i: 2">
-        <h3 class="vs-card-title">Excelência</h3>
-        <p class="vs-card-body">
+      <article class="vs-card relative flex flex-col gap-3 py-7 pr-7 pl-8 border-l-[3px] border-l-mulim-ouro bg-[oklch(0.99_0.002_247)] overflow-hidden transition-colors duration-300 hover:border-l-mulim-azul hover:bg-white" data-num="03" style="--i: 2">
+        <h3 class="font-sans text-[0.95rem] font-bold tracking-[0.08em] uppercase text-mulim-azul leading-[1.2]">Excelência</h3>
+        <p class="font-sans text-sm font-light leading-[1.8] tracking-[0.01em] text-[oklch(0.4_0.04_264.695)]">
           Buscamos continuamente a atualização técnica e o aperfeiçoamento
           profissional para oferecer o mais alto nível de serviço jurídico.
         </p>
       </article>
-
-      <article class="vs-card" data-num="04" style="--i: 3">
-        <h3 class="vs-card-title">Confiança</h3>
-        <p class="vs-card-body">
+      <article class="vs-card relative flex flex-col gap-3 py-7 pr-7 pl-8 border-l-[3px] border-l-mulim-ouro bg-[oklch(0.99_0.002_247)] overflow-hidden transition-colors duration-300 hover:border-l-mulim-azul hover:bg-white" data-num="04" style="--i: 3">
+        <h3 class="font-sans text-[0.95rem] font-bold tracking-[0.08em] uppercase text-mulim-azul leading-[1.2]">Confiança</h3>
+        <p class="font-sans text-sm font-light leading-[1.8] tracking-[0.01em] text-[oklch(0.4_0.04_264.695)]">
           Construímos relações duradouras com nossos clientes, fundamentadas
           no respeito, na comunicação clara e nos resultados concretos.
         </p>
       </article>
-
     </div>
+
   </div>
 </section>

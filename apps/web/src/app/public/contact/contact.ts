@@ -7,7 +7,6 @@ import { ContactForm } from './contact-form/contact-form';
   selector: 'app-contact',
   imports: [ContactBanner, Container, ContactForm],
   templateUrl: './contact.html',
-  styleUrl: './contact.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Contact {}
