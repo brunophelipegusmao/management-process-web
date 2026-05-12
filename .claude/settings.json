@@ -25,7 +25,8 @@
       "Bash(xargs ls)",
       "Bash(awk '{print $NF}')",
       "Bash(mkdir -p /home/bruno/.claude/projects/-home-bruno-management-process-web/memory)",
-      "Bash(pnpm --filter @mgmt/api build)"
+      "Bash(pnpm --filter @mgmt/api build)",
+      "Bash(xargs cat -n)"
     ],
     "additionalDirectories": [
       "/home/bruno/.claude/projects/-home-bruno-management-process-web"

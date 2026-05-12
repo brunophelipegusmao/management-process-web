@@ -6,14 +6,9 @@ import { Header } from '../../components/shared/header/header';
 @Component({
   selector: 'app-public-layout',
   imports: [RouterOutlet, Header, Footer],
-  template: `
-    <div class="min-h-screen flex flex-col w-full overflow-x-hidden">
-      <app-header />
-      <router-outlet />
-      <app-footer />
-    </div>
-  `,
+  templateUrl: './public-layout.html',
+  styleUrl: './public-layout.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { 'class': 'light' },
+  host: { class: 'light' },
 })
 export class PublicLayout {}

@@ -1,0 +1,304 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
+
+  <app-breadcrumb />
+
+  @if (loading()) {
+    <div class="py-20 flex items-center justify-center">
+      <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+    </div>
+  } @else if (loadError()) {
+    <div class="py-20 flex flex-col items-center gap-4">
+      <span class="font-mono text-xs text-destructive">Erro ao carregar testemunha.</span>
+      <a routerLink="/dashboard/witnesses" class="wd-back-link">← Voltar</a>
+    </div>
+  } @else if (witness(); as w) {
+
+    <!-- Cabeçalho -->
+    <header class="mb-8">
+      <a [routerLink]="['/dashboard/processes', w.processId]" class="wd-back-link mb-3 inline-flex">← Processo</a>
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="font-sans text-2xl font-bold">{{ w.fullName }}</h1>
+          <p class="font-mono text-xs text-foreground/40 mt-1 uppercase tracking-widest">
+            {{ w.side === 'reu' ? 'Réu' : 'Autor' }}
+          </p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span
+            class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm bg-foreground/5 text-foreground/60"
+          >{{ statusLabels[w.status] }}</span>
+          @if (!w.replaced) {
+            <button (click)="openModal('intimar')" class="wd-btn-secondary">Intimar</button>
+            <button (click)="openModal('resultado')" class="wd-btn-secondary">Resultado</button>
+            <button (click)="openModal('substituir')" class="wd-btn-secondary">Substituir</button>
+          }
+        </div>
+      </div>
+      @if (w.replaced) {
+        <p class="mt-3 font-mono text-xs text-amber-600 tracking-wide">
+          ⚠ Testemunha substituída — ações de intimação desabilitadas
+        </p>
+      }
+    </header>
+
+    <!-- Seção 01: Dados da Testemunha -->
+    <section aria-labelledby="sec-dados" class="mb-8">
+      <h2 id="sec-dados" class="wd-section-title"><span class="text-mulim-ouro">01</span> Dados da Testemunha</h2>
+
+      @if (!editMode()) {
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-4 mb-4">
+          <div class="wd-field">
+            <span class="wd-field-label">Nome</span>
+            <span class="wd-field-value">{{ w.fullName }}</span>
+          </div>
+          <div class="wd-field">
+            <span class="wd-field-label">Polo</span>
+            <span class="wd-field-value">{{ w.side === 'reu' ? 'Réu' : 'Autor' }}</span>
+          </div>
+          <div class="wd-field">
+            <span class="wd-field-label">Status</span>
+            <span class="wd-field-value">{{ statusLabels[w.status] }}</span>
+          </div>
+          <div class="wd-field">
+            <span class="wd-field-label">Endereço</span>
+            <span class="wd-field-value">{{ w.address ?? '—' }}</span>
+          </div>
+          <div class="wd-field">
+            <span class="wd-field-label">Comarca de Residência</span>
+            <span class="wd-field-value">{{ w.residenceComarca ?? '—' }}</span>
+          </div>
+          <div class="wd-field">
+            <span class="wd-field-label">Estado Civil</span>
+            <span class="wd-field-value">{{ w.maritalStatus ?? '—' }}</span>
+          </div>
+          <div class="wd-field">
+            <span class="wd-field-label">Profissão</span>
+            <span class="wd-field-value">{{ w.profession ?? '—' }}</span>
+          </div>
+          <div class="wd-field">
+            <span class="wd-field-label">Telefone</span>
+            <span class="wd-field-value font-mono text-sm">{{ w.phone ?? '—' }}</span>
+          </div>
+          <div class="wd-field sm:col-span-3">
+            <span class="wd-field-label">Observações</span>
+            <span class="wd-field-value">{{ w.notes ?? '—' }}</span>
+          </div>
+          <div class="wd-field">
+            <span class="wd-field-label">Cadastrada em</span>
+            <span class="wd-field-value font-mono text-sm">{{ formatDate(w.createdAt) }}</span>
+          </div>
+        </div>
+        @if (!w.replaced) {
+          <button (click)="enableEdit()" class="wd-btn-secondary">Editar</button>
+        }
+      } @else {
+        <form [formGroup]="editForm" (ngSubmit)="submitEdit()" novalidate
+              class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 max-w-2xl">
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-name" class="wd-label">Nome <span class="text-destructive">*</span></label>
+            <input id="edit-name" formControlName="fullName" class="wd-input"
+                   [class.wd-input--error]="hasError('fullName')">
+            @if (hasError('fullName')) { <span class="wd-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-side" class="wd-label">Polo <span class="text-destructive">*</span></label>
+            <select id="edit-side" formControlName="side" class="wd-select">
+              <option value="reu">Réu</option>
+              <option value="autor">Autor</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-address" class="wd-label">Endereço</label>
+            <input id="edit-address" formControlName="address" class="wd-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-comarca" class="wd-label">Comarca de Residência</label>
+            <input id="edit-comarca" formControlName="residenceComarca" class="wd-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-marital" class="wd-label">Estado Civil</label>
+            <input id="edit-marital" formControlName="maritalStatus" class="wd-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-profession" class="wd-label">Profissão</label>
+            <input id="edit-profession" formControlName="profession" class="wd-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-phone" class="wd-label">Telefone</label>
+            <input id="edit-phone" formControlName="phone" class="wd-input">
+          </div>
+          <div class="flex flex-col gap-1.5 sm:col-span-2">
+            <label for="edit-notes" class="wd-label">Observações</label>
+            <textarea id="edit-notes" formControlName="notes" rows="3"
+                      class="wd-input resize-none"></textarea>
+          </div>
+          <div class="sm:col-span-2 flex items-center gap-4 pt-2 flex-wrap">
+            @if (submitError()) {
+              <p class="text-sm text-destructive font-medium w-full" role="alert">{{ submitError() }}</p>
+            }
+            <button type="submit" class="wd-btn-primary" [disabled]="submitting()">
+              @if (submitting()) { Salvando… } @else { Salvar }
+            </button>
+            <button type="button" (click)="cancelEdit()" class="wd-btn-secondary" [disabled]="submitting()">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      }
+    </section>
+
+    <!-- Modal: Intimar -->
+    @if (activeModal() === 'intimar') {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+           role="dialog" aria-modal="true" aria-labelledby="modal-intimar-title">
+        <div class="bg-background border border-foreground/10 shadow-2xl max-w-md w-full p-6">
+          <h2 id="modal-intimar-title" class="wd-section-title mb-6">
+            <span class="text-mulim-ouro">✉</span> Registrar Intimação
+          </h2>
+          <form [formGroup]="intimarForm" (ngSubmit)="submitIntimation()" novalidate class="flex flex-col gap-5">
+            <div class="flex flex-col gap-1.5">
+              <label for="intimar-method" class="wd-label">Método <span class="text-destructive">*</span></label>
+              <select id="intimar-method" formControlName="method" class="wd-select"
+                      [class.wd-input--error]="intimarForm.get('method')!.invalid && intimarForm.get('method')!.touched">
+                <option value="">Selecione…</option>
+                <option value="oficial_de_justica">Oficial de Justiça</option>
+                <option value="carta_simples">Carta Simples</option>
+                <option value="edital">Edital</option>
+                <option value="carta_precatoria">Carta Precatória</option>
+              </select>
+              @if (intimarForm.get('method')!.invalid && intimarForm.get('method')!.touched) {
+                <span class="wd-error" role="alert">Campo obrigatório</span>
+              }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="intimar-sent" class="wd-label">Data de Envio</label>
+              <input id="intimar-sent" type="date" formControlName="sentAt" class="wd-input">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="intimar-hearing" class="wd-label">Data da Audiência</label>
+              <input id="intimar-hearing" type="date" formControlName="hearingDate" class="wd-input">
+            </div>
+            @if (modalError()) {
+              <p class="text-sm text-destructive font-medium" role="alert">{{ modalError() }}</p>
+            }
+            <div class="flex items-center gap-4 pt-2">
+              <button type="submit" class="wd-btn-primary" [disabled]="modalSubmitting()">
+                @if (modalSubmitting()) { Salvando… } @else { Registrar }
+              </button>
+              <button type="button" (click)="closeModal()" class="wd-btn-secondary" [disabled]="modalSubmitting()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <!-- Modal: Resultado -->
+    @if (activeModal() === 'resultado') {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+           role="dialog" aria-modal="true" aria-labelledby="modal-resultado-title">
+        <div class="bg-background border border-foreground/10 shadow-2xl max-w-md w-full p-6">
+          <h2 id="modal-resultado-title" class="wd-section-title mb-6">
+            <span class="text-mulim-ouro">✓</span> Registrar Resultado
+          </h2>
+          <form [formGroup]="resultadoForm" (ngSubmit)="submitOutcome()" novalidate class="flex flex-col gap-5">
+            <div class="flex flex-col gap-1.5">
+              <label for="resultado-outcome" class="wd-label">Resultado <span class="text-destructive">*</span></label>
+              <select id="resultado-outcome" formControlName="outcome" class="wd-select"
+                      [class.wd-input--error]="resultadoForm.get('outcome')!.invalid && resultadoForm.get('outcome')!.touched">
+                <option value="">Selecione…</option>
+                <option value="positive">Positivo</option>
+                <option value="negative">Negativo</option>
+              </select>
+              @if (resultadoForm.get('outcome')!.invalid && resultadoForm.get('outcome')!.touched) {
+                <span class="wd-error" role="alert">Campo obrigatório</span>
+              }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="resultado-occurred" class="wd-label">Data do Resultado</label>
+              <input id="resultado-occurred" type="date" formControlName="occurredAt" class="wd-input">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="resultado-hearing" class="wd-label">Data da Audiência</label>
+              <input id="resultado-hearing" type="date" formControlName="hearingDate" class="wd-input">
+            </div>
+            @if (modalError()) {
+              <p class="text-sm text-destructive font-medium" role="alert">{{ modalError() }}</p>
+            }
+            <div class="flex items-center gap-4 pt-2">
+              <button type="submit" class="wd-btn-primary" [disabled]="modalSubmitting()">
+                @if (modalSubmitting()) { Salvando… } @else { Registrar }
+              </button>
+              <button type="button" (click)="closeModal()" class="wd-btn-secondary" [disabled]="modalSubmitting()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+    <!-- Modal: Substituir -->
+    @if (activeModal() === 'substituir') {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+           role="dialog" aria-modal="true" aria-labelledby="modal-substituir-title">
+        <div class="bg-background border border-foreground/10 shadow-2xl max-w-lg w-full p-6">
+          <h2 id="modal-substituir-title" class="wd-section-title mb-6">
+            <span class="text-mulim-ouro">⇄</span> Substituir Testemunha
+          </h2>
+          <form [formGroup]="substituirForm" (ngSubmit)="submitSubstituir()" novalidate
+                class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5">
+            <div class="flex flex-col gap-1.5 sm:col-span-2">
+              <label for="sub-name" class="wd-label">Nome Completo <span class="text-destructive">*</span></label>
+              <input id="sub-name" formControlName="fullName" class="wd-input"
+                     [class.wd-input--error]="substituirForm.get('fullName')!.invalid && substituirForm.get('fullName')!.touched">
+              @if (substituirForm.get('fullName')!.invalid && substituirForm.get('fullName')!.touched) {
+                <span class="wd-error" role="alert">Campo obrigatório</span>
+              }
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="sub-side" class="wd-label">Polo</label>
+              <select id="sub-side" formControlName="side" class="wd-select">
+                <option value="reu">Réu</option>
+                <option value="autor">Autor</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="sub-address" class="wd-label">Endereço</label>
+              <input id="sub-address" formControlName="address" class="wd-input">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="sub-comarca" class="wd-label">Comarca de Residência</label>
+              <input id="sub-comarca" formControlName="residenceComarca" class="wd-input">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="sub-marital" class="wd-label">Estado Civil</label>
+              <input id="sub-marital" formControlName="maritalStatus" class="wd-input">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="sub-profession" class="wd-label">Profissão</label>
+              <input id="sub-profession" formControlName="profession" class="wd-input">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="sub-phone" class="wd-label">Telefone</label>
+              <input id="sub-phone" formControlName="phone" class="wd-input">
+            </div>
+            @if (modalError()) {
+              <p class="text-sm text-destructive font-medium sm:col-span-2" role="alert">{{ modalError() }}</p>
+            }
+            <div class="sm:col-span-2 flex items-center gap-4 pt-2">
+              <button type="submit" class="wd-btn-primary" [disabled]="modalSubmitting()">
+                @if (modalSubmitting()) { Salvando… } @else { Substituir }
+              </button>
+              <button type="button" (click)="closeModal()" class="wd-btn-secondary" [disabled]="modalSubmitting()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+
+  }
+</div>

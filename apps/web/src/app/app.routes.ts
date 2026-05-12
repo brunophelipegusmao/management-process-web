@@ -65,8 +65,7 @@ export const routes: Routes = [
       },
       {
         path: 'clients',
-        loadComponent: () =>
-          import('./private/clients/list/client-list').then((m) => m.ClientList),
+        loadComponent: () => import('./private/clients/list/client-list').then((m) => m.ClientList),
         title: 'Clientes',
       },
       {
@@ -88,6 +87,12 @@ export const routes: Routes = [
         title: 'Prazos',
       },
       {
+        path: 'deadlines/:id',
+        loadComponent: () =>
+          import('./private/deadlines/detail/deadline-detail').then((m) => m.DeadlineDetail),
+        title: 'Prazo',
+      },
+      {
         path: 'hearings',
         loadComponent: () =>
           import('./private/hearings/list/hearing-list').then((m) => m.HearingList),
@@ -99,10 +104,22 @@ export const routes: Routes = [
         title: 'Nova Audiência',
       },
       {
+        path: 'hearings/:id',
+        loadComponent: () =>
+          import('./private/hearings/detail/hearing-detail').then((m) => m.HearingDetail),
+        title: 'Audiência',
+      },
+      {
         path: 'witnesses/assign',
         loadComponent: () =>
           import('./private/witnesses/assign/assign-witness').then((m) => m.AssignWitness),
         title: 'Designar Testemunha',
+      },
+      {
+        path: 'witnesses/:id',
+        loadComponent: () =>
+          import('./private/witnesses/detail/witness-detail').then((m) => m.WitnessDetail),
+        title: 'Testemunha',
       },
       {
         path: 'hearing-schedule',
@@ -128,8 +145,7 @@ export const routes: Routes = [
       },
       {
         path: 'audit',
-        loadComponent: () =>
-          import('./private/audit/audit-logs').then((m) => m.AuditLogs),
+        loadComponent: () => import('./private/audit/audit-logs').then((m) => m.AuditLogs),
         title: 'Auditoria',
         canActivate: [superadminGuard],
       },
@@ -137,6 +153,18 @@ export const routes: Routes = [
         path: 'consulta',
         loadComponent: () => import('./private/consulta/consulta').then((m) => m.Consulta),
         title: 'Consulta',
+      },
+      {
+        path: 'holidays',
+        loadComponent: () => import('./private/holidays/holidays').then((m) => m.Holidays),
+        title: 'Feriados',
+        canActivate: [superadminGuard],
+      },
+      {
+        path: 'emails',
+        loadComponent: () => import('./private/emails/email-history').then((m) => m.EmailHistory),
+        title: 'E-mails',
+        canActivate: [superadminGuard],
       },
     ],
   },

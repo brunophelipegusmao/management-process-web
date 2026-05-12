@@ -187,6 +187,48 @@ export const CLIENT_TYPE_LABELS: Record<Client['type'], string> = {
   pj: 'Pessoa Jurídica',
 };
 
+export interface Holiday {
+  id: string;
+  date: string;
+  name: string;
+  type: 'nacional' | 'estadual' | 'municipal';
+  state: string | null;
+  municipality: string | null;
+  source: 'auto' | 'manual';
+  createdAt: string;
+}
+
+export const HOLIDAY_TYPE_LABELS: Record<Holiday['type'], string> = {
+  nacional: 'Nacional',
+  estadual: 'Estadual',
+  municipal: 'Municipal',
+};
+
+export const HOLIDAY_SOURCE_LABELS: Record<Holiday['source'], string> = {
+  auto: 'Automático',
+  manual: 'Manual',
+};
+
+export interface Email {
+  id: string;
+  processId: string;
+  template: 'E1' | 'E2' | 'E3' | 'E4' | 'E5' | 'E6';
+  recipient: string;
+  sentAt: string;
+  repliedAt: string | null;
+  acknowledgmentDate: string | null;
+  fulfilledAt: string | null;
+}
+
+export const EMAIL_TEMPLATE_LABELS: Record<Email['template'], string> = {
+  E1: 'E1 — Aviso de Audiência',
+  E2: 'E2 — Solicitação de Dados',
+  E3: 'E3 — Confirmação de Intimação',
+  E4: 'E4 — Alerta de Prazo',
+  E5: 'E5 — Aviso de Vencimento',
+  E6: 'E6 — Acuse de Recebimento',
+};
+
 export const ACTION_TYPE_VALUES = [
   'CREATE_PROCESS',
   'UPDATE_PROCESS',

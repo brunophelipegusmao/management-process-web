@@ -97,12 +97,20 @@
                   </span>
                 </td>
                 <td class="py-3">
-                  <a
-                    [routerLink]="['/dashboard/processes', h.processId]"
-                    class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-1"
-                  >
-                    Ver Processo
-                  </a>
+                  <div class="flex items-center gap-4">
+                    <a
+                      [routerLink]="['/dashboard/hearings', h.id]"
+                      class="font-mono text-[0.65rem] tracking-wider uppercase text-mulim-ouro hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-1"
+                    >
+                      Detalhe
+                    </a>
+                    <a
+                      [routerLink]="['/dashboard/processes', h.processId]"
+                      class="font-mono text-[0.65rem] tracking-wider uppercase text-foreground/40 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-mulim-ouro focus-visible:outline-offset-1"
+                    >
+                      Processo
+                    </a>
+                  </div>
                 </td>
               </tr>
             }

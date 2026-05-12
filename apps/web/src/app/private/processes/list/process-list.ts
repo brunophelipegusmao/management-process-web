@@ -21,6 +21,7 @@ import {
   PROCESS_STATUS_LABELS,
   COURT_TYPE_LABELS,
 } from '../../../core/models/api.types';
+import { ProcessStore } from '../../../core/stores/process.store';
 
 @Component({
   selector: 'app-process-list',
@@ -34,6 +35,7 @@ export class ProcessList implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = inject(API_BASE_URL);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly store = inject(ProcessStore);
 
   readonly processes = signal<Process[]>([]);
   readonly loading = signal(true);
@@ -53,7 +55,17 @@ export class ProcessList implements OnInit {
   readonly isEmpty = computed(() => !this.loading() && this.processes().length === 0);
 
   ngOnInit(): void {
-    this.loadProcesses();
+    // Restore from cache if fresh
+    const cached = this.store.state();
+    if (this.store.isFresh() && cached) {
+      this.processes.set(cached.items);
+      this.total.set(cached.total);
+      this.page.set(cached.page);
+      this.filterForm.patchValue(cached.filters, { emitEvent: false });
+      this.loading.set(false);
+    } else {
+      this.loadProcesses();
+    }
 
     this.filterForm.valueChanges
       .pipe(debounceTime(400), takeUntilDestroyed(this.destroyRef))
@@ -85,6 +97,17 @@ export class ProcessList implements OnInit {
           this.processes.set(res.data);
           this.total.set(res.meta.total);
           this.loading.set(false);
+          this.store.set({
+            items: res.data,
+            total: res.meta.total,
+            page: this.page(),
+            pageSize: this.pageSize(),
+            filters: {
+              cnjNumber: cnjNumber ?? '',
+              status: status ?? '',
+              courtType: courtType ?? '',
+            },
+          });
         },
         error: () => this.loading.set(false),
       });

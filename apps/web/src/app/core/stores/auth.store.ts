@@ -4,7 +4,7 @@ interface AuthUser {
   id: string;
   name: string;
   email: string;
-  role: string;
+  profile: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +13,7 @@ export class AuthStore {
 
   readonly user = this._user.asReadonly();
   readonly isAuthenticated = computed(() => this._user() !== null);
-  readonly isSuperAdmin = computed(() => this._user()?.role === 'superadmin');
+  readonly isSuperAdmin = computed(() => this._user()?.profile === 'superadmin');
 
   setUser(user: AuthUser | null): void {
     this._user.set(user);

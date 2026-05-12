@@ -22,6 +22,7 @@ import {
   type ApiListResponse,
   CLIENT_TYPE_LABELS,
 } from '../../../core/models/api.types';
+import { ClientStore } from '../../../core/stores/client.store';
 
 @Component({
   selector: 'app-client-list',
@@ -36,6 +37,7 @@ export class ClientList implements OnInit {
   private readonly apiUrl = inject(API_BASE_URL);
   private readonly destroyRef = inject(DestroyRef);
   private readonly toastService = inject(ToastService);
+  private readonly store = inject(ClientStore);
 
   readonly clients = signal<Client[]>([]);
   readonly loading = signal(true);
@@ -54,7 +56,17 @@ export class ClientList implements OnInit {
   readonly isEmpty = computed(() => !this.loading() && this.clients().length === 0);
 
   ngOnInit(): void {
-    this.loadClients();
+    // Restore from cache if fresh
+    const cached = this.store.state();
+    if (this.store.isFresh() && cached) {
+      this.clients.set(cached.items);
+      this.total.set(cached.total);
+      this.page.set(cached.page);
+      this.filterForm.patchValue(cached.filters, { emitEvent: false });
+      this.loading.set(false);
+    } else {
+      this.loadClients();
+    }
 
     this.filterForm.valueChanges
       .pipe(debounceTime(400), takeUntilDestroyed(this.destroyRef))
@@ -82,6 +94,13 @@ export class ClientList implements OnInit {
           this.clients.set(res.data);
           this.total.set(res.meta.total);
           this.loading.set(false);
+          this.store.set({
+            items: res.data,
+            total: res.meta.total,
+            page: this.page(),
+            pageSize: this.pageSize(),
+            filters: { name: name ?? '', type: type ?? '' },
+          });
         },
         error: () => this.loading.set(false),
       });
@@ -101,6 +120,7 @@ export class ClientList implements OnInit {
       .subscribe({
         next: () => {
           this.confirmDeleteId.set(null);
+          this.store.invalidate();
           this.loadClients();
           this.toastService.show('success', 'Cliente excluído com sucesso');
         },

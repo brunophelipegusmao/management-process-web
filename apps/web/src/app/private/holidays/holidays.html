@@ -1,0 +1,248 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
+
+  <!-- Cabeçalho -->
+  <header class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+    <div>
+      <h1 class="font-sans text-2xl font-bold">Feriados</h1>
+      <p class="font-mono text-xs text-foreground/40 mt-1 tracking-wide">
+        Gestão de feriados nacionais, estaduais e municipais
+      </p>
+    </div>
+    <button (click)="openCreate()" class="hols-btn-primary">+ Novo Feriado</button>
+  </header>
+
+  <!-- Filtros -->
+  <form [formGroup]="filterForm" class="mb-6 grid grid-cols-2 sm:grid-cols-5 gap-3">
+    <div class="flex flex-col gap-1">
+      <label class="hols-label">Data</label>
+      <input type="date" formControlName="date" class="hols-input">
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="hols-label">Tipo</label>
+      <select formControlName="type" class="hols-select">
+        <option value="">Todos</option>
+        <option value="nacional">Nacional</option>
+        <option value="estadual">Estadual</option>
+        <option value="municipal">Municipal</option>
+      </select>
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="hols-label">Estado (UF)</label>
+      <input formControlName="state" class="hols-input" placeholder="ex: SP">
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="hols-label">Município</label>
+      <input formControlName="municipality" class="hols-input" placeholder="ex: Campinas">
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="hols-label">Origem</label>
+      <select formControlName="source" class="hols-select">
+        <option value="">Todas</option>
+        <option value="auto">Automático</option>
+        <option value="manual">Manual</option>
+      </select>
+    </div>
+  </form>
+
+  <!-- Lista -->
+  @if (loading()) {
+    <div class="py-20 flex items-center justify-center">
+      <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="py-20 flex items-center justify-center border border-dashed border-foreground/15 rounded">
+      <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Nenhum feriado encontrado</span>
+    </div>
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" aria-label="Lista de feriados">
+        <thead>
+          <tr class="border-b border-foreground/10">
+            <th scope="col" class="hols-th">Data</th>
+            <th scope="col" class="hols-th">Nome</th>
+            <th scope="col" class="hols-th">Tipo</th>
+            <th scope="col" class="hols-th">Estado</th>
+            <th scope="col" class="hols-th">Município</th>
+            <th scope="col" class="hols-th">Origem</th>
+            <th scope="col" class="hols-th text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (h of holidays(); track h.id) {
+            <tr class="border-b border-foreground/5 hover:bg-foreground/2">
+              <td class="py-3 pr-4 font-mono text-xs">{{ formatDate(h.date) }}</td>
+              <td class="py-3 pr-4 font-sans text-sm font-medium">{{ h.name }}</td>
+              <td class="py-3 pr-4">
+                <span
+                  class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+                  [class.text-blue-600]="h.type === 'nacional'"
+                  [class.bg-blue-50]="h.type === 'nacional'"
+                  [class.text-green-700]="h.type === 'estadual'"
+                  [class.bg-green-50]="h.type === 'estadual'"
+                  [class.text-amber-600]="h.type === 'municipal'"
+                  [class.bg-amber-50]="h.type === 'municipal'"
+                >{{ typeLabels[h.type] }}</span>
+              </td>
+              <td class="py-3 pr-4 font-mono text-xs text-foreground/60">{{ h.state ?? '—' }}</td>
+              <td class="py-3 pr-4 text-xs text-foreground/60">{{ h.municipality ?? '—' }}</td>
+              <td class="py-3 pr-4">
+                <span class="font-mono text-[0.6rem] tracking-wide text-foreground/40 uppercase">
+                  {{ sourceLabels[h.source] }}
+                </span>
+              </td>
+              <td class="py-3 text-right">
+                <div class="flex items-center justify-end gap-3">
+                  <button (click)="openEdit(h)" class="hols-action-btn">Editar</button>
+                  <button (click)="confirmDeleteId.set(h.id)" class="hols-action-btn hols-action-btn--danger">
+                    Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <app-pagination
+      [page]="page()"
+      [pageSize]="pageSize()"
+      [total]="total()"
+      (pageChange)="onPageChange($event)"
+      class="mt-6"
+    />
+  }
+
+  <!-- Modal: Criar Feriado -->
+  @if (showCreateForm()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+         role="dialog" aria-modal="true" aria-labelledby="modal-create-title">
+      <div class="bg-background border border-foreground/10 shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+        <h2 id="modal-create-title" class="hols-section-title mb-6">
+          <span class="text-mulim-ouro">+</span> Novo Feriado
+        </h2>
+        <form [formGroup]="createForm" (ngSubmit)="submitCreate()" novalidate
+              class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5">
+          <div class="flex flex-col gap-1.5 sm:col-span-2">
+            <label for="c-name" class="hols-label">Nome <span class="text-destructive">*</span></label>
+            <input id="c-name" formControlName="name" class="hols-input"
+                   [class.hols-input--error]="hasCreateError('name')">
+            @if (hasCreateError('name')) { <span class="hols-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="c-date" class="hols-label">Data <span class="text-destructive">*</span></label>
+            <input id="c-date" type="date" formControlName="date" class="hols-input"
+                   [class.hols-input--error]="hasCreateError('date')">
+            @if (hasCreateError('date')) { <span class="hols-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="c-type" class="hols-label">Tipo <span class="text-destructive">*</span></label>
+            <select id="c-type" formControlName="type" class="hols-select">
+              <option value="nacional">Nacional</option>
+              <option value="estadual">Estadual</option>
+              <option value="municipal">Municipal</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="c-state" class="hols-label">Estado (UF)</label>
+            <input id="c-state" formControlName="state" class="hols-input" placeholder="ex: SP">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="c-municipality" class="hols-label">Município</label>
+            <input id="c-municipality" formControlName="municipality" class="hols-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="c-source" class="hols-label">Origem <span class="text-destructive">*</span></label>
+            <select id="c-source" formControlName="source" class="hols-select">
+              <option value="manual">Manual</option>
+              <option value="auto">Automático</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2 flex items-center gap-4 pt-2 flex-wrap">
+            @if (submitError()) {
+              <p class="text-sm text-destructive font-medium w-full" role="alert">{{ submitError() }}</p>
+            }
+            <button type="submit" class="hols-btn-primary" [disabled]="submitting()">
+              @if (submitting()) { Salvando… } @else { Criar }
+            </button>
+            <button type="button" (click)="closeCreate()" class="hols-btn-secondary" [disabled]="submitting()">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Editar Feriado -->
+  @if (editingHoliday(); as h) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+         role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
+      <div class="bg-background border border-foreground/10 shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+        <h2 id="modal-edit-title" class="hols-section-title mb-6">
+          <span class="text-mulim-ouro">✎</span> Editar Feriado
+        </h2>
+        <form [formGroup]="editForm" (ngSubmit)="submitEdit()" novalidate
+              class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5">
+          <div class="flex flex-col gap-1.5 sm:col-span-2">
+            <label for="e-name" class="hols-label">Nome <span class="text-destructive">*</span></label>
+            <input id="e-name" formControlName="name" class="hols-input"
+                   [class.hols-input--error]="hasEditError('name')">
+            @if (hasEditError('name')) { <span class="hols-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="e-date" class="hols-label">Data <span class="text-destructive">*</span></label>
+            <input id="e-date" type="date" formControlName="date" class="hols-input"
+                   [class.hols-input--error]="hasEditError('date')">
+            @if (hasEditError('date')) { <span class="hols-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="e-type" class="hols-label">Tipo <span class="text-destructive">*</span></label>
+            <select id="e-type" formControlName="type" class="hols-select">
+              <option value="nacional">Nacional</option>
+              <option value="estadual">Estadual</option>
+              <option value="municipal">Municipal</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="e-state" class="hols-label">Estado (UF)</label>
+            <input id="e-state" formControlName="state" class="hols-input" placeholder="ex: SP">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="e-municipality" class="hols-label">Município</label>
+            <input id="e-municipality" formControlName="municipality" class="hols-input">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="e-source" class="hols-label">Origem <span class="text-destructive">*</span></label>
+            <select id="e-source" formControlName="source" class="hols-select">
+              <option value="manual">Manual</option>
+              <option value="auto">Automático</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2 flex items-center gap-4 pt-2 flex-wrap">
+            @if (editError()) {
+              <p class="text-sm text-destructive font-medium w-full" role="alert">{{ editError() }}</p>
+            }
+            <button type="submit" class="hols-btn-primary" [disabled]="editSubmitting()">
+              @if (editSubmitting()) { Salvando… } @else { Salvar }
+            </button>
+            <button type="button" (click)="closeEdit()" class="hols-btn-secondary" [disabled]="editSubmitting()">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Confirm: Excluir -->
+  <app-confirm-dialog
+    [open]="!!confirmDeleteId()"
+    title="Excluir Feriado"
+    message="Tem certeza que deseja excluir este feriado? Esta ação não pode ser desfeita."
+    confirmLabel="Sim, excluir"
+    (confirmed)="deleteHoliday()"
+    (cancelled)="confirmDeleteId.set(null)"
+  />
+
+</div>

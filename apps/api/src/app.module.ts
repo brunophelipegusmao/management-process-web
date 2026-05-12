@@ -20,49 +20,51 @@ import { RolesGuard } from './common/guards/roles.guard';
 import { ContactModule } from './modules/contact/contact.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
+import { EmailsModule } from './modules/emails/emails.module';
 
 @Module({
-  imports: [
-    ScheduleModule.forRoot(),
-    ClientsModule,
-    UsersModule,
-    ProcessesModule,
-    DeadlinesModule,
-    WitnessesModule,
-    HearingsModule,
-    JobsModule,
-    ReportsModule,
-    ContactModule,
-    TasksModule,
-    AuditLogsModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_PIPE,
-      useClass: ZodValidationPipe,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseEnvelopeInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: AuditInterceptor,
-    },
-  ],
+   imports: [
+      ScheduleModule.forRoot(),
+      ClientsModule,
+      UsersModule,
+      ProcessesModule,
+      DeadlinesModule,
+      WitnessesModule,
+      HearingsModule,
+      JobsModule,
+      ReportsModule,
+      ContactModule,
+      TasksModule,
+      AuditLogsModule,
+      EmailsModule,
+   ],
+   controllers: [AppController],
+   providers: [
+      AppService,
+      {
+         provide: APP_PIPE,
+         useClass: ZodValidationPipe,
+      },
+      {
+         provide: APP_FILTER,
+         useClass: GlobalExceptionFilter,
+      },
+      {
+         provide: APP_GUARD,
+         useClass: AuthGuard,
+      },
+      {
+         provide: APP_GUARD,
+         useClass: RolesGuard,
+      },
+      {
+         provide: APP_INTERCEPTOR,
+         useClass: ResponseEnvelopeInterceptor,
+      },
+      {
+         provide: APP_INTERCEPTOR,
+         useClass: AuditInterceptor,
+      },
+   ],
 })
 export class AppModule {}

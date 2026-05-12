@@ -8,7 +8,7 @@ interface AuthUser {
   id: string;
   name: string;
   email: string;
-  role: string;
+  profile: string;
 }
 
 interface SignInResponse {
@@ -34,7 +34,7 @@ export class AuthService {
       ),
     );
 
-    this.authStore.setUser({ id: res.user.id, name: res.user.name, email: res.user.email, role: res.user.role });
+    this.authStore.setUser({ id: res.user.id, name: res.user.name, email: res.user.email, profile: res.user.profile });
   }
 
   async signOut(): Promise<void> {
@@ -65,7 +65,7 @@ export class AuthService {
     const user = await this.getSession();
     this.authStore.setUser(
       user
-        ? { id: user.id, name: user.name, email: user.email, role: user.role }
+        ? { id: user.id, name: user.name, email: user.email, profile: user.profile }
         : null,
     );
   }

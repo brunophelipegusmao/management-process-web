@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  PLATFORM_ID,
+  effect,
+  inject,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { AuthStore } from '../../core/stores/auth.store';
@@ -16,14 +24,22 @@ interface NavItem {
   imports: [RouterOutlet, RouterLink, RouterLinkActive, Toast],
   templateUrl: './private-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.dark]': 'themeStore.isDark()' },
 })
 export class PrivateLayout {
+  private readonly el = inject(ElementRef);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly authStore = inject(AuthStore);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   readonly themeStore = inject(ThemeStore);
+
+  constructor() {
+    effect(() => {
+      if (!isPlatformBrowser(this.platformId)) return;
+      this.el.nativeElement.classList.toggle('dark', this.themeStore.isDark());
+    });
+  }
   readonly user = this.authStore.user;
   readonly isSuperAdmin = this.authStore.isSuperAdmin;
 

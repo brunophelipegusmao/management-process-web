@@ -1,0 +1,129 @@
+<div class="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
+
+  <app-breadcrumb />
+
+  @if (loading()) {
+    <div class="py-20 flex items-center justify-center">
+      <span class="font-mono text-xs tracking-widest uppercase text-foreground/30">Carregando…</span>
+    </div>
+  } @else if (loadError()) {
+    <div class="py-20 flex flex-col items-center gap-4">
+      <span class="font-mono text-xs text-destructive">Erro ao carregar prazo.</span>
+      <a routerLink="/dashboard/deadlines" class="dd-back-link">← Voltar</a>
+    </div>
+  } @else if (deadline(); as d) {
+
+    <!-- Cabeçalho -->
+    <header class="mb-8">
+      <a [routerLink]="['/dashboard/processes', d.processId]" class="dd-back-link mb-3 inline-flex">← Processo</a>
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 class="font-sans text-2xl font-bold">{{ typeLabels[d.type] }}</h1>
+          <p class="font-mono text-xs text-foreground/40 mt-1">
+            Vencimento: {{ formatDate(d.dueDate) }}
+            @if (isOverdue(d)) { <span class="text-destructive ml-1">(Vencido)</span> }
+          </p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span
+            class="inline-block font-mono text-[0.6rem] tracking-widest uppercase px-2 py-0.5 rounded-sm"
+            [class.text-amber-600]="d.status === 'aberto'"
+            [class.bg-amber-50]="d.status === 'aberto'"
+            [class.text-green-700]="d.status === 'cumprido'"
+            [class.bg-green-50]="d.status === 'cumprido'"
+            [class.text-destructive]="d.status === 'vencido'"
+            [class.bg-red-50]="d.status === 'vencido'"
+            [class.text-foreground/40]="d.status === 'cancelado'"
+            [class.bg-foreground/5]="d.status === 'cancelado'"
+          >{{ statusLabels[d.status] }}</span>
+          @if (d.status !== 'cancelado' && d.status !== 'cumprido') {
+            <button (click)="confirmCancel.set(true)" class="dd-btn-danger">Cancelar Prazo</button>
+          }
+        </div>
+      </div>
+    </header>
+
+    <!-- Seção 01: Dados do Prazo -->
+    <section aria-labelledby="sec-dados" class="mb-8">
+      <h2 id="sec-dados" class="dd-section-title"><span class="text-mulim-ouro">01</span> Dados do Prazo</h2>
+
+      @if (!editMode()) {
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-4 mb-4">
+          <div class="dd-field">
+            <span class="dd-field-label">Tipo</span>
+            <span class="dd-field-value">{{ typeLabels[d.type] }}</span>
+          </div>
+          <div class="dd-field">
+            <span class="dd-field-label">Vencimento</span>
+            <span class="dd-field-value font-mono text-sm">{{ formatDate(d.dueDate) }}</span>
+          </div>
+          <div class="dd-field">
+            <span class="dd-field-label">Status</span>
+            <span class="dd-field-value">{{ statusLabels[d.status] }}</span>
+          </div>
+          <div class="dd-field">
+            <span class="dd-field-label">Notificação Enviada</span>
+            <span class="dd-field-value">{{ d.notificationSent ? 'Sim' : 'Não' }}</span>
+          </div>
+          @if (d.witnessId) {
+            <div class="dd-field">
+              <span class="dd-field-label">Testemunha</span>
+              <a [routerLink]="['/dashboard/witnesses', d.witnessId]"
+                 class="dd-field-value text-mulim-ouro hover:underline">Ver testemunha</a>
+            </div>
+          }
+          <div class="dd-field">
+            <span class="dd-field-label">Criado em</span>
+            <span class="dd-field-value font-mono text-sm">{{ formatDate(d.createdAt) }}</span>
+          </div>
+        </div>
+        @if (d.status !== 'cancelado') {
+          <button (click)="enableEdit()" class="dd-btn-secondary">Editar</button>
+        }
+      } @else {
+        <form [formGroup]="editForm" (ngSubmit)="submitEdit()" novalidate
+              class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 max-w-2xl">
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-due" class="dd-label">Vencimento <span class="text-destructive">*</span></label>
+            <input id="edit-due" type="date" formControlName="dueDate" class="dd-input"
+                   [class.dd-input--error]="hasError('dueDate')">
+            @if (hasError('dueDate')) { <span class="dd-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="edit-status" class="dd-label">Status <span class="text-destructive">*</span></label>
+            <select id="edit-status" formControlName="status" class="dd-select"
+                    [class.dd-input--error]="hasError('status')">
+              <option value="aberto">Aberto</option>
+              <option value="cumprido">Cumprido</option>
+              <option value="vencido">Vencido</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+            @if (hasError('status')) { <span class="dd-error" role="alert">Campo obrigatório</span> }
+          </div>
+          <div class="sm:col-span-2 flex items-center gap-4 pt-2 flex-wrap">
+            @if (submitError()) {
+              <p class="text-sm text-destructive font-medium w-full" role="alert">{{ submitError() }}</p>
+            }
+            <button type="submit" class="dd-btn-primary" [disabled]="submitting()">
+              @if (submitting()) { Salvando… } @else { Salvar }
+            </button>
+            <button type="button" (click)="cancelEdit()" class="dd-btn-secondary" [disabled]="submitting()">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      }
+    </section>
+
+    <!-- Confirm: Cancelar prazo -->
+    <app-confirm-dialog
+      [open]="confirmCancel()"
+      title="Cancelar Prazo"
+      message="Tem certeza que deseja cancelar este prazo? Esta ação não pode ser desfeita."
+      confirmLabel="Sim, cancelar"
+      (confirmed)="cancelDeadline()"
+      (cancelled)="confirmCancel.set(false)"
+    />
+
+  }
+</div>
