@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -45,6 +45,19 @@ export class ClientList implements OnInit {
   readonly page = signal(1);
   readonly pageSize = signal(20);
   readonly confirmDeleteId = signal<string | null>(null);
+
+  // ── Criar cliente ──────────────────────────────────────────
+  readonly showCreateModal = signal(false);
+  readonly submitting = signal(false);
+  readonly submitError = signal<string | null>(null);
+
+  readonly createForm = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(1)]],
+    email: ['', [Validators.required, Validators.email]],
+    phone: [''],
+    type: ['pf' as 'pf' | 'pj', Validators.required],
+  });
+  // ──────────────────────────────────────────────────────────
 
   readonly typeLabels = CLIENT_TYPE_LABELS;
 
@@ -127,6 +140,49 @@ export class ClientList implements OnInit {
         error: () => {
           this.confirmDeleteId.set(null);
           this.toastService.show('error', 'Erro ao excluir cliente.');
+        },
+      });
+  }
+
+  openCreateModal(): void {
+    this.createForm.reset({ name: '', email: '', phone: '', type: 'pf' });
+    this.submitError.set(null);
+    this.showCreateModal.set(true);
+  }
+
+  closeCreateModal(): void {
+    this.showCreateModal.set(false);
+    this.submitError.set(null);
+  }
+
+  createClient(): void {
+    if (this.createForm.invalid || this.submitting()) return;
+    this.submitting.set(true);
+    this.submitError.set(null);
+
+    const { name, email, phone, type } = this.createForm.value;
+    const body: Record<string, string> = {
+      name: name!.trim(),
+      email: email!.trim(),
+      type: type!,
+    };
+    if (phone?.trim()) body['phone'] = phone.trim();
+
+    this.http
+      .post<{ data: Client }>(`${this.apiUrl}/clients`, body, { withCredentials: true })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.submitting.set(false);
+          this.showCreateModal.set(false);
+          this.store.invalidate();
+          this.loadClients();
+          this.toastService.show('success', 'Cliente cadastrado com sucesso');
+        },
+        error: (err) => {
+          this.submitting.set(false);
+          const msg: string = err?.error?.message ?? 'Erro ao cadastrar cliente.';
+          this.submitError.set(msg);
         },
       });
   }

@@ -5,6 +5,13 @@
       <span class="cl-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-foreground/40">Gestão</span>
       <h1 class="font-sans text-2xl sm:text-3xl font-bold uppercase">Clientes</h1>
     </div>
+    <button
+      type="button"
+      (click)="openCreateModal()"
+      class="font-mono text-[0.65rem] tracking-[0.18em] uppercase px-4 py-2.5 border border-mulim-ouro text-mulim-ouro hover:bg-mulim-ouro hover:text-background transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+    >
+      + Novo Cliente
+    </button>
   </header>
 
   <section aria-labelledby="sec-filtros" class="mb-6">
@@ -111,3 +118,100 @@
   (confirmed)="deleteClient()"
   (cancelled)="confirmDeleteId.set(null)"
 />
+
+<!-- ── Modal: Novo Cliente ────────────────────────────── -->
+@if (showCreateModal()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-create-client-title"
+    (click)="closeCreateModal()"
+  >
+    <div
+      class="bg-background border border-foreground/10 w-full max-w-md shadow-xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-foreground/8">
+        <h2 id="modal-create-client-title" class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-foreground/70">
+          Novo Cliente
+        </h2>
+        <button
+          type="button"
+          (click)="closeCreateModal()"
+          class="text-foreground/30 hover:text-foreground transition-colors text-sm focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+          aria-label="Fechar"
+        >✕</button>
+      </div>
+
+      <form [formGroup]="createForm" (ngSubmit)="createClient()" class="px-6 py-5 flex flex-col gap-5" novalidate>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="create-name" class="cl-label">Nome <span class="text-destructive" aria-hidden="true">*</span></label>
+          <input
+            id="create-name"
+            formControlName="name"
+            autocomplete="off"
+            class="cl-input"
+            [class.border-destructive]="createForm.controls.name.invalid && createForm.controls.name.touched"
+          >
+          @if (createForm.controls.name.invalid && createForm.controls.name.touched) {
+            <span class="font-mono text-[0.58rem] text-destructive">Nome é obrigatório.</span>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="create-email" class="cl-label">E-mail <span class="text-destructive" aria-hidden="true">*</span></label>
+          <input
+            id="create-email"
+            type="email"
+            formControlName="email"
+            autocomplete="off"
+            class="cl-input"
+            [class.border-destructive]="createForm.controls.email.invalid && createForm.controls.email.touched"
+          >
+          @if (createForm.controls.email.invalid && createForm.controls.email.touched) {
+            <span class="font-mono text-[0.58rem] text-destructive">E-mail inválido.</span>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="create-phone" class="cl-label">Telefone</label>
+          <input
+            id="create-phone"
+            type="tel"
+            formControlName="phone"
+            autocomplete="off"
+            class="cl-input"
+          >
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="create-type" class="cl-label">Tipo <span class="text-destructive" aria-hidden="true">*</span></label>
+          <select id="create-type" formControlName="type" class="cl-select">
+            <option value="pf">Pessoa Física</option>
+            <option value="pj">Pessoa Jurídica</option>
+          </select>
+        </div>
+
+        @if (submitError()) {
+          <p class="font-mono text-[0.65rem] text-destructive">{{ submitError() }}</p>
+        }
+
+        <div class="flex items-center justify-end gap-3 pt-1">
+          <button
+            type="button"
+            (click)="closeCreateModal()"
+            class="font-mono text-[0.65rem] tracking-[0.15em] uppercase px-4 py-2 border border-foreground/20 text-foreground/50 hover:border-foreground/40 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro"
+          >Cancelar</button>
+          <button
+            type="submit"
+            [disabled]="createForm.invalid || submitting()"
+            class="font-mono text-[0.65rem] tracking-[0.15em] uppercase px-4 py-2 border border-mulim-ouro text-mulim-ouro hover:bg-mulim-ouro hover:text-background transition-colors focus-visible:outline-2 focus-visible:outline-mulim-ouro disabled:opacity-40 disabled:pointer-events-none"
+          >{{ submitting() ? 'Salvando…' : 'Cadastrar' }}</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+}

@@ -11,8 +11,8 @@
     <h2 id="sec-filtros" class="dl-section-title"><span class="text-mulim-ouro">01</span> Filtros</h2>
     <form [formGroup]="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div class="flex flex-col gap-1.5">
-        <label for="filter-process" class="dl-label">ID do Processo (UUID)</label>
-        <input id="filter-process" formControlName="processId" placeholder="UUID" autocomplete="off" class="dl-input">
+        <label for="filter-cnj" class="dl-label">Número CNJ</label>
+        <input id="filter-cnj" formControlName="cnjNumber" placeholder="0000000-00.0000.0.00.0000" autocomplete="off" class="dl-input">
       </div>
       <div class="flex flex-col gap-1.5">
         <label for="filter-status" class="dl-label">Status</label>

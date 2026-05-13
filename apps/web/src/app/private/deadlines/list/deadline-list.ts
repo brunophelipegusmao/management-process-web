@@ -49,7 +49,7 @@ export class DeadlineList implements OnInit {
   readonly statusLabels = DEADLINE_STATUS_LABELS;
 
   readonly filterForm = this.fb.group({
-    processId: [''],
+    cnjNumber: [''],
     status: [''],
     type: [''],
     dueDateFrom: [''],
@@ -71,12 +71,12 @@ export class DeadlineList implements OnInit {
 
   loadDeadlines(): void {
     this.loading.set(true);
-    const { processId, status, type, dueDateFrom, dueDateTo } = this.filterForm.value;
+    const { cnjNumber, status, type, dueDateFrom, dueDateTo } = this.filterForm.value;
     const params: Record<string, string> = {
       page: String(this.page()),
       pageSize: String(this.pageSize()),
     };
-    if (processId) params['processId'] = processId;
+    if (cnjNumber) params['cnjNumber'] = cnjNumber;
     if (status) params['status'] = status;
     if (type) params['type'] = type;
     if (dueDateFrom) params['dueDateFrom'] = dueDateFrom;

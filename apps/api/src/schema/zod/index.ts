@@ -1,22 +1,22 @@
 import { z } from 'zod';
 
 import {
-  actionTypeValues,
-  clientSideValues,
-  clientTypeValues,
-  courtTypeValues,
-  deadlineStatusValues,
-  deadlineTypeValues,
-  emailTemplateValues,
-  hearingStatusValues,
-  hearingTypeValues,
-  holidaySourceValues,
-  holidayTypeValues,
-  processStatusValues,
-  taskStatusValues,
-  userProfileValues,
-  witnessSideValues,
-  witnessStatusValues,
+   actionTypeValues,
+   clientSideValues,
+   clientTypeValues,
+   courtTypeValues,
+   deadlineStatusValues,
+   deadlineTypeValues,
+   emailTemplateValues,
+   hearingStatusValues,
+   hearingTypeValues,
+   holidaySourceValues,
+   holidayTypeValues,
+   processStatusValues,
+   taskStatusValues,
+   userProfileValues,
+   witnessSideValues,
+   witnessStatusValues,
 } from '..';
 
 const uuidSchema = z.string().uuid();
@@ -28,38 +28,38 @@ const optionalDateTimeSchema = dateTimeSchema.optional();
 const optionalLooseTrimmedStringSchema = z.string().trim().optional();
 const optionalTrimmedStringSchema = z.string().trim().min(1).optional();
 const paginationSchema = z
-  .object({
-    page: z.coerce.number().int().positive().optional(),
-    pageSize: z.coerce.number().int().positive().max(100).optional(),
-  })
-  .strict();
+   .object({
+      page: z.coerce.number().int().positive().optional(),
+      pageSize: z.coerce.number().int().positive().max(100).optional(),
+   })
+   .strict();
 
 const bannedWitnessFields = [
-  'cpf',
-  'rg',
-  'cnh',
-  'document',
-  'identityDocument',
+   'cpf',
+   'rg',
+   'cnh',
+   'document',
+   'identityDocument',
 ];
 
 function withStrictUnknownFieldValidation<T extends z.ZodRawShape>(
-  schema: z.ZodObject<T>,
+   schema: z.ZodObject<T>,
 ) {
-  return schema.strict();
+   return schema.strict();
 }
 
 function withWitnessGuards<T extends z.ZodRawShape>(schema: z.ZodObject<T>) {
-  return schema.strict().superRefine((value, context) => {
-    for (const field of bannedWitnessFields) {
-      if (field in value) {
-        context.addIssue({
-          code: 'custom',
-          path: [field],
-          message: `${field} is not allowed for witnesses`,
-        });
+   return schema.strict().superRefine((value, context) => {
+      for (const field of bannedWitnessFields) {
+         if (field in value) {
+            context.addIssue({
+               code: 'custom',
+               path: [field],
+               message: `${field} is not allowed for witnesses`,
+            });
+         }
       }
-    }
-  });
+   });
 }
 
 export const userProfileSchema = z.enum(userProfileValues);
@@ -79,304 +79,305 @@ export const emailTemplateSchema = z.enum(emailTemplateValues);
 export const actionTypeSchema = z.enum(actionTypeValues);
 export const taskStatusSchema = z.enum(taskStatusValues);
 export const witnessIntimationMethodSchema = z.enum([
-  'carta_simples',
-  'carta_precatoria',
-  'sala_passiva',
-  'mandado',
-  'whatsapp',
+   'carta_simples',
+   'carta_precatoria',
+   'sala_passiva',
+   'mandado',
+   'whatsapp',
 ]);
 export const witnessIntimationOutcomeSchema = z.enum(['positive', 'negative']);
 
 const userShape = {
-  name: z.string().trim().min(1),
-  email: z.string().trim().email(),
-  emailVerified: z.boolean().optional(),
-  image: optionalTrimmedStringSchema,
-  profile: userProfileSchema.default('advogado'),
-  active: z.boolean().optional(),
+   name: z.string().trim().min(1),
+   email: z.string().trim().email(),
+   emailVerified: z.boolean().optional(),
+   image: optionalTrimmedStringSchema,
+   profile: userProfileSchema.default('advogado'),
+   active: z.boolean().optional(),
 };
 
 export const createUserSchema = withStrictUnknownFieldValidation(
-  z.object(userShape),
+   z.object(userShape),
 );
 export const updateUserSchema = withStrictUnknownFieldValidation(
-  z.object(userShape).partial(),
+   z.object(userShape).partial(),
 );
 export const userFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    email: optionalTrimmedStringSchema,
-    profile: userProfileSchema.optional(),
-    active: z.coerce.boolean().optional(),
-  }),
+   paginationSchema.extend({
+      email: optionalTrimmedStringSchema,
+      profile: userProfileSchema.optional(),
+      active: z.coerce.boolean().optional(),
+   }),
 );
 
 const clientShape = {
-  name: z.string().trim().min(1),
-  email: z.string().trim().email(),
-  phone: optionalTrimmedStringSchema,
-  type: clientTypeSchema,
+   name: z.string().trim().min(1),
+   email: z.string().trim().email(),
+   phone: optionalTrimmedStringSchema,
+   type: clientTypeSchema,
 };
 
 export const createClientSchema = withStrictUnknownFieldValidation(
-  z.object(clientShape),
+   z.object(clientShape),
 );
 export const updateClientSchema = withStrictUnknownFieldValidation(
-  z.object(clientShape).partial(),
+   z.object(clientShape).partial(),
 );
 export const clientFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    email: optionalTrimmedStringSchema,
-    type: clientTypeSchema.optional(),
-    name: optionalTrimmedStringSchema,
-  }),
+   paginationSchema.extend({
+      email: optionalTrimmedStringSchema,
+      type: clientTypeSchema.optional(),
+      name: optionalTrimmedStringSchema,
+   }),
 );
 
 const processShape = {
-  clientId: uuidSchema,
-  cnjNumber: z.string().trim().min(1),
-  comarca: z.string().trim().min(1),
-  vara: z.string().trim().min(1),
-  courtType: courtTypeSchema,
-  authorName: z.string().trim().min(1),
-  defendantName: z.string().trim().min(1),
-  clientSide: clientSideSchema.default('reu'),
-  status: processStatusSchema.default('citado'),
-  citationDate: optionalDateSchema,
-  mentionsWitness: z.boolean().optional(),
+   clientId: uuidSchema,
+   cnjNumber: z.string().trim().min(1),
+   comarca: z.string().trim().min(1),
+   vara: z.string().trim().min(1),
+   courtType: courtTypeSchema,
+   authorName: z.string().trim().min(1),
+   defendantName: z.string().trim().min(1),
+   clientSide: clientSideSchema.default('reu'),
+   status: processStatusSchema.default('citado'),
+   citationDate: optionalDateSchema,
+   mentionsWitness: z.boolean().optional(),
 };
 
 export const createProcessSchema = withStrictUnknownFieldValidation(
-  z.object(processShape),
+   z.object(processShape),
 );
 export const updateProcessSchema = withStrictUnknownFieldValidation(
-  z.object(processShape).partial(),
+   z.object(processShape).partial(),
 );
 export const processFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    clientId: optionalUuidSchema,
-    cnjNumber: optionalTrimmedStringSchema,
-    courtType: courtTypeSchema.optional(),
-    status: processStatusSchema.optional(),
-    mentionsWitness: z.coerce.boolean().optional(),
-  }),
+   paginationSchema.extend({
+      clientId: optionalUuidSchema,
+      cnjNumber: optionalTrimmedStringSchema,
+      courtType: courtTypeSchema.optional(),
+      status: processStatusSchema.optional(),
+      mentionsWitness: z.coerce.boolean().optional(),
+   }),
 );
 
 const hearingShape = {
-  processId: uuidSchema,
-  dateTime: dateTimeSchema,
-  type: hearingTypeSchema,
-  status: hearingStatusSchema.default('agendada'),
-  rescheduledTo: optionalDateTimeSchema,
+   processId: uuidSchema,
+   dateTime: dateTimeSchema,
+   type: hearingTypeSchema,
+   status: hearingStatusSchema.default('agendada'),
+   rescheduledTo: optionalDateTimeSchema,
 };
 
 export const createHearingSchema = withStrictUnknownFieldValidation(
-  z.object(hearingShape),
+   z.object(hearingShape),
 );
 export const updateHearingSchema = withStrictUnknownFieldValidation(
-  z.object(hearingShape).partial(),
+   z.object(hearingShape).partial(),
 );
 export const hearingFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    processId: optionalUuidSchema,
-    type: hearingTypeSchema.optional(),
-    status: hearingStatusSchema.optional(),
-    startsAt: optionalDateTimeSchema,
-    endsAt: optionalDateTimeSchema,
-  }),
+   paginationSchema.extend({
+      processId: optionalUuidSchema,
+      type: hearingTypeSchema.optional(),
+      status: hearingStatusSchema.optional(),
+      startsAt: optionalDateTimeSchema,
+      endsAt: optionalDateTimeSchema,
+   }),
 );
 
 const witnessShape = {
-  processId: uuidSchema,
-  replacedById: optionalUuidSchema,
-  fullName: z.string().trim().min(1),
-  address: optionalLooseTrimmedStringSchema,
-  residenceComarca: optionalLooseTrimmedStringSchema,
-  maritalStatus: optionalTrimmedStringSchema,
-  profession: optionalTrimmedStringSchema,
-  phone: optionalTrimmedStringSchema,
-  notes: optionalTrimmedStringSchema,
-  side: witnessSideSchema.default('reu'),
-  status: witnessStatusSchema.optional(),
-  replaced: z.boolean().optional(),
+   processId: uuidSchema,
+   replacedById: optionalUuidSchema,
+   fullName: z.string().trim().min(1),
+   address: optionalLooseTrimmedStringSchema,
+   residenceComarca: optionalLooseTrimmedStringSchema,
+   maritalStatus: optionalTrimmedStringSchema,
+   profession: optionalTrimmedStringSchema,
+   phone: optionalTrimmedStringSchema,
+   notes: optionalTrimmedStringSchema,
+   side: witnessSideSchema.default('reu'),
+   status: witnessStatusSchema.optional(),
+   replaced: z.boolean().optional(),
 };
 
 const replaceWitnessShape = {
-  fullName: z.string().trim().min(1),
-  address: optionalLooseTrimmedStringSchema,
-  residenceComarca: optionalLooseTrimmedStringSchema,
-  maritalStatus: optionalTrimmedStringSchema,
-  profession: optionalTrimmedStringSchema,
-  phone: optionalTrimmedStringSchema,
-  notes: optionalTrimmedStringSchema,
-  side: witnessSideSchema.default('reu'),
-  status: witnessStatusSchema.optional(),
+   fullName: z.string().trim().min(1),
+   address: optionalLooseTrimmedStringSchema,
+   residenceComarca: optionalLooseTrimmedStringSchema,
+   maritalStatus: optionalTrimmedStringSchema,
+   profession: optionalTrimmedStringSchema,
+   phone: optionalTrimmedStringSchema,
+   notes: optionalTrimmedStringSchema,
+   side: witnessSideSchema.default('reu'),
+   status: witnessStatusSchema.optional(),
 };
 
 export const createWitnessSchema = withWitnessGuards(z.object(witnessShape));
 export const updateWitnessSchema = withWitnessGuards(
-  z.object(witnessShape).partial(),
+   z.object(witnessShape).partial(),
 );
 export const replaceWitnessSchema = withWitnessGuards(
-  z.object(replaceWitnessShape),
+   z.object(replaceWitnessShape),
 );
 export const witnessIntimationRequestSchema = withStrictUnknownFieldValidation(
-  z.object({
-    method: witnessIntimationMethodSchema,
-    hearingDate: optionalDateTimeSchema,
-    sentAt: optionalDateTimeSchema,
-  }),
+   z.object({
+      method: witnessIntimationMethodSchema,
+      hearingDate: optionalDateTimeSchema,
+      sentAt: optionalDateTimeSchema,
+   }),
 ).superRefine((value, context) => {
-  if (value.method === 'carta_simples' && !value.hearingDate) {
-    context.addIssue({
-      code: 'custom',
-      path: ['hearingDate'],
-      message: 'hearingDate is required for carta_simples intimation',
-    });
-  }
+   if (value.method === 'carta_simples' && !value.hearingDate) {
+      context.addIssue({
+         code: 'custom',
+         path: ['hearingDate'],
+         message: 'hearingDate is required for carta_simples intimation',
+      });
+   }
 });
 export const witnessIntimationOutcomeRequestSchema =
-  withStrictUnknownFieldValidation(
-    z.object({
-      outcome: witnessIntimationOutcomeSchema,
-      hearingDate: optionalDateTimeSchema,
-      occurredAt: optionalDateTimeSchema,
-    }),
-  ).superRefine((value, context) => {
-    if (value.outcome === 'positive' && !value.hearingDate) {
-      context.addIssue({
-        code: 'custom',
-        path: ['hearingDate'],
-        message: 'hearingDate is required for positive intimation outcome',
-      });
-    }
-  });
+   withStrictUnknownFieldValidation(
+      z.object({
+         outcome: witnessIntimationOutcomeSchema,
+         hearingDate: optionalDateTimeSchema,
+         occurredAt: optionalDateTimeSchema,
+      }),
+   ).superRefine((value, context) => {
+      if (value.outcome === 'positive' && !value.hearingDate) {
+         context.addIssue({
+            code: 'custom',
+            path: ['hearingDate'],
+            message: 'hearingDate is required for positive intimation outcome',
+         });
+      }
+   });
 export const witnessFiltersSchema = withWitnessGuards(
-  paginationSchema.extend({
-    processId: optionalUuidSchema,
-    side: witnessSideSchema.optional(),
-    status: witnessStatusSchema.optional(),
-    replaced: z.coerce.boolean().optional(),
-  }),
+   paginationSchema.extend({
+      processId: optionalUuidSchema,
+      side: witnessSideSchema.optional(),
+      status: witnessStatusSchema.optional(),
+      replaced: z.coerce.boolean().optional(),
+   }),
 );
 
 const createDeadlineShape = {
-  processId: uuidSchema,
-  witnessId: optionalUuidSchema,
-  type: deadlineTypeSchema,
-  referenceDate: optionalDateSchema,
-  hearingDate: optionalDateSchema,
-  state: optionalTrimmedStringSchema,
-  municipality: optionalTrimmedStringSchema,
-  notificationSent: z.boolean().optional(),
+   processId: uuidSchema,
+   witnessId: optionalUuidSchema,
+   type: deadlineTypeSchema,
+   referenceDate: optionalDateSchema,
+   hearingDate: optionalDateSchema,
+   state: optionalTrimmedStringSchema,
+   municipality: optionalTrimmedStringSchema,
+   notificationSent: z.boolean().optional(),
 };
 
 const deadlineShape = {
-  processId: uuidSchema,
-  witnessId: optionalUuidSchema,
-  type: deadlineTypeSchema,
-  dueDate: dateSchema,
-  status: deadlineStatusSchema.default('aberto'),
-  notificationSent: z.boolean().optional(),
+   processId: uuidSchema,
+   witnessId: optionalUuidSchema,
+   type: deadlineTypeSchema,
+   dueDate: dateSchema,
+   status: deadlineStatusSchema.default('aberto'),
+   notificationSent: z.boolean().optional(),
 };
 
 export const createDeadlineSchema = withStrictUnknownFieldValidation(
-  z.object(createDeadlineShape),
+   z.object(createDeadlineShape),
 ).superRefine((value, context) => {
-  const requiresHearingDate =
-    value.type === 'juntada_intimacao' ||
-    value.type === 'desistencia_testemunha';
+   const requiresHearingDate =
+      value.type === 'juntada_intimacao' ||
+      value.type === 'desistencia_testemunha';
 
-  if (requiresHearingDate && !value.hearingDate) {
-    context.addIssue({
-      code: 'custom',
-      path: ['hearingDate'],
-      message: 'hearingDate is required for the selected deadline type',
-    });
-  }
+   if (requiresHearingDate && !value.hearingDate) {
+      context.addIssue({
+         code: 'custom',
+         path: ['hearingDate'],
+         message: 'hearingDate is required for the selected deadline type',
+      });
+   }
 });
 export const updateDeadlineSchema = withStrictUnknownFieldValidation(
-  z.object(deadlineShape).partial(),
+   z.object(deadlineShape).partial(),
 );
 export const deadlineFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    processId: optionalUuidSchema,
-    witnessId: optionalUuidSchema,
-    type: deadlineTypeSchema.optional(),
-    status: deadlineStatusSchema.optional(),
-    dueDateFrom: optionalDateSchema,
-    dueDateTo: optionalDateSchema,
-  }),
+   paginationSchema.extend({
+      processId: optionalUuidSchema,
+      cnjNumber: optionalLooseTrimmedStringSchema,
+      witnessId: optionalUuidSchema,
+      type: deadlineTypeSchema.optional(),
+      status: deadlineStatusSchema.optional(),
+      dueDateFrom: optionalDateSchema,
+      dueDateTo: optionalDateSchema,
+   }),
 );
 
 const holidayShape = {
-  date: dateSchema,
-  name: z.string().trim().min(1),
-  type: holidayTypeSchema,
-  state: optionalTrimmedStringSchema,
-  municipality: optionalTrimmedStringSchema,
-  source: holidaySourceSchema,
+   date: dateSchema,
+   name: z.string().trim().min(1),
+   type: holidayTypeSchema,
+   state: optionalTrimmedStringSchema,
+   municipality: optionalTrimmedStringSchema,
+   source: holidaySourceSchema,
 };
 
 export const createHolidaySchema = withStrictUnknownFieldValidation(
-  z.object(holidayShape),
+   z.object(holidayShape),
 );
 export const updateHolidaySchema = withStrictUnknownFieldValidation(
-  z.object(holidayShape).partial(),
+   z.object(holidayShape).partial(),
 );
 export const holidayFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    date: optionalDateSchema,
-    type: holidayTypeSchema.optional(),
-    state: optionalTrimmedStringSchema,
-    municipality: optionalTrimmedStringSchema,
-    source: holidaySourceSchema.optional(),
-  }),
+   paginationSchema.extend({
+      date: optionalDateSchema,
+      type: holidayTypeSchema.optional(),
+      state: optionalTrimmedStringSchema,
+      municipality: optionalTrimmedStringSchema,
+      source: holidaySourceSchema.optional(),
+   }),
 );
 
 const emailShape = {
-  processId: uuidSchema,
-  template: emailTemplateSchema,
-  recipient: z.string().trim().email(),
-  sentAt: optionalDateTimeSchema,
-  repliedAt: optionalDateTimeSchema,
-  acknowledgmentDate: optionalDateSchema,
-  fulfilledAt: optionalDateSchema,
+   processId: uuidSchema,
+   template: emailTemplateSchema,
+   recipient: z.string().trim().email(),
+   sentAt: optionalDateTimeSchema,
+   repliedAt: optionalDateTimeSchema,
+   acknowledgmentDate: optionalDateSchema,
+   fulfilledAt: optionalDateSchema,
 };
 
 export const createEmailSchema = withStrictUnknownFieldValidation(
-  z.object(emailShape),
+   z.object(emailShape),
 );
 export const updateEmailSchema = withStrictUnknownFieldValidation(
-  z.object(emailShape).partial(),
+   z.object(emailShape).partial(),
 );
 export const emailFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    processId: optionalUuidSchema,
-    template: emailTemplateSchema.optional(),
-    recipient: optionalTrimmedStringSchema,
-  }),
+   paginationSchema.extend({
+      processId: optionalUuidSchema,
+      template: emailTemplateSchema.optional(),
+      recipient: optionalTrimmedStringSchema,
+   }),
 );
 
 const auditLogShape = {
-  processId: optionalUuidSchema,
-  userId: optionalUuidSchema,
-  actionType: actionTypeSchema,
-  description: z.string().trim().min(1),
-  previousData: z.record(z.string(), z.unknown()).nullable().optional(),
-  newData: z.record(z.string(), z.unknown()).nullable().optional(),
+   processId: optionalUuidSchema,
+   userId: optionalUuidSchema,
+   actionType: actionTypeSchema,
+   description: z.string().trim().min(1),
+   previousData: z.record(z.string(), z.unknown()).nullable().optional(),
+   newData: z.record(z.string(), z.unknown()).nullable().optional(),
 };
 
 export const createAuditLogSchema = withStrictUnknownFieldValidation(
-  z.object(auditLogShape),
+   z.object(auditLogShape),
 );
 export const auditLogFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    processId: optionalUuidSchema,
-    userId: optionalUuidSchema,
-    actionType: actionTypeSchema.optional(),
-    createdFrom: optionalDateTimeSchema,
-    createdTo: optionalDateTimeSchema,
-  }),
+   paginationSchema.extend({
+      processId: optionalUuidSchema,
+      userId: optionalUuidSchema,
+      actionType: actionTypeSchema.optional(),
+      createdFrom: optionalDateTimeSchema,
+      createdTo: optionalDateTimeSchema,
+   }),
 );
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
@@ -395,10 +396,10 @@ export type CreateWitnessInput = z.infer<typeof createWitnessSchema>;
 export type UpdateWitnessInput = z.infer<typeof updateWitnessSchema>;
 export type ReplaceWitnessInput = z.infer<typeof replaceWitnessSchema>;
 export type WitnessIntimationRequestInput = z.infer<
-  typeof witnessIntimationRequestSchema
+   typeof witnessIntimationRequestSchema
 >;
 export type WitnessIntimationOutcomeRequestInput = z.infer<
-  typeof witnessIntimationOutcomeRequestSchema
+   typeof witnessIntimationOutcomeRequestSchema
 >;
 export type WitnessFiltersInput = z.infer<typeof witnessFiltersSchema>;
 export type CreateDeadlineInput = z.infer<typeof createDeadlineSchema>;
@@ -414,26 +415,26 @@ export type CreateAuditLogInput = z.infer<typeof createAuditLogSchema>;
 export type AuditLogFiltersInput = z.infer<typeof auditLogFiltersSchema>;
 
 const taskShape = {
-  title: z.string().trim().min(1),
-  description: optionalTrimmedStringSchema,
-  processId: optionalUuidSchema,
-  status: taskStatusSchema.optional(),
+   title: z.string().trim().min(1),
+   description: optionalTrimmedStringSchema,
+   processId: optionalUuidSchema,
+   status: taskStatusSchema.optional(),
 };
 
 export const createTaskSchema = withStrictUnknownFieldValidation(
-  z.object(taskShape),
+   z.object(taskShape),
 );
 export const updateTaskSchema = withStrictUnknownFieldValidation(
-  z.object(taskShape).partial(),
+   z.object(taskShape).partial(),
 );
 export const updateTaskStatusSchema = withStrictUnknownFieldValidation(
-  z.object({ status: taskStatusSchema }),
+   z.object({ status: taskStatusSchema }),
 );
 export const taskFiltersSchema = withStrictUnknownFieldValidation(
-  paginationSchema.extend({
-    status: taskStatusSchema.optional(),
-    processId: optionalUuidSchema,
-  }),
+   paginationSchema.extend({
+      status: taskStatusSchema.optional(),
+      processId: optionalUuidSchema,
+   }),
 );
 
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;

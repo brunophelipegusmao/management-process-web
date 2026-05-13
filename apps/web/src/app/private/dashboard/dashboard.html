@@ -1,7 +1,7 @@
-<div class="p-4 sm:p-6 lg:p-8 max-w-screen flex flex-col items-center justify-center">
+<div class="p-4 sm:p-6 lg:p-8 w-full flex flex-col items-center justify-center">
 
   <!-- Cabeçalho + Busca -->
-  <header class="flex items-end-safe justify-around gap-4 mb-5 flex-wrap w-[80%]">
+  <header class="flex items-end-safe justify-around gap-4 mb-5 flex-wrap w-full">
     <div class="flex items-end justify-between flex-wrap gap-4 mb-4">
       <div class="flex flex-col gap-1">
         <span class="db-eyebrow font-mono text-[0.65rem] tracking-[0.25em] uppercase text-mulim-ouro flex items-center gap-2">Escritório</span>
@@ -78,7 +78,7 @@
   } @else {
 
     <!-- ── KPI CARDS ─────────────────────────────────────── -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-10">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 w-full">
 
       <div class="db-kpi flex flex-col gap-1 px-4 pt-4 pb-5 border border-foreground/10">
         <span class="font-mono text-3xl sm:text-4xl font-bold text-mulim-ouro tabular-nums leading-none">{{ weekHearingCount() }}</span>
@@ -108,10 +108,74 @@
         <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/40 mt-1.5">Expedientes enviados</span>
       </div>
 
+      <div class="db-kpi flex flex-col gap-1 px-4 pt-4 pb-5 border border-foreground/10">
+        <span class="font-mono text-3xl sm:text-4xl font-bold text-mulim-ouro tabular-nums leading-none">{{ activeTaskCount() }}</span>
+        <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/40 mt-1.5">Tarefas ativas</span>
+      </div>
+
+      <div
+        class="db-kpi flex flex-col gap-1 px-4 pt-4 pb-5 border transition-colors"
+        [class.border-foreground/10]="overdueDeadlineCountKpi() === 0"
+        [class.border-destructive/40]="overdueDeadlineCountKpi() > 0"
+      >
+        <span
+          class="font-mono text-3xl sm:text-4xl font-bold tabular-nums leading-none"
+          [class.text-mulim-ouro]="overdueDeadlineCountKpi() === 0"
+          [class.text-destructive]="overdueDeadlineCountKpi() > 0"
+        >{{ overdueDeadlineCountKpi() }}</span>
+        <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/40 mt-1.5">Prazos vencidos</span>
+      </div>
+
+    </div>
+
+    <!-- ── RESUMO DIÁRIO / MENSAL ─────────────────────────────── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 sm:mb-10 w-full">
+
+      <div class="flex items-center gap-4 px-5 py-3.5 border border-mulim-ouro/25 bg-mulim-ouro/3">
+        <span class="font-mono text-[0.58rem] tracking-[0.2em] uppercase text-mulim-ouro font-bold shrink-0">Hoje</span>
+        <div class="flex-1 h-px bg-foreground/6"></div>
+        <div class="flex items-center gap-5">
+          <div class="flex flex-col items-end gap-0.5">
+            <span class="font-mono text-xl font-bold text-foreground tabular-nums leading-none">{{ todayHearingCount() }}</span>
+            <span class="font-mono text-[0.52rem] tracking-wide uppercase text-foreground/35">audiências</span>
+          </div>
+          <div class="w-px h-7 bg-foreground/8"></div>
+          <div class="flex flex-col items-end gap-0.5">
+            <span
+              class="font-mono text-xl font-bold tabular-nums leading-none"
+              [class.text-destructive]="todayDeadlineCount() > 0"
+              [class.text-foreground]="todayDeadlineCount() === 0"
+            >{{ todayDeadlineCount() }}</span>
+            <span class="font-mono text-[0.52rem] tracking-wide uppercase text-foreground/35">prazos vencendo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 px-5 py-3.5 border border-foreground/8 min-w-0">
+        <span class="font-mono text-[0.58rem] tracking-[0.2em] uppercase text-foreground/40 font-bold shrink-0">Este mês</span>
+        <div class="flex-1 h-px bg-foreground/6"></div>
+        <div class="flex items-center gap-4 shrink-0">
+          <div class="flex flex-col items-end gap-0.5">
+            <span class="font-mono text-xl font-bold text-mulim-ouro tabular-nums leading-none">{{ monthHearingCount() }}</span>
+            <span class="font-mono text-[0.52rem] tracking-wide uppercase text-foreground/35">audiências</span>
+          </div>
+          <div class="w-px h-7 bg-foreground/8"></div>
+          <div class="flex flex-col items-end gap-0.5">
+            <span class="font-mono text-xl font-bold text-mulim-ouro tabular-nums leading-none">{{ openDeadlineCount() }}</span>
+            <span class="font-mono text-[0.52rem] tracking-wide uppercase text-foreground/35">prazos em aberto</span>
+          </div>
+          <div class="w-px h-7 bg-foreground/8"></div>
+          <div class="flex flex-col items-end gap-0.5">
+            <span class="font-mono text-xl font-bold text-mulim-ouro tabular-nums leading-none">{{ activeTaskCount() }}</span>
+            <span class="font-mono text-[0.52rem] tracking-wide uppercase text-foreground/35">tarefas ativas</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ── CONTEÚDO PRINCIPAL ─────────────────────────────── -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 w-full">
 
       <!-- Agenda da semana -->
       <section aria-labelledby="sec-agenda">
@@ -185,6 +249,93 @@
               <span class="font-mono text-[0.58rem] tracking-[0.18em] uppercase text-foreground/35">Concluídos</span>
             </div>
           </div>
+        }
+      </section>
+
+    </div>
+
+    <!-- ── TAREFAS + PRAZOS ─────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 mt-6 lg:mt-10 w-full">
+
+      <!-- Tarefas Ativas -->
+      <section aria-labelledby="sec-tarefas">
+        <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-4 border-b-2 border-mulim-ouro/40" id="sec-tarefas">
+          <span class="text-mulim-ouro text-sm">03</span> Tarefas Ativas
+          <a routerLink="/dashboard/kanban" class="ml-auto font-mono text-[0.55rem] tracking-widest uppercase text-foreground/35 hover:text-mulim-ouro transition-colors" aria-label="Ver todas as tarefas no Kanban">Ver tudo →</a>
+        </h2>
+
+        @if (todoTasks().length === 0 && inProgressTasks().length === 0) {
+          <div class="py-10 flex items-center justify-center border border-dashed border-foreground/10">
+            <p class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/25">Nenhuma tarefa ativa</p>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-2">
+            @for (t of inProgressTasks(); track t.id) {
+              <div class="flex items-start gap-3 px-3 py-2.5 border border-mulim-ouro/20">
+                <span class="font-mono text-[0.52rem] font-bold tracking-widest uppercase px-1.5 py-0.5 border border-mulim-ouro/40 text-mulim-ouro shrink-0 mt-0.5">Em andamento</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-sans text-sm text-foreground truncate">{{ t.title }}</p>
+                  @if (t.cnjNumber) {
+                    <p class="font-mono text-[0.58rem] uppercase tracking-wide text-foreground/35 mt-0.5 truncate">{{ t.cnjNumber }}</p>
+                  }
+                </div>
+              </div>
+            }
+            @for (t of todoTasks(); track t.id) {
+              <div class="flex items-start gap-3 px-3 py-2.5 border border-foreground/8 dark:border-foreground/5">
+                <span class="font-mono text-[0.52rem] font-bold tracking-widest uppercase px-1.5 py-0.5 border border-foreground/20 text-foreground/40 shrink-0 mt-0.5">A fazer</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-sans text-sm text-foreground truncate">{{ t.title }}</p>
+                  @if (t.cnjNumber) {
+                    <p class="font-mono text-[0.58rem] uppercase tracking-wide text-foreground/35 mt-0.5 truncate">{{ t.cnjNumber }}</p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Prazos Pendentes -->
+      <section aria-labelledby="sec-prazos">
+        <h2 class="font-mono text-xs font-bold tracking-[0.22em] uppercase text-mulim-azul dark:text-foreground flex items-center gap-3 pb-3 mb-4 border-b-2 border-mulim-ouro/40" id="sec-prazos">
+          <span class="text-mulim-ouro text-sm">04</span> Prazos Pendentes
+          <a routerLink="/dashboard/deadlines" class="ml-auto font-mono text-[0.55rem] tracking-widest uppercase text-foreground/35 hover:text-mulim-ouro transition-colors" aria-label="Ver todos os prazos">Ver tudo →</a>
+        </h2>
+
+        @if (overdueDeadlineList().length === 0 && pendingDeadlines().length === 0) {
+          <div class="py-10 flex items-center justify-center border border-dashed border-foreground/10">
+            <p class="font-mono text-[0.65rem] tracking-widest uppercase text-foreground/25">Nenhum prazo pendente</p>
+          </div>
+        } @else {
+          <ul class="flex flex-col gap-2">
+            @for (d of overdueDeadlineList(); track d.id) {
+              <li class="flex items-center gap-3 px-3 py-2.5 border border-destructive/30">
+                <div class="flex flex-col shrink-0 min-w-20 text-right">
+                  <time [attr.datetime]="d.dueDate" class="font-mono text-xs font-bold text-destructive tabular-nums leading-none">{{ formatDate(d.dueDate) }}</time>
+                  <span class="font-mono text-[0.5rem] tracking-wide uppercase text-destructive/70 mt-0.5">Vencido</span>
+                </div>
+                <div class="w-px self-stretch bg-destructive/20 shrink-0"></div>
+                <p class="flex-1 font-sans text-xs text-foreground truncate min-w-0">{{ deadlineTypeLabels[d.type] }}</p>
+              </li>
+            }
+            @for (d of pendingDeadlines(); track d.id) {
+              <li class="flex items-center gap-3 px-3 py-2.5 border border-foreground/8 dark:border-foreground/5"
+                  [class.border-amber-400/30]="isDueToday(d.dueDate)">
+                <div class="flex flex-col shrink-0 min-w-20 text-right">
+                  <time [attr.datetime]="d.dueDate"
+                        class="font-mono text-xs font-bold tabular-nums leading-none"
+                        [class.text-amber-500]="isDueToday(d.dueDate)"
+                        [class.text-mulim-ouro]="!isDueToday(d.dueDate)">{{ formatDate(d.dueDate) }}</time>
+                  @if (isDueToday(d.dueDate)) {
+                    <span class="font-mono text-[0.5rem] tracking-wide uppercase text-amber-500/80 mt-0.5">Hoje</span>
+                  }
+                </div>
+                <div class="w-px self-stretch bg-foreground/10 shrink-0"></div>
+                <p class="flex-1 font-sans text-xs text-foreground truncate min-w-0">{{ deadlineTypeLabels[d.type] }}</p>
+              </li>
+            }
+          </ul>
         }
       </section>
 
